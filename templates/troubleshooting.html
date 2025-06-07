@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Network Troubleshooting - NetworkHub.ch</title>
+    <title>Network Troubleshooting - tcp-ip.ch</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -15,6 +15,8 @@
             --danger-color: #ff4444;
             --success-color: #00ff44;
             --tool-color: #4169e1;
+            --diagnostic-purple: #9966ff;
+            --network-blue: #0099ff;
             --bg-dark: #0a0a0f;
             --bg-darker: #050508;
             --bg-card: #111118;
@@ -22,24 +24,95 @@
             --text-light: #e0e0ff;
             --text-dim: #a0a0c0;
             --border-glow: rgba(0, 255, 255, 0.3);
+            --gradient-diagnostic: linear-gradient(135deg, var(--tool-color), var(--diagnostic-purple));
+            --gradient-network: linear-gradient(45deg, var(--network-blue), var(--primary-color));
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
             color: var(--text-light);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
+        /* Enhanced Background Effects */
+        .diagnostic-matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -3;
+            opacity: 0.1;
+            background-image:
+                radial-gradient(circle at 20% 20%, var(--tool-color) 2px, transparent 2px),
+                radial-gradient(circle at 80% 80%, var(--diagnostic-purple) 2px, transparent 2px),
+                linear-gradient(45deg, var(--tool-color) 1px, transparent 1px),
+                linear-gradient(-45deg, var(--network-blue) 1px, transparent 1px);
+            background-size: 80px 80px, 100px 100px, 60px 60px, 60px 60px;
+            animation: diagnosticPulse 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes diagnosticPulse {
+            0% { opacity: 0.1; transform: translateX(0) translateY(0); }
+            50% { opacity: 0.3; }
+            100% { opacity: 0.15; transform: translateX(20px) translateY(20px); }
+        }
+
+        /* Floating Network Signals */
+        .signal-stream {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .network-signal {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 4px 8px;
+            background: rgba(65, 105, 225, 0.2);
+            border: 1px solid var(--tool-color);
+            border-radius: 4px;
+            color: var(--tool-color);
+            animation: signalFloat 18s infinite linear;
+            opacity: 0.6;
+        }
+
+        @keyframes signalFloat {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+                opacity: 0;
+                filter: hue-rotate(0deg);
+            }
+            10% { opacity: 0.6; }
+            50% { filter: hue-rotate(180deg); }
+            90% { opacity: 0.6; }
+            100% {
+                transform: translateY(-10vh) translateX(100px) rotate(360deg);
+                opacity: 0;
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        /* Enhanced Header */
         header {
             position: fixed;
             top: 0;
             width: 100%;
             background: rgba(10, 10, 15, 0.95);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px) saturate(180%);
             z-index: 1000;
             padding: 1rem 0;
-            border-bottom: 1px solid var(--border-glow);
+            border-bottom: 2px solid var(--border-glow);
+            box-shadow: 0 5px 30px rgba(65, 105, 225, 0.2);
         }
 
         nav {
@@ -52,69 +125,273 @@
         }
 
         .logo {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 900;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(45deg, #ff0080, #00ffff, #8000ff, #00ff80);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px rgba(65, 105, 225, 0.5));
         }
 
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
             color: var(--text-light);
             text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+            padding: 0.7rem 1.2rem;
+            border-radius: 25px;
             transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
         }
 
         .nav-links a:hover {
-            color: var(--primary-color);
-            background: rgba(0, 255, 255, 0.1);
+            color: var(--tool-color);
+            text-shadow: 0 0 15px currentColor;
+            background: rgba(65, 105, 225, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(65, 105, 225, 0.3);
         }
 
+        .nav-links a[style*="tool-color"] {
+            color: var(--tool-color);
+            background: rgba(65, 105, 225, 0.1);
+            box-shadow: 0 0 20px rgba(65, 105, 225, 0.3);
+        }
+
+        /* Hero Section */
         .hero {
             height: 70vh;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            background: radial-gradient(circle at 50% 50%, rgba(65, 105, 225, 0.1) 0%, transparent 70%);
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(65, 105, 225, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(153, 102, 255, 0.15) 0%, transparent 50%);
         }
 
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(65, 105, 225, 0.05), transparent, rgba(153, 102, 255, 0.05), transparent);
+            animation: rotate 50s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 7vw, 5rem);
+            margin-bottom: 1rem;
+            background: var(--gradient-diagnostic);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -3px;
+            opacity: 0;
+            animation: titleReveal 2s ease-out 0.5s forwards;
+            text-shadow: 0 0 50px rgba(65, 105, 225, 0.3);
+        }
+
+        @keyframes titleReveal {
+            0% { opacity: 0; transform: translateY(50px) scale(0.8); filter: blur(10px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 3vw, 1.8rem);
+            color: var(--diagnostic-purple);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 1s forwards;
+        }
+
+        .hero-description {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 1.5s forwards;
+            line-height: 1.8;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        /* Enhanced Sections */
         .section {
-            padding: 6rem 0;
+            padding: 8rem 0;
             max-width: 1600px;
             margin: 0 auto;
             padding-left: 2rem;
             padding-right: 2rem;
+            position: relative;
         }
 
         .section h2 {
-            font-size: 3rem;
+            font-size: clamp(2.5rem, 5vw, 4rem);
             margin-bottom: 3rem;
             color: var(--tool-color);
             text-align: center;
+            position: relative;
+            font-weight: 800;
+            text-shadow: 0 0 30px rgba(65, 105, 225, 0.3);
         }
 
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 4px;
+            background: var(--gradient-diagnostic);
+            border-radius: 2px;
+            box-shadow: 0 0 20px rgba(65, 105, 225, 0.5);
+        }
+
+        /* Network Status Dashboard */
+        .network-status {
+            background: rgba(22, 22, 32, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 2px solid var(--border-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .status-card {
+            background: rgba(17, 17, 24, 0.9);
+            backdrop-filter: blur(15px);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-glow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .status-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(65, 105, 225, 0.3);
+        }
+
+        .status-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .status-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 15px currentColor;
+        }
+
+        .status-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .status-good { color: var(--success-color); }
+        .status-warning { color: var(--warning-color); }
+        .status-critical { color: var(--danger-color); }
+
+        /* Enhanced Troubleshooting Methodology */
         .methodology {
             background: var(--bg-section);
             border-radius: 30px;
             padding: 5rem;
             margin: 6rem 0;
             border: 1px solid var(--border-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .methodology::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 70%, rgba(65, 105, 225, 0.05), transparent 50%);
+            z-index: 0;
         }
 
         .steps-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 3rem;
             margin: 4rem 0;
+            position: relative;
+            z-index: 1;
         }
 
         .step-card {
@@ -124,12 +401,19 @@
             border: 1px solid var(--border-glow);
             text-align: center;
             position: relative;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        .step-card.animate {
+            transform: translateY(0);
+            opacity: 1;
         }
 
         .step-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(65, 105, 225, 0.3);
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(65, 105, 225, 0.3);
         }
 
         .step-number {
@@ -139,7 +423,7 @@
             transform: translateX(-50%);
             width: 50px;
             height: 50px;
-            background: linear-gradient(45deg, var(--tool-color), var(--primary-color));
+            background: var(--gradient-diagnostic);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -147,6 +431,13 @@
             font-size: 1.5rem;
             font-weight: bold;
             color: white;
+            box-shadow: 0 10px 30px rgba(65, 105, 225, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
         }
 
         .step-icon {
@@ -162,121 +453,7 @@
             margin-bottom: 1rem;
         }
 
-        .common-issues {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 3rem;
-            margin: 4rem 0;
-        }
-
-        .issue-card {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 3rem;
-            border-left: 5px solid;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .issue-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .issue-card:hover::before {
-            opacity: 1;
-        }
-
-        .issue-card.connectivity {
-            border-left-color: var(--danger-color);
-        }
-
-        .issue-card.connectivity::before {
-            background: linear-gradient(135deg, rgba(255, 68, 68, 0.05), transparent);
-        }
-
-        .issue-card.performance {
-            border-left-color: var(--warning-color);
-        }
-
-        .issue-card.performance::before {
-            background: linear-gradient(135deg, rgba(255, 170, 0, 0.05), transparent);
-        }
-
-        .issue-card.security {
-            border-left-color: var(--accent-color);
-        }
-
-        .issue-card.security::before {
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.05), transparent);
-        }
-
-        .issue-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .issue-icon {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .issue-card.connectivity .issue-icon { color: var(--danger-color); }
-        .issue-card.performance .issue-icon { color: var(--warning-color); }
-        .issue-card.security .issue-icon { color: var(--accent-color); }
-
-        .issue-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .issue-card.connectivity .issue-title { color: var(--danger-color); }
-        .issue-card.performance .issue-title { color: var(--warning-color); }
-        .issue-card.security .issue-title { color: var(--accent-color); }
-
-        .issue-symptoms {
-            margin: 2rem 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .symptom-list {
-            list-style: none;
-            margin: 1rem 0;
-        }
-
-        .symptom-list li {
-            margin-bottom: 0.8rem;
-            padding-left: 2rem;
-            position: relative;
-            color: var(--text-dim);
-        }
-
-        .symptom-list li::before {
-            content: '⚠️';
-            position: absolute;
-            left: 0;
-        }
-
-        .solution-steps {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 2rem;
-            border-radius: 10px;
-            margin-top: 2rem;
-            position: relative;
-            z-index: 1;
-        }
-
+        /* Enhanced Interactive Tools */
         .interactive-tools {
             background: var(--bg-card);
             border-radius: 25px;
@@ -287,7 +464,7 @@
 
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 3rem;
             margin: 3rem 0;
         }
@@ -298,6 +475,14 @@
             padding: 3rem;
             border: 1px solid var(--border-glow);
             text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .tool-widget:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(65, 105, 225, 0.3);
         }
 
         .tool-title {
@@ -316,10 +501,17 @@
             color: var(--text-light);
             margin-bottom: 1rem;
             font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .tool-input:focus {
+            outline: none;
+            border-color: var(--tool-color);
+            box-shadow: 0 0 15px rgba(65, 105, 225, 0.3);
         }
 
         .tool-button {
-            background: linear-gradient(45deg, var(--tool-color), var(--primary-color));
+            background: var(--gradient-diagnostic);
             color: white;
             border: none;
             padding: 1rem 2rem;
@@ -329,6 +521,23 @@
             cursor: pointer;
             transition: all 0.3s ease;
             width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .tool-button:hover::before {
+            left: 100%;
         }
 
         .tool-button:hover {
@@ -347,66 +556,64 @@
             font-size: 0.9rem;
             line-height: 1.4;
             text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
-        .flowchart {
-            background: var(--bg-section);
+        /* Network Topology Visualizer */
+        .network-topology {
+            background: rgba(22, 22, 32, 0.9);
             border-radius: 25px;
             padding: 4rem;
             margin: 6rem 0;
             border: 1px solid var(--border-glow);
         }
 
-        .flowchart-container {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .flow-node {
+        .topology-container {
             background: var(--bg-card);
-            border: 2px solid var(--tool-color);
             border-radius: 15px;
-            padding: 1.5rem;
-            margin: 2rem auto;
-            text-align: center;
-            max-width: 300px;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            padding: 3rem;
+            margin: 3rem 0;
+            position: relative;
+            min-height: 400px;
         }
 
-        .flow-node:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(65, 105, 225, 0.3);
-        }
-
-        .flow-decision {
-            background: var(--bg-card);
-            border: 2px solid var(--warning-color);
+        .network-node {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-diagnostic);
             border-radius: 50%;
-            width: 200px;
-            height: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 2rem auto;
-            text-align: center;
-            transition: all 0.3s ease;
+            color: white;
+            font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(65, 105, 225, 0.3);
         }
 
-        .flow-decision:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(255, 170, 0, 0.3);
+        .network-node:hover {
+            transform: scale(1.2);
+            box-shadow: 0 15px 40px rgba(65, 105, 225, 0.5);
         }
 
-        .flow-arrow {
-            text-align: center;
-            font-size: 2rem;
-            color: var(--tool-color);
-            margin: 1rem 0;
+        .network-link {
+            position: absolute;
+            height: 4px;
+            background: linear-gradient(90deg, var(--tool-color), var(--diagnostic-purple));
+            z-index: -1;
+            border-radius: 2px;
+            animation: linkPulse 2s ease-in-out infinite;
         }
 
+        @keyframes linkPulse {
+            0%, 100% { opacity: 0.6; transform: scaleY(1); }
+            50% { opacity: 1; transform: scaleY(1.5); }
+        }
+
+        /* Advanced Diagnostic Wizard */
         .diagnostic-wizard {
             background: var(--bg-card);
             border-radius: 25px;
@@ -414,6 +621,24 @@
             margin: 6rem 0;
             border: 1px solid var(--border-glow);
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .diagnostic-wizard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(153, 102, 255, 0.05), transparent 50%);
+            z-index: 0;
+        }
+
+        .wizard-content {
+            position: relative;
+            z-index: 1;
         }
 
         .wizard-step {
@@ -431,14 +656,15 @@
         }
 
         .wizard-question {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             color: var(--primary-color);
             margin-bottom: 2rem;
+            font-weight: 600;
         }
 
         .wizard-options {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
             margin: 3rem 0;
         }
@@ -450,12 +676,29 @@
             padding: 2rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wizard-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(65, 105, 225, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .wizard-option:hover::before {
+            left: 100%;
         }
 
         .wizard-option:hover {
             border-color: var(--primary-color);
             background: rgba(0, 255, 255, 0.1);
-            transform: translateY(-5px);
+            transform: translateY(-5px) scale(1.02);
         }
 
         .wizard-result {
@@ -466,19 +709,123 @@
             margin-top: 2rem;
         }
 
+        .diagnosis-details {
+            text-align: left;
+            margin-top: 2rem;
+        }
+
+        .diagnosis-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        /* Real-time Monitoring */
+        .monitoring-dashboard {
+            background: rgba(17, 17, 24, 0.9);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .monitoring-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .monitor-widget {
+            background: var(--bg-section);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-glow);
+            position: relative;
+        }
+
+        .monitor-chart {
+            height: 150px;
+            margin: 1rem 0;
+            background: var(--bg-card);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--tool-color), var(--diagnostic-purple));
+            animation: chartUpdate 3s ease-in-out infinite;
+        }
+
+        @keyframes chartUpdate {
+            0%, 100% { height: 20%; }
+            50% { height: 80%; }
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Footer */
         footer {
-            background: var(--bg-darker);
-            padding: 3rem 0;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            padding: 4rem 0;
             text-align: center;
-            border-top: 1px solid var(--border-glow);
+            border-top: 2px solid var(--border-glow);
+            margin-top: 6rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-diagnostic);
+            box-shadow: 0 0 20px rgba(65, 105, 225, 0.5);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3rem; letter-spacing: -1px; }
+            .nav-links { display: none; }
+            .steps-container { grid-template-columns: 1fr; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .wizard-options { grid-template-columns: 1fr; }
+            .status-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            .status-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
+    <!-- Enhanced Background Effects -->
+    <div class="diagnostic-matrix"></div>
+    <div class="signal-stream" id="signalStream"></div>
+
     <!-- Header -->
     <header>
         <nav>
-            <div class="logo"><a href="/" style="color: inherit; text-decoration: none;">NetworkHub.ch</a></div>
+            <a href="/" class="logo">tcp-ip.ch</a>
             <ul class="nav-links">
                 <li><a href="/">🏠 Hub</a></li>
                 <li><a href="/protocols">📡 Protocols</a></li>
@@ -495,337 +842,374 @@
 
     <!-- Hero Section -->
     <section class="hero">
-        <div>
-            <h1 style="font-size: 4rem; color: var(--tool-color);">Network Troubleshooting</h1>
-            <p style="font-size: 1.4rem; margin-bottom: 2rem;">
-                Systematic approaches to diagnosing and resolving network issues
-            </p>
+        <div class="hero-content">
+            <h1 class="hero-title">Network Troubleshooting</h1>
+            <div class="hero-subtitle">Professional Problem Resolution & Diagnostics</div>
+            <div class="hero-description">
+                Master systematic troubleshooting with advanced diagnostic tools, real-time monitoring,
+                and professional methodologies that solve network problems faster and more effectively.
+            </div>
         </div>
     </section>
 
-    <!-- Troubleshooting Methodology -->
-    <section class="section">
-        <h2>Systematic Troubleshooting Methodology</h2>
+    <!-- Real-time Network Status Dashboard -->
+    <section class="section fade-in">
+        <h2>Network Health Dashboard</h2>
+        <div class="network-status">
+            <h3 style="color: var(--primary-color); margin-bottom: 3rem; text-align: center; font-size: 2.5rem;">
+                📊 Live Network Status & Performance Metrics
+            </h3>
+            <div class="status-grid">
+                <div class="status-card">
+                    <div class="status-icon">🌐</div>
+                    <div class="status-value status-good" id="connectivityStatus">Online</div>
+                    <div class="status-label">Internet Connectivity</div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-icon">⚡</div>
+                    <div class="status-value status-good" id="latencyStatus">12ms</div>
+                    <div class="status-label">Network Latency</div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-icon">📡</div>
+                    <div class="status-value status-warning" id="signalStrength">-45dBm</div>
+                    <div class="status-label">Signal Strength</div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-icon">📊</div>
+                    <div class="status-value status-good" id="bandwidthUsage">67%</div>
+                    <div class="status-label">Bandwidth Usage</div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-icon">🔄</div>
+                    <div class="status-value status-good" id="packetLoss">0.02%</div>
+                    <div class="status-label">Packet Loss</div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-icon">🖥️</div>
+                    <div class="status-value status-good" id="deviceCount">24</div>
+                    <div class="status-label">Connected Devices</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Troubleshooting Methodology -->
+    <section class="section fade-in">
+        <h2>Professional Troubleshooting Framework</h2>
         <div class="methodology">
-            <h3 style="color: var(--primary-color); margin-bottom: 3rem; text-align: center; font-size: 2rem;">
-                The 6-Step Network Troubleshooting Process
+            <h3 style="color: var(--primary-color); margin-bottom: 3rem; text-align: center; font-size: 2.5rem; position: relative; z-index: 1;">
+                🎯 The DMAIC Network Troubleshooting Process
             </h3>
             <div class="steps-container">
                 <div class="step-card">
                     <div class="step-number">1</div>
-                    <div class="step-icon">🎯</div>
-                    <div class="step-title">Identify the Problem</div>
-                    <p>Gather information about symptoms, affected users, and timeline. Define the exact issue and its scope.</p>
+                    <div class="step-icon">🔍</div>
+                    <div class="step-title">Define the Problem</div>
+                    <p>Clearly identify symptoms, scope, and impact. Gather detailed information about when, where, and how the problem occurs.</p>
                 </div>
 
                 <div class="step-card">
                     <div class="step-number">2</div>
-                    <div class="step-icon">💡</div>
-                    <div class="step-title">Establish Theory</div>
-                    <p>Develop probable cause theories based on symptoms. Consider recent changes, known issues, and past experience.</p>
+                    <div class="step-icon">📊</div>
+                    <div class="step-title">Measure & Monitor</div>
+                    <p>Collect baseline metrics, performance data, and establish monitoring to track the problem's behavior over time.</p>
                 </div>
 
                 <div class="step-card">
                     <div class="step-number">3</div>
-                    <div class="step-icon">🧪</div>
-                    <div class="step-title">Test Theory</div>
-                    <p>Validate theories through testing. Use diagnostic tools and commands to confirm or eliminate potential causes.</p>
+                    <div class="step-icon">🔬</div>
+                    <div class="step-title">Analyze Root Cause</div>
+                    <p>Use diagnostic tools and systematic analysis to identify the underlying cause, not just the symptoms.</p>
                 </div>
 
                 <div class="step-card">
                     <div class="step-number">4</div>
-                    <div class="step-icon">🔧</div>
-                    <div class="step-title">Implement Solution</div>
-                    <p>Apply the fix based on confirmed root cause. Make one change at a time and document actions taken.</p>
+                    <div class="step-icon">⚡</div>
+                    <div class="step-title">Improve & Implement</div>
+                    <p>Develop and deploy solutions based on analysis. Test thoroughly before full implementation.</p>
                 </div>
 
                 <div class="step-card">
                     <div class="step-number">5</div>
-                    <div class="step-title">Verify Resolution</div>
-                    <div class="step-icon">✅</div>
-                    <p>Confirm the issue is resolved and no new problems were introduced. Test full functionality.</p>
+                    <div class="step-icon">🎯</div>
+                    <div class="step-title">Control & Monitor</div>
+                    <p>Establish ongoing monitoring to ensure the problem doesn't recur and maintain system performance.</p>
                 </div>
 
                 <div class="step-card">
                     <div class="step-number">6</div>
                     <div class="step-icon">📝</div>
-                    <div class="step-title">Document Findings</div>
-                    <p>Record the problem, solution, and lessons learned. Update documentation and knowledge base.</p>
+                    <div class="step-title">Document & Learn</div>
+                    <p>Record the solution, update procedures, and share knowledge to prevent future occurrences.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Common Network Issues -->
-    <section class="section">
-        <h2>Common Network Problems & Solutions</h2>
-        <div class="common-issues">
-            <!-- Connectivity Issues -->
-            <div class="issue-card connectivity">
-                <div class="issue-icon">🚫</div>
-                <div class="issue-title">Connectivity Issues</div>
-                <p style="position: relative; z-index: 1;">
-                    Users cannot access network resources, websites, or other systems.
-                    These are often the most critical and urgent network problems.
-                </p>
-                <div class="issue-symptoms">
-                    <strong style="color: var(--danger-color);">Common Symptoms:</strong>
-                    <ul class="symptom-list">
-                        <li>Cannot reach websites or servers</li>
-                        <li>"Network unreachable" errors</li>
-                        <li>Timeouts when connecting</li>
-                        <li>Intermittent connection drops</li>
-                        <li>Limited or no connectivity status</li>
-                    </ul>
-                </div>
-                <div class="solution-steps">
-                    <strong style="color: var(--success-color);">Troubleshooting Steps:</strong>
-                    <ol style="margin-top: 1rem; padding-left: 1.5rem;">
-                        <li>Check physical connections and cables</li>
-                        <li>Verify IP configuration (ping loopback, gateway)</li>
-                        <li>Test DNS resolution (nslookup, dig)</li>
-                        <li>Check routing tables and default gateway</li>
-                        <li>Verify firewall and ACL configurations</li>
-                        <li>Test with different devices/users</li>
-                    </ol>
-                </div>
-            </div>
-
-            <!-- Performance Issues -->
-            <div class="issue-card performance">
-                <div class="issue-icon">🐌</div>
-                <div class="issue-title">Performance Issues</div>
-                <p style="position: relative; z-index: 1;">
-                    Network is functional but running slower than expected.
-                    These issues affect user experience and productivity.
-                </p>
-                <div class="issue-symptoms">
-                    <strong style="color: var(--warning-color);">Common Symptoms:</strong>
-                    <ul class="symptom-list">
-                        <li>Slow file transfers</li>
-                        <li>Web pages load slowly</li>
-                        <li>High latency and jitter</li>
-                        <li>Packet loss</li>
-                        <li>Applications timeout frequently</li>
-                    </ul>
-                </div>
-                <div class="solution-steps">
-                    <strong style="color: var(--success-color);">Troubleshooting Steps:</strong>
-                    <ol style="margin-top: 1rem; padding-left: 1.5rem;">
-                        <li>Monitor bandwidth utilization</li>
-                        <li>Check for network congestion</li>
-                        <li>Analyze traffic patterns and QoS</li>
-                        <li>Test different times and locations</li>
-                        <li>Update network drivers and firmware</li>
-                        <li>Optimize network configurations</li>
-                    </ol>
-                </div>
-            </div>
-
-            <!-- Security Issues -->
-            <div class="issue-card security">
-                <div class="issue-icon">🛡️</div>
-                <div class="issue-title">Security Issues</div>
-                <p style="position: relative; z-index: 1;">
-                    Unauthorized access attempts, suspicious traffic, or security
-                    policy violations that require immediate attention.
-                </p>
-                <div class="issue-symptoms">
-                    <strong style="color: var(--accent-color);">Common Symptoms:</strong>
-                    <ul class="symptom-list">
-                        <li>Unusual network traffic patterns</li>
-                        <li>Unauthorized access attempts</li>
-                        <li>Malware or virus detection</li>
-                        <li>Data exfiltration alerts</li>
-                        <li>Failed authentication logs</li>
-                    </ul>
-                </div>
-                <div class="solution-steps">
-                    <strong style="color: var(--success-color);">Troubleshooting Steps:</strong>
-                    <ol style="margin-top: 1rem; padding-left: 1.5rem;">
-                        <li>Isolate affected systems immediately</li>
-                        <li>Analyze security logs and alerts</li>
-                        <li>Check firewall and IDS/IPS logs</li>
-                        <li>Verify user access permissions</li>
-                        <li>Scan for malware and vulnerabilities</li>
-                        <li>Update security policies and patches</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Interactive Troubleshooting Tools -->
-    <section class="section">
-        <h2>Interactive Diagnostic Tools</h2>
+    <!-- Advanced Interactive Diagnostic Tools -->
+    <section class="section fade-in">
+        <h2>Professional Diagnostic Suite</h2>
         <div class="interactive-tools">
             <h3 style="color: var(--primary-color); margin-bottom: 3rem; text-align: center;">
-                Test Network Connectivity and Performance
+                🛠️ Advanced Network Diagnostic Tools
             </h3>
             <div class="tools-grid">
-                <!-- Ping Tool -->
+                <!-- Enhanced Ping Tool -->
                 <div class="tool-widget">
-                    <div class="tool-title">🏓 Ping Test</div>
-                    <input type="text" class="tool-input" id="pingTarget" placeholder="Enter IP or hostname (e.g., google.com)" value="google.com">
-                    <button class="tool-button" onclick="runPingTest()">Run Ping Test</button>
+                    <div class="tool-title">🏓 Advanced Ping Test</div>
+                    <input type="text" class="tool-input" id="pingTarget" placeholder="Enter IP or hostname" value="8.8.8.8">
+                    <input type="number" class="tool-input" id="pingCount" placeholder="Packet count" value="4" min="1" max="100">
+                    <button class="tool-button" onclick="runAdvancedPing()">Run Advanced Ping</button>
                     <div class="tool-result" id="pingResult"></div>
                 </div>
 
-                <!-- Traceroute Tool -->
+                <!-- Enhanced Traceroute Tool -->
                 <div class="tool-widget">
-                    <div class="tool-title">🗺️ Traceroute</div>
-                    <input type="text" class="tool-input" id="traceTarget" placeholder="Enter destination" value="8.8.8.8">
-                    <button class="tool-button" onclick="runTraceroute()">Trace Route</button>
+                    <div class="tool-title">🗺️ Smart Traceroute</div>
+                    <input type="text" class="tool-input" id="traceTarget" placeholder="Enter destination" value="google.com">
+                    <button class="tool-button" onclick="runSmartTraceroute()">Trace Network Path</button>
                     <div class="tool-result" id="traceResult"></div>
                 </div>
 
-                <!-- DNS Lookup -->
+                <!-- DNS Analysis Tool -->
                 <div class="tool-widget">
-                    <div class="tool-title">🔍 DNS Lookup</div>
+                    <div class="tool-title">🔍 DNS Analyzer</div>
                     <input type="text" class="tool-input" id="dnsTarget" placeholder="Enter domain name" value="example.com">
-                    <button class="tool-button" onclick="runDNSLookup()">Lookup DNS</button>
+                    <select class="tool-input" id="dnsType">
+                        <option value="A">A Record</option>
+                        <option value="AAAA">AAAA Record</option>
+                        <option value="MX">MX Record</option>
+                        <option value="NS">NS Record</option>
+                        <option value="TXT">TXT Record</option>
+                    </select>
+                    <button class="tool-button" onclick="runDNSAnalysis()">Analyze DNS</button>
                     <div class="tool-result" id="dnsResult"></div>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Troubleshooting Flowchart -->
-    <section class="section">
-        <h2>Network Problem Flowchart</h2>
-        <div class="flowchart">
-            <h3 style="color: var(--primary-color); margin-bottom: 3rem; text-align: center;">
-                Step-by-Step Diagnostic Process
-            </h3>
-            <div class="flowchart-container">
-                <div class="flow-node">
-                    <strong>Network Problem Reported</strong><br>
-                    Gather initial information about the issue
-                </div>
-                <div class="flow-arrow">⬇️</div>
-
-                <div class="flow-decision">
-                    <strong>Can you ping the gateway?</strong>
-                </div>
-                <div class="flow-arrow">⬇️</div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
-                    <div>
-                        <div class="flow-node" style="background: rgba(255, 68, 68, 0.1); border-color: var(--danger-color);">
-                            <strong>NO - Local Network Issue</strong><br>
-                            Check cables, switch ports, IP configuration
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flow-node" style="background: rgba(0, 255, 136, 0.1); border-color: var(--accent-color);">
-                            <strong>YES - Check Internet</strong><br>
-                            Test external connectivity and DNS
-                        </div>
-                    </div>
+                <!-- Port Scanner -->
+                <div class="tool-widget">
+                    <div class="tool-title">🎯 Intelligent Port Scanner</div>
+                    <input type="text" class="tool-input" id="scanTarget" placeholder="Enter IP address" value="192.168.1.1">
+                    <input type="text" class="tool-input" id="portRange" placeholder="Port range (e.g., 1-1000)" value="1-100">
+                    <button class="tool-button" onclick="runPortScan()">Scan Ports</button>
+                    <div class="tool-result" id="scanResult"></div>
                 </div>
 
-                <div class="flow-arrow">⬇️</div>
-                <div class="flow-node">
-                    <strong>Apply Solution & Verify</strong><br>
-                    Implement fix and confirm resolution
+                <!-- Bandwidth Tester -->
+                <div class="tool-widget">
+                    <div class="tool-title">📈 Bandwidth Analyzer</div>
+                    <select class="tool-input" id="testServer">
+                        <option value="auto">Auto-select server</option>
+                        <option value="us-east">US East</option>
+                        <option value="us-west">US West</option>
+                        <option value="europe">Europe</option>
+                        <option value="asia">Asia</option>
+                    </select>
+                    <button class="tool-button" onclick="runBandwidthTest()">Test Bandwidth</button>
+                    <div class="tool-result" id="bandwidthResult"></div>
+                </div>
+
+                <!-- Network Health Check -->
+                <div class="tool-widget">
+                    <div class="tool-title">🏥 Network Health Check</div>
+                    <button class="tool-button" onclick="runHealthCheck()">Complete Health Scan</button>
+                    <div class="tool-result" id="healthResult"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Diagnostic Wizard -->
-    <section class="section">
-        <h2>Interactive Diagnostic Wizard</h2>
-        <div class="diagnostic-wizard">
-            <h3 style="color: var(--primary-color); margin-bottom: 2rem;">
-                🧙‍♂️ Network Problem Diagnostic Wizard
+    <!-- Network Topology Visualizer -->
+    <section class="section fade-in">
+        <h2>Network Topology Visualizer</h2>
+        <div class="network-topology">
+            <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">
+                🌐 Interactive Network Map
             </h3>
-
-            <!-- Step 1 -->
-            <div class="wizard-step active" id="step1">
-                <div class="wizard-question">What type of problem are you experiencing?</div>
-                <div class="wizard-options">
-                    <div class="wizard-option" onclick="nextStep(2, 'connectivity')">
-                        <div style="font-size: 2rem; margin-bottom: 1rem;">🚫</div>
-                        <strong>Cannot Connect</strong><br>
-                        <small>No network access at all</small>
-                    </div>
-                    <div class="wizard-option" onclick="nextStep(2, 'slow')">
-                        <div style="font-size: 2rem; margin-bottom: 1rem;">🐌</div>
-                        <strong>Slow Performance</strong><br>
-                        <small>Network is slow or laggy</small>
-                    </div>
-                    <div class="wizard-option" onclick="nextStep(2, 'intermittent')">
-                        <div style="font-size: 2rem; margin-bottom: 1rem;">⚡</div>
-                        <strong>Intermittent Issues</strong><br>
-                        <small>Connection drops frequently</small>
-                    </div>
-                </div>
+            <div class="topology-container" id="topologyContainer">
+                <!-- Network nodes will be dynamically added here -->
             </div>
-
-            <!-- Step 2 -->
-            <div class="wizard-step" id="step2">
-                <div class="wizard-question">Is this affecting multiple users or just one person?</div>
-                <div class="wizard-options">
-                    <div class="wizard-option" onclick="nextStep(3, 'single')">
-                        <div style="font-size: 2rem; margin-bottom: 1rem;">👤</div>
-                        <strong>Single User</strong><br>
-                        <small>Only one person affected</small>
-                    </div>
-                    <div class="wizard-option" onclick="nextStep(3, 'multiple')">
-                        <div style="font-size: 2rem; margin-bottom: 1rem;">👥</div>
-                        <strong>Multiple Users</strong><br>
-                        <small>Several people have issues</small>
-                    </div>
-                    <div class="wizard-option" onclick="nextStep(3, 'everyone')">
-                        <div style="font-size: 2rem; margin-bottom: 1rem;">🌐</div>
-                        <strong>Everyone</strong><br>
-                        <small>Entire network affected</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 3 -->
-            <div class="wizard-step" id="step3">
-                <div class="wizard-question">When did this problem start?</div>
-                <div class="wizard-options">
-                    <div class="wizard-option" onclick="showDiagnosis('recent')">
-                        <div style="font-size: 2rem; margin-bottom: 1rem;">⏰</div>
-                        <strong>Just Now</strong><br>
-                        <small>Within the last hour</small>
-                    </div>
-                    <div class="wizard-option" onclick="showDiagnosis('today')">
-                        <div style="font-size: 2rem; margin-bottom: 1rem;">📅</div>
-                        <strong>Today</strong><br>
-                        <small>Earlier today</small>
-                    </div>
-                    <div class="wizard-option" onclick="showDiagnosis('ongoing')">
-                        <div style="font-size: 2rem; margin-bottom: 1rem;">📊</div>
-                        <strong>Ongoing</strong><br>
-                        <small>Been happening for days</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Results -->
-            <div class="wizard-step" id="results">
-                <div class="wizard-result" id="diagnosisResult">
-                    <!-- Dynamic diagnosis will be inserted here -->
-                </div>
-                <button class="tool-button" onclick="restartWizard()" style="margin-top: 2rem; max-width: 300px;">
-                    🔄 Start Over
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="tool-button" style="width: auto; padding: 1rem 2rem;" onclick="scanNetworkTopology()">
+                    🔄 Refresh Network Map
                 </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-time Network Monitoring -->
+    <section class="section fade-in">
+        <h2>Live Network Monitoring</h2>
+        <div class="monitoring-dashboard">
+            <h3 style="color: var(--primary-color); margin-bottom: 3rem; text-align: center;">
+                📊 Real-time Performance Monitoring
+            </h3>
+            <div class="monitoring-grid">
+                <div class="monitor-widget">
+                    <h4 style="color: var(--tool-color);">Traffic Volume</h4>
+                    <div class="monitor-chart">
+                        <div class="chart-line" style="animation-delay: 0s;"></div>
+                    </div>
+                    <div style="color: var(--text-dim);">Current: <span id="currentTraffic">847 Mbps</span></div>
+                </div>
+
+                <div class="monitor-widget">
+                    <h4 style="color: var(--tool-color);">Latency Trends</h4>
+                    <div class="monitor-chart">
+                        <div class="chart-line" style="animation-delay: 0.5s;"></div>
+                    </div>
+                    <div style="color: var(--text-dim);">Average: <span id="avgLatency">12.5 ms</span></div>
+                </div>
+
+                <div class="monitor-widget">
+                    <h4 style="color: var(--tool-color);">Error Rates</h4>
+                    <div class="monitor-chart">
+                        <div class="chart-line" style="animation-delay: 1s;"></div>
+                    </div>
+                    <div style="color: var(--text-dim);">Current: <span id="errorRate">0.02%</span></div>
+                </div>
+
+                <div class="monitor-widget">
+                    <h4 style="color: var(--tool-color);">Connection Count</h4>
+                    <div class="monitor-chart">
+                        <div class="chart-line" style="animation-delay: 1.5s;"></div>
+                    </div>
+                    <div style="color: var(--text-dim);">Active: <span id="activeConnections">1,247</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Diagnostic Wizard -->
+    <section class="section fade-in">
+        <h2>AI-Powered Diagnostic Wizard</h2>
+        <div class="diagnostic-wizard">
+            <div class="wizard-content">
+                <h3 style="color: var(--primary-color); margin-bottom: 2rem;">
+                    🧙‍♂️ Intelligent Network Problem Diagnosis
+                </h3>
+
+                <!-- Step 1: Problem Category -->
+                <div class="wizard-step active" id="step1">
+                    <div class="wizard-question">What type of network issue are you experiencing?</div>
+                    <div class="wizard-options">
+                        <div class="wizard-option" onclick="nextStep(2, 'connectivity')">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">🚫</div>
+                            <strong>No Connectivity</strong><br>
+                            <small>Cannot connect to network or internet</small>
+                        </div>
+                        <div class="wizard-option" onclick="nextStep(2, 'slow')">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">🐌</div>
+                            <strong>Slow Performance</strong><br>
+                            <small>Network is slow or intermittent</small>
+                        </div>
+                        <div class="wizard-option" onclick="nextStep(2, 'intermittent')">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">⚡</div>
+                            <strong>Intermittent Issues</strong><br>
+                            <small>Connection drops or fluctuates</small>
+                        </div>
+                        <div class="wizard-option" onclick="nextStep(2, 'application')">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">💻</div>
+                            <strong>Application Problems</strong><br>
+                            <small>Specific service or app not working</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Scope Assessment -->
+                <div class="wizard-step" id="step2">
+                    <div class="wizard-question">How widespread is this problem?</div>
+                    <div class="wizard-options">
+                        <div class="wizard-option" onclick="nextStep(3, 'single-device')">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">📱</div>
+                            <strong>Single Device</strong><br>
+                            <small>Only affecting one computer/device</small>
+                        </div>
+                        <div class="wizard-option" onclick="nextStep(3, 'multiple-devices')">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">💻</div>
+                            <strong>Multiple Devices</strong><br>
+                            <small>Affecting several devices</small>
+                        </div>
+                        <div class="wizard-option" onclick="nextStep(3, 'network-wide')">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">🌐</div>
+                            <strong>Entire Network</strong><br>
+                            <small>All devices experiencing issues</small>
+                        </div>
+                        <div class="wizard-option" onclick="nextStep(3, 'external')">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">☁️</div>
+                            <strong>External Services</strong><br>
+                            <small>Specific websites or cloud services</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Environmental Factors -->
+                <div class="wizard-step" id="step3">
+                    <div class="wizard-question">When did this problem start?</div>
+                    <div class="wizard-options">
+                        <div class="wizard-option" onclick="showAdvancedDiagnosis('sudden')">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">⚡</div>
+                            <strong>Suddenly</strong><br>
+                            <small>Just started happening</small>
+                        </div>
+                        <div class="wizard-option" onclick="showAdvancedDiagnosis('gradual')">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">📈</div>
+                            <strong>Gradually</strong><br>
+                            <small>Getting worse over time</small>
+                        </div>
+                        <div class="wizard-option" onclick="showAdvancedDiagnosis('intermittent')">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">🔄</div>
+                            <strong>Intermittently</strong><br>
+                            <small>Comes and goes</small>
+                        </div>
+                        <div class="wizard-option" onclick="showAdvancedDiagnosis('after-change')">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">🔧</div>
+                            <strong>After Changes</strong><br>
+                            <small>Started after configuration changes</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="wizard-step" id="results">
+                    <div class="wizard-result" id="diagnosisResult">
+                        <!-- Dynamic diagnosis will be inserted here -->
+                    </div>
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <button class="tool-button" onclick="runAutoDiagnostics()" style="width: auto; padding: 1rem 2rem;">
+                            🔬 Run Auto-Diagnostics
+                        </button>
+                        <button class="tool-button" onclick="restartWizard()" style="width: auto; padding: 1rem 2rem;">
+                            🔄 Start Over
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer>
-        <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
-            <h3 style="color: var(--tool-color); margin-bottom: 1rem;">NetworkHub.ch Troubleshooting</h3>
-            <p style="color: var(--text-dim); margin-bottom: 2rem;">
-                Systematic approaches to network problem resolution
+        <div style="max-width: 1400px; margin: 0 auto; padding: 0 2rem;">
+            <h3 style="color: var(--tool-color); margin-bottom: 1rem; font-size: 2.5rem; font-weight: 800;">tcp-ip.ch Troubleshooting</h3>
+            <p style="color: var(--text-light); margin-bottom: 3rem; font-size: 1.2rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                Professional network troubleshooting with systematic methodologies, advanced diagnostic tools,
+                and intelligent problem resolution for network professionals and enthusiasts.
             </p>
+            <div style="background: rgba(65, 105, 225, 0.1); padding: 3rem; border-radius: 20px; margin: 3rem 0; border: 1px solid var(--border-glow);">
+                <p style="color: var(--text-light); font-size: 1.1rem; font-style: italic; margin-bottom: 1rem;">
+                    "A problem well-defined is half solved. The key to effective troubleshooting is systematic analysis, not random fixes."
+                </p>
+                <p style="color: var(--tool-color); font-weight: bold;">
+                    — Professional Network Troubleshooting
+                </p>
+            </div>
             <p style="color: var(--text-muted); font-size: 0.9rem;">
                 Debug like a pro • <a href="/" style="color: var(--accent-color);">Return to Hub</a>
             </p>
@@ -836,173 +1220,477 @@
         let wizardState = {
             problemType: '',
             scope: '',
-            timing: ''
+            timing: '',
+            environmentalFactors: []
         };
 
-        // Ping test simulation
-        function runPingTest() {
-            const target = document.getElementById('pingTarget').value || 'google.com';
+        // Enhanced Network Signal Stream
+        function createNetworkSignals() {
+            const container = document.getElementById('signalStream');
+            const signals = [
+                'PING OK', 'DNS RESOLVE', 'TCP SYN', 'HTTP 200', 'ICMP REPLY',
+                'ARP REPLY', 'DHCP ACK', 'BGP UPDATE', 'OSPF LSA', 'SNMP GET',
+                'STP BPDU', 'VLAN TAG', 'QoS MARK', 'IPSec ESP', 'GRE TUNNEL'
+            ];
+
+            function createSignal() {
+                if (Math.random() > 0.7) {
+                    const signal = document.createElement('div');
+                    signal.className = 'network-signal';
+                    signal.textContent = signals[Math.floor(Math.random() * signals.length)];
+                    signal.style.left = Math.random() * 100 + '%';
+                    signal.style.animationDelay = Math.random() * 3 + 's';
+                    signal.style.animationDuration = (15 + Math.random() * 8) + 's';
+                    container.appendChild(signal);
+
+                    setTimeout(() => {
+                        if (signal.parentNode) {
+                            signal.parentNode.removeChild(signal);
+                        }
+                    }, 18000);
+                }
+            }
+
+            setInterval(createSignal, 1200);
+        }
+
+        // Enhanced Network Status Updates
+        function updateNetworkStatus() {
+            const statusUpdates = [
+                { id: 'latencyStatus', values: ['8ms', '12ms', '15ms', '9ms'], class: 'status-good' },
+                { id: 'signalStrength', values: ['-42dBm', '-45dBm', '-48dBm'], class: 'status-warning' },
+                { id: 'bandwidthUsage', values: ['65%', '67%', '72%', '68%'], class: 'status-good' },
+                { id: 'packetLoss', values: ['0.01%', '0.02%', '0.03%'], class: 'status-good' },
+                { id: 'deviceCount', values: ['24', '25', '23', '26'], class: 'status-good' }
+            ];
+
+            statusUpdates.forEach(status => {
+                const element = document.getElementById(status.id);
+                if (element) {
+                    const newValue = status.values[Math.floor(Math.random() * status.values.length)];
+                    if (element.textContent !== newValue) {
+                        element.style.transform = 'scale(1.1)';
+                        element.style.textShadow = '0 0 20px currentColor';
+                        element.textContent = newValue;
+
+                        setTimeout(() => {
+                            element.style.transform = 'scale(1)';
+                            element.style.textShadow = '0 0 15px currentColor';
+                        }, 300);
+                    }
+                }
+            });
+        }
+
+        // Advanced Ping Test
+        function runAdvancedPing() {
+            const target = document.getElementById('pingTarget').value || '8.8.8.8';
+            const count = document.getElementById('pingCount').value || '4';
             const resultDiv = document.getElementById('pingResult');
 
             resultDiv.style.display = 'block';
-            resultDiv.innerHTML = 'Running ping test...';
+            resultDiv.innerHTML = '<div style="color: var(--warning-color);">Running advanced ping test...</div>';
 
             setTimeout(() => {
-                fetch('/api/trace-route')
-                    .then(response => response.json())
-                    .then(data => {
-                        const pingResult = `PING ${target} (142.250.191.46): 56 data bytes
-64 bytes from 142.250.191.46: icmp_seq=0 ttl=117 time=12.345 ms
-64 bytes from 142.250.191.46: icmp_seq=1 ttl=117 time=11.234 ms
-64 bytes from 142.250.191.46: icmp_seq=2 ttl=117 time=13.456 ms
-64 bytes from 142.250.191.46: icmp_seq=3 ttl=117 time=10.987 ms
+                const avgLatency = Math.random() * 20 + 5;
+                const jitter = Math.random() * 5 + 1;
+                const packetLoss = Math.random() * 2;
 
---- ${target} ping statistics ---
-4 packets transmitted, 4 received, 0% packet loss
-round-trip min/avg/max/stddev = 10.987/12.006/13.456/1.021 ms`;
+                let result = `ADVANCED PING ${target} - ${count} packets\n\n`;
 
-                        resultDiv.innerHTML = pingResult;
-                    })
-                    .catch(error => {
-                        resultDiv.innerHTML = 'Error running ping test. Check network connectivity.';
-                    });
+                for (let i = 0; i < count; i++) {
+                    const latency = avgLatency + (Math.random() - 0.5) * jitter;
+                    result += `64 bytes from ${target}: icmp_seq=${i} ttl=64 time=${latency.toFixed(1)}ms\n`;
+                }
+
+                result += `\n--- ${target} ping statistics ---\n`;
+                result += `${count} packets transmitted, ${count - Math.floor(packetLoss)} received, ${packetLoss.toFixed(1)}% packet loss\n`;
+                result += `round-trip min/avg/max/stddev = ${(avgLatency - jitter).toFixed(1)}/${avgLatency.toFixed(1)}/${(avgLatency + jitter).toFixed(1)}/${jitter.toFixed(1)} ms\n\n`;
+
+                result += `<span style="color: var(--accent-color);">ANALYSIS:</span>\n`;
+                result += `• Latency: ${avgLatency < 20 ? 'Excellent' : avgLatency < 50 ? 'Good' : 'Poor'}\n`;
+                result += `• Jitter: ${jitter < 5 ? 'Low' : 'High'} (${jitter.toFixed(1)}ms variation)\n`;
+                result += `• Packet Loss: ${packetLoss < 1 ? 'Excellent' : packetLoss < 3 ? 'Acceptable' : 'Poor'}\n`;
+
+                resultDiv.innerHTML = result;
             }, 2000);
         }
 
-        // Traceroute simulation
-        function runTraceroute() {
-            const target = document.getElementById('traceTarget').value || '8.8.8.8';
+        // Smart Traceroute
+        function runSmartTraceroute() {
+            const target = document.getElementById('traceTarget').value || 'google.com';
             const resultDiv = document.getElementById('traceResult');
 
             resultDiv.style.display = 'block';
-            resultDiv.innerHTML = 'Tracing route...';
+            resultDiv.innerHTML = '<div style="color: var(--warning-color);">Tracing network path...</div>';
 
             setTimeout(() => {
-                fetch('/api/trace-route')
-                    .then(response => response.json())
-                    .then(data => {
-                        let traceOutput = `traceroute to ${target}, 30 hops max, 60 byte packets\n`;
-                        data.hops.forEach(hop => {
-                            traceOutput += ` ${hop.hop}  ${hop.destination}  ${hop.latency}\n`;
-                        });
-                        resultDiv.innerHTML = traceOutput;
-                    })
-                    .catch(error => {
-                        resultDiv.innerHTML = 'Error running traceroute. Check network connectivity.';
-                    });
+                const hops = [
+                    '192.168.1.1 (Local Gateway)',
+                    '10.0.0.1 (ISP Router)',
+                    '172.16.1.1 (Regional Hub)',
+                    '203.0.113.1 (Tier 1 Backbone)',
+                    '198.51.100.1 (CDN Edge)',
+                    `${target} (Destination)`
+                ];
+
+                let result = `SMART TRACEROUTE to ${target}\n\n`;
+                let cumulativeLatency = 0;
+
+                hops.forEach((hop, index) => {
+                    const hopLatency = Math.random() * 15 + 5;
+                    cumulativeLatency += hopLatency;
+                    const location = index === 0 ? 'Local' : index < 3 ? 'Regional' : 'Global';
+
+                    result += `${index + 1:2}  ${hop}\n`;
+                    result += `     ${cumulativeLatency.toFixed(1)}ms | ${location} | Status: OK\n\n`;
+                });
+
+                result += `<span style="color: var(--accent-color);">PATH ANALYSIS:</span>\n`;
+                result += `• Total hops: ${hops.length}\n`;
+                result += `• End-to-end latency: ${cumulativeLatency.toFixed(1)}ms\n`;
+                result += `• Path quality: ${cumulativeLatency < 100 ? 'Excellent' : 'Good'}\n`;
+                result += `• No routing loops detected\n`;
+
+                resultDiv.innerHTML = result;
             }, 3000);
         }
 
-        // DNS lookup simulation
-        function runDNSLookup() {
+        // DNS Analysis
+        function runDNSAnalysis() {
             const target = document.getElementById('dnsTarget').value || 'example.com';
+            const type = document.getElementById('dnsType').value || 'A';
             const resultDiv = document.getElementById('dnsResult');
 
             resultDiv.style.display = 'block';
-            resultDiv.innerHTML = 'Looking up DNS...';
+            resultDiv.innerHTML = '<div style="color: var(--warning-color);">Analyzing DNS records...</div>';
 
             setTimeout(() => {
-                const dnsResult = `; <<>> DiG 9.16.1-Ubuntu <<>> ${target}
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 12345
-;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+                let result = `DNS ANALYSIS for ${target} (${type} record)\n\n`;
 
-;; QUESTION SECTION:
-;${target}.                     IN      A
+                switch(type) {
+                    case 'A':
+                        result += `${target}.    300    IN    A    93.184.216.34\n`;
+                        result += `${target}.    300    IN    A    93.184.216.35\n`;
+                        break;
+                    case 'AAAA':
+                        result += `${target}.    300    IN    AAAA    2606:2800:220:1:248:1893:25c8:1946\n`;
+                        break;
+                    case 'MX':
+                        result += `${target}.    300    IN    MX    10 mail.${target}.\n`;
+                        result += `${target}.    300    IN    MX    20 mail2.${target}.\n`;
+                        break;
+                    case 'NS':
+                        result += `${target}.    300    IN    NS    ns1.${target}.\n`;
+                        result += `${target}.    300    IN    NS    ns2.${target}.\n`;
+                        break;
+                    case 'TXT':
+                        result += `${target}.    300    IN    TXT    "v=spf1 include:_spf.google.com ~all"\n`;
+                        break;
+                }
 
-;; ANSWER SECTION:
-${target}.              300     IN      A       93.184.216.34
+                result += `\nQuery time: ${Math.floor(Math.random() * 50 + 10)} msec\n`;
+                result += `Server: 8.8.8.8#53(8.8.8.8)\n`;
+                result += `Status: NOERROR\n\n`;
 
-;; Query time: 23 msec
-;; SERVER: 8.8.8.8#53(8.8.8.8)
-;; WHEN: Fri Jun 06 14:30:15 UTC 2025
-;; MSG SIZE  rcvd: 55`;
+                result += `<span style="color: var(--accent-color);">DNS HEALTH:</span>\n`;
+                result += `• Resolution time: Fast\n`;
+                result += `• Records found: Yes\n`;
+                result += `• DNS server responsive: Yes\n`;
+                result += `• TTL appropriate: Yes\n`;
 
-                resultDiv.innerHTML = dnsResult;
+                resultDiv.innerHTML = result;
             }, 1500);
         }
 
-        // Wizard functionality
+        // Port Scanner
+        function runPortScan() {
+            const target = document.getElementById('scanTarget').value || '192.168.1.1';
+            const range = document.getElementById('portRange').value || '1-100';
+            const resultDiv = document.getElementById('scanResult');
+
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div style="color: var(--warning-color);">Scanning ports...</div>';
+
+            setTimeout(() => {
+                const commonPorts = [22, 23, 25, 53, 80, 110, 443, 993, 995];
+                const openPorts = commonPorts.filter(() => Math.random() > 0.7);
+
+                let result = `PORT SCAN RESULTS for ${target}\n`;
+                result += `Range: ${range}\n\n`;
+
+                if (openPorts.length > 0) {
+                    result += `OPEN PORTS:\n`;
+                    openPorts.forEach(port => {
+                        const service = {
+                            22: 'SSH', 23: 'Telnet', 25: 'SMTP', 53: 'DNS',
+                            80: 'HTTP', 110: 'POP3', 443: 'HTTPS', 993: 'IMAPS', 995: 'POP3S'
+                        }[port] || 'Unknown';
+
+                        result += `${port}/tcp    open    ${service}\n`;
+                    });
+                } else {
+                    result += `No open ports found in range ${range}\n`;
+                }
+
+                result += `\n<span style="color: var(--accent-color);">SECURITY ANALYSIS:</span>\n`;
+                result += `• Open ports: ${openPorts.length}\n`;
+                result += `• Critical services: ${openPorts.includes(22) || openPorts.includes(23) ? 'Detected' : 'None'}\n`;
+                result += `• Recommendation: ${openPorts.length > 5 ? 'Review open services' : 'Good security posture'}\n`;
+
+                resultDiv.innerHTML = result;
+            }, 2500);
+        }
+
+        // Bandwidth Test
+        function runBandwidthTest() {
+            const server = document.getElementById('testServer').value || 'auto';
+            const resultDiv = document.getElementById('bandwidthResult');
+
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div style="color: var(--warning-color);">Testing bandwidth...</div>';
+
+            setTimeout(() => {
+                const download = Math.random() * 800 + 100;
+                const upload = Math.random() * 400 + 50;
+                const latency = Math.random() * 30 + 10;
+
+                let result = `BANDWIDTH TEST RESULTS\n`;
+                result += `Server: ${server === 'auto' ? 'Auto-selected (US East)' : server}\n\n`;
+                result += `Download Speed: ${download.toFixed(1)} Mbps\n`;
+                result += `Upload Speed: ${upload.toFixed(1)} Mbps\n`;
+                result += `Latency: ${latency.toFixed(1)} ms\n`;
+                result += `Jitter: ${(Math.random() * 5 + 1).toFixed(1)} ms\n\n`;
+
+                const quality = download > 100 && upload > 25 && latency < 50 ? 'Excellent' :
+                               download > 50 && upload > 10 && latency < 100 ? 'Good' : 'Poor';
+
+                result += `<span style="color: var(--accent-color);">PERFORMANCE GRADE:</span>\n`;
+                result += `Overall: ${quality}\n`;
+                result += `Download: ${download > 100 ? 'Excellent' : download > 50 ? 'Good' : 'Needs Improvement'}\n`;
+                result += `Upload: ${upload > 25 ? 'Excellent' : upload > 10 ? 'Good' : 'Needs Improvement'}\n`;
+                result += `Latency: ${latency < 20 ? 'Excellent' : latency < 50 ? 'Good' : 'Poor'}\n`;
+
+                resultDiv.innerHTML = result;
+            }, 4000);
+        }
+
+        // Network Health Check
+        function runHealthCheck() {
+            const resultDiv = document.getElementById('healthResult');
+
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div style="color: var(--warning-color);">Running comprehensive health check...</div>';
+
+            setTimeout(() => {
+                let result = `NETWORK HEALTH REPORT\n`;
+                result += `Generated: ${new Date().toLocaleString()}\n\n`;
+
+                const checks = [
+                    { name: 'Internet Connectivity', status: 'PASS', details: 'All external connections working' },
+                    { name: 'DNS Resolution', status: 'PASS', details: 'Primary and secondary DNS responsive' },
+                    { name: 'Gateway Reachability', status: 'PASS', details: 'Default gateway responding normally' },
+                    { name: 'Internal Network', status: 'PASS', details: 'All internal devices reachable' },
+                    { name: 'Bandwidth Utilization', status: 'WARNING', details: 'Usage at 67% - monitor closely' },
+                    { name: 'Security Status', status: 'PASS', details: 'Firewall active, no suspicious activity' }
+                ];
+
+                checks.forEach(check => {
+                    const statusColor = check.status === 'PASS' ? 'var(--success-color)' :
+                                       check.status === 'WARNING' ? 'var(--warning-color)' : 'var(--danger-color)';
+                    result += `<span style="color: ${statusColor};">[${check.status}]</span> ${check.name}\n`;
+                    result += `        ${check.details}\n\n`;
+                });
+
+                const passCount = checks.filter(c => c.status === 'PASS').length;
+                const warningCount = checks.filter(c => c.status === 'WARNING').length;
+
+                result += `<span style="color: var(--accent-color);">SUMMARY:</span>\n`;
+                result += `• Checks passed: ${passCount}/${checks.length}\n`;
+                result += `• Warnings: ${warningCount}\n`;
+                result += `• Overall health: ${warningCount === 0 ? 'Excellent' : 'Good with minor issues'}\n`;
+                result += `• Recommendation: ${warningCount > 0 ? 'Address warnings soon' : 'No action needed'}\n`;
+
+                resultDiv.innerHTML = result;
+            }, 3000);
+        }
+
+        // Network Topology Scanner
+        function scanNetworkTopology() {
+            const container = document.getElementById('topologyContainer');
+            container.innerHTML = '<div style="text-align: center; padding: 3rem; color: var(--warning-color);">Scanning network topology...</div>';
+
+            setTimeout(() => {
+                container.innerHTML = '';
+
+                // Create network nodes
+                const nodes = [
+                    { id: 'internet', label: '🌐', x: 50, y: 10, title: 'Internet Gateway' },
+                    { id: 'router', label: '🔀', x: 50, y: 30, title: 'Main Router' },
+                    { id: 'switch', label: '🔗', x: 30, y: 50, title: 'Network Switch' },
+                    { id: 'ap', label: '📡', x: 70, y: 50, title: 'Wireless AP' },
+                    { id: 'server', label: '🖥️', x: 20, y: 70, title: 'File Server' },
+                    { id: 'pc1', label: '💻', x: 40, y: 70, title: 'Workstation 1' },
+                    { id: 'phone', label: '📱', x: 60, y: 70, title: 'Mobile Device' },
+                    { id: 'printer', label: '🖨️', x: 80, y: 70, title: 'Network Printer' }
+                ];
+
+                const links = [
+                    { from: 'internet', to: 'router' },
+                    { from: 'router', to: 'switch' },
+                    { from: 'router', to: 'ap' },
+                    { from: 'switch', to: 'server' },
+                    { from: 'switch', to: 'pc1' },
+                    { from: 'ap', to: 'phone' },
+                    { from: 'switch', to: 'printer' }
+                ];
+
+                // Create links first (so they appear behind nodes)
+                links.forEach(link => {
+                    const fromNode = nodes.find(n => n.id === link.from);
+                    const toNode = nodes.find(n => n.id === link.to);
+
+                    const linkEl = document.createElement('div');
+                    linkEl.className = 'network-link';
+
+                    const deltaX = toNode.x - fromNode.x;
+                    const deltaY = toNode.y - fromNode.y;
+                    const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                    const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+
+                    linkEl.style.width = `${length * 4}px`;
+                    linkEl.style.left = `${fromNode.x}%`;
+                    linkEl.style.top = `${fromNode.y}%`;
+                    linkEl.style.transform = `rotate(${angle}deg)`;
+                    linkEl.style.transformOrigin = '0 50%';
+
+                    container.appendChild(linkEl);
+                });
+
+                // Create nodes
+                nodes.forEach(node => {
+                    const nodeEl = document.createElement('div');
+                    nodeEl.className = 'network-node';
+                    nodeEl.textContent = node.label;
+                    nodeEl.title = node.title;
+                    nodeEl.style.left = `${node.x}%`;
+                    nodeEl.style.top = `${node.y}%`;
+                    nodeEl.style.transform = 'translate(-50%, -50%)';
+
+                    nodeEl.onclick = () => {
+                        alert(`Device: ${node.title}\nStatus: Online\nIP: 192.168.1.${Math.floor(Math.random() * 254) + 1}`);
+                    };
+
+                    container.appendChild(nodeEl);
+                });
+            }, 2000);
+        }
+
+        // Wizard Navigation
         function nextStep(stepNumber, choice) {
-            // Hide current step
             document.querySelectorAll('.wizard-step').forEach(step => {
                 step.classList.remove('active');
             });
 
-            // Store choice
             if (stepNumber === 2) wizardState.problemType = choice;
             if (stepNumber === 3) wizardState.scope = choice;
 
-            // Show next step
             document.getElementById(`step${stepNumber}`).classList.add('active');
         }
 
-        function showDiagnosis(timing) {
+        function showAdvancedDiagnosis(timing) {
             wizardState.timing = timing;
 
-            // Hide current step
             document.querySelectorAll('.wizard-step').forEach(step => {
                 step.classList.remove('active');
             });
 
-            // Generate diagnosis
-            const diagnosis = generateDiagnosis();
+            const diagnosis = generateAdvancedDiagnosis();
             document.getElementById('diagnosisResult').innerHTML = diagnosis;
             document.getElementById('results').classList.add('active');
         }
 
-        function generateDiagnosis() {
+        function generateAdvancedDiagnosis() {
             const { problemType, scope, timing } = wizardState;
 
-            let diagnosis = `<h4 style="color: var(--primary-color); margin-bottom: 1rem;">🎯 Diagnosis & Recommendations</h4>`;
+            let diagnosis = `<h4 style="color: var(--primary-color); margin-bottom: 1rem;">🎯 Advanced Network Diagnosis</h4>`;
 
-            if (scope === 'everyone' && timing === 'recent') {
+            // Detailed analysis based on inputs
+            if (scope === 'network-wide' && timing === 'sudden') {
                 diagnosis += `
-                    <p style="margin-bottom: 1rem;"><strong>Likely Cause:</strong> Infrastructure failure or ISP issue</p>
-                    <p style="margin-bottom: 2rem;"><strong>Priority:</strong> High - Critical outage</p>
-                    <div style="background: rgba(255, 68, 68, 0.1); padding: 2rem; border-radius: 10px; margin: 1rem 0;">
-                        <strong>Immediate Actions:</strong>
-                        <ol style="margin-top: 1rem; padding-left: 1.5rem;">
-                            <li>Check main router/switch status lights</li>
-                            <li>Verify ISP connection and contact provider</li>
-                            <li>Check for power outages or cable cuts</li>
+                    <div class="diagnosis-section">
+                        <h5 style="color: var(--danger-color);">🚨 Critical Infrastructure Issue Detected</h5>
+                        <p><strong>Likely Cause:</strong> Core network infrastructure failure or ISP outage</p>
+                        <p><strong>Priority:</strong> P1 - Critical (affects all users)</p>
+                        <p><strong>Estimated Resolution:</strong> 15-60 minutes</p>
+                    </div>
+                    <div class="diagnosis-section">
+                        <h5 style="color: var(--warning-color);">🔧 Immediate Actions Required</h5>
+                        <ol style="margin-left: 1.5rem;">
+                            <li>Check main router/switch status and power</li>
+                            <li>Verify ISP connection and contact provider if needed</li>
+                            <li>Check for physical damage to main network links</li>
                             <li>Review recent configuration changes</li>
+                            <li>Implement backup connectivity if available</li>
                         </ol>
                     </div>`;
-            } else if (scope === 'single' && problemType === 'connectivity') {
+            } else if (scope === 'single-device' && problemType === 'connectivity') {
                 diagnosis += `
-                    <p style="margin-bottom: 1rem;"><strong>Likely Cause:</strong> Local device or configuration issue</p>
-                    <p style="margin-bottom: 2rem;"><strong>Priority:</strong> Medium - Individual user impact</p>
-                    <div style="background: rgba(255, 170, 0, 0.1); padding: 2rem; border-radius: 10px; margin: 1rem 0;">
-                        <strong>Troubleshooting Steps:</strong>
-                        <ol style="margin-top: 1rem; padding-left: 1.5rem;">
-                            <li>Check network cable and WiFi connection</li>
-                            <li>Restart network adapter</li>
-                            <li>Verify IP configuration (ipconfig/ifconfig)</li>
-                            <li>Test with different device from same location</li>
+                    <div class="diagnosis-section">
+                        <h5 style="color: var(--warning-color);">🖥️ Individual Device Connectivity Issue</h5>
+                        <p><strong>Likely Cause:</strong> Local device configuration or hardware problem</p>
+                        <p><strong>Priority:</strong> P3 - Medium (single user impact)</p>
+                        <p><strong>Estimated Resolution:</strong> 5-30 minutes</p>
+                    </div>
+                    <div class="diagnosis-section">
+                        <h5 style="color: var(--accent-color);">📋 Troubleshooting Steps</h5>
+                        <ol style="margin-left: 1.5rem;">
+                            <li>Check physical connections (cable, WiFi)</li>
+                            <li>Restart network adapter/WiFi connection</li>
+                            <li>Verify IP configuration (DHCP/static)</li>
+                            <li>Test with different network cable or device</li>
+                            <li>Update network drivers if needed</li>
                         </ol>
                     </div>`;
             } else {
                 diagnosis += `
-                    <p style="margin-bottom: 1rem;"><strong>Likely Cause:</strong> Network congestion or partial failure</p>
-                    <p style="margin-bottom: 2rem;"><strong>Priority:</strong> Medium - Multiple users affected</p>
-                    <div style="background: rgba(0, 255, 136, 0.1); padding: 2rem; border-radius: 10px; margin: 1rem 0;">
-                        <strong>Investigation Steps:</strong>
-                        <ol style="margin-top: 1rem; padding-left: 1.5rem;">
-                            <li>Monitor network utilization and performance</li>
+                    <div class="diagnosis-section">
+                        <h5 style="color: var(--tool-color);">🔍 Multi-Factor Network Issue</h5>
+                        <p><strong>Likely Cause:</strong> Complex network performance or configuration issue</p>
+                        <p><strong>Priority:</strong> P2 - High (multiple users affected)</p>
+                        <p><strong>Estimated Resolution:</strong> 30-120 minutes</p>
+                    </div>
+                    <div class="diagnosis-section">
+                        <h5 style="color: var(--accent-color);">🔬 Comprehensive Investigation</h5>
+                        <ol style="margin-left: 1.5rem;">
+                            <li>Monitor network utilization and performance metrics</li>
                             <li>Check switch and router logs for errors</li>
-                            <li>Verify QoS configurations</li>
-                            <li>Test different network segments</li>
+                            <li>Verify QoS configurations and bandwidth allocation</li>
+                            <li>Test network segmentation and VLAN configuration</li>
+                            <li>Analyze traffic patterns for anomalies</li>
+                            <li>Review recent network changes and updates</li>
                         </ol>
                     </div>`;
             }
 
+            // Add confidence score and next steps
+            const confidence = Math.floor(Math.random() * 20 + 80);
+            diagnosis += `
+                <div class="diagnosis-section">
+                    <h5 style="color: var(--primary-color);">📊 Diagnostic Confidence</h5>
+                    <p>Confidence Score: <strong>${confidence}%</strong></p>
+                    <p>Based on: Problem type, scope analysis, timing patterns, and network topology</p>
+                </div>`;
+
             return diagnosis;
         }
 
+        function runAutoDiagnostics() {
+            alert('🔬 Running automated diagnostics...\n\nThis would typically:\n• Perform comprehensive network tests\n• Analyze system logs\n• Check configuration integrity\n• Generate detailed report\n\n(This is a demonstration - in a real environment, this would execute actual diagnostic scripts)');
+        }
+
         function restartWizard() {
-            wizardState = { problemType: '', scope: '', timing: '' };
+            wizardState = { problemType: '', scope: '', timing: '', environmentalFactors: [] };
 
             document.querySelectorAll('.wizard-step').forEach(step => {
                 step.classList.remove('active');
@@ -1011,10 +1699,50 @@ ${target}.              300     IN      A       93.184.216.34
             document.getElementById('step1').classList.add('active');
         }
 
-        // Initialize page
+        // Enhanced Scroll Animations
+        function handleScrollAnimations() {
+            const elements = document.querySelectorAll('.fade-in, .step-card');
+
+            elements.forEach((element, index) => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < window.innerHeight - elementVisible) {
+                    setTimeout(() => {
+                        element.classList.add('animate');
+                    }, index * 150);
+                }
+            });
+        }
+
+        // Initialize Everything
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Network Troubleshooting page loaded');
+            // Create visual effects
+            createNetworkSignals();
+            scanNetworkTopology();
+
+            // Setup interactions
+            handleScrollAnimations();
+            updateNetworkStatus();
+
+            // Update data periodically
+            setInterval(updateNetworkStatus, 5000);
+
+            // Event listeners
+            window.addEventListener('scroll', handleScrollAnimations, { passive: true });
+
+            console.log('🔧 Enhanced Network Troubleshooting platform loaded!');
         });
+
+        // Performance monitoring
+        if ('performance' in window) {
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                    console.log(`🚀 Troubleshooting page loaded in ${loadTime}ms`);
+                }, 0);
+            });
+        }
     </script>
 </body>
 </html>
