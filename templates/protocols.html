@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Network Protocols - NetworkHub.ch</title>
+    <title>Network Protocols - tcp-ip.ch</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -14,26 +14,55 @@
             --warning-color: #ffaa00;
             --danger-color: #ff4444;
             --success-color: #00ff44;
-            --protocol-color: #4da6ff;
+            --protocol-blue: #4da6ff;
+            --neon-purple: #8833ff;
+            --neon-green: #00ff66;
             --bg-dark: #0a0a0f;
             --bg-darker: #050508;
             --bg-card: #111118;
             --bg-section: #161620;
             --text-light: #e0e0ff;
             --text-dim: #a0a0c0;
-            --border-glow: rgba(0, 255, 255, 0.3);
+            --border-glow: rgba(0, 255, 255, 0.4);
+            --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            --gradient-protocol: linear-gradient(45deg, var(--protocol-blue), var(--primary-color));
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
             color: var(--text-light);
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* Enhanced background effects */
-        .bg-particles {
+        /* Enhanced Background Effects */
+        .protocol-matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -3;
+            opacity: 0.1;
+            background-image:
+                radial-gradient(circle at 20% 20%, var(--protocol-blue) 2px, transparent 2px),
+                radial-gradient(circle at 80% 80%, var(--accent-color) 2px, transparent 2px),
+                linear-gradient(45deg, var(--primary-color) 1px, transparent 1px),
+                linear-gradient(-45deg, var(--neon-purple) 1px, transparent 1px);
+            background-size: 100px 100px, 120px 120px, 60px 60px, 60px 60px;
+            animation: matrixShift 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes matrixShift {
+            0% { opacity: 0.1; transform: translateX(0) translateY(0); }
+            50% { opacity: 0.2; }
+            100% { opacity: 0.15; transform: translateX(20px) translateY(20px); }
+        }
+
+        /* Floating Protocol Packets */
+        .protocol-particles {
             position: fixed;
             top: 0;
             left: 0;
@@ -41,64 +70,50 @@
             height: 100%;
             pointer-events: none;
             z-index: -2;
-        }
-
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            animation: float 12s infinite linear;
-            opacity: 0.4;
-        }
-
-        .particle.small { width: 2px; height: 2px; background: var(--protocol-color); }
-        .particle.medium { width: 4px; height: 4px; background: var(--accent-color); animation-duration: 16s; }
-        .particle.large { width: 6px; height: 6px; background: var(--primary-color); animation-duration: 20s; }
-
-        @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.4; }
-            90% { opacity: 0.4; }
-            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
-        }
-
-        /* Protocol data stream */
-        .protocol-stream {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
             overflow: hidden;
         }
 
-        .stream-packet {
+        .protocol-packet {
             position: absolute;
             font-family: 'Courier New', monospace;
-            font-size: 10px;
-            color: var(--protocol-color);
-            animation: streamFlow 15s infinite linear;
-            opacity: 0.3;
+            font-size: 12px;
+            padding: 4px 8px;
+            background: rgba(77, 166, 255, 0.2);
+            border: 1px solid var(--protocol-blue);
+            border-radius: 4px;
+            color: var(--protocol-blue);
+            animation: packetFloat 18s infinite linear;
+            opacity: 0.6;
         }
 
-        @keyframes streamFlow {
-            0% { transform: translateX(-100px); opacity: 0; }
-            10% { opacity: 0.3; }
-            90% { opacity: 0.3; }
-            100% { transform: translateX(calc(100vw + 100px)); opacity: 0; }
+        @keyframes packetFloat {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+                opacity: 0;
+                filter: hue-rotate(0deg);
+            }
+            10% { opacity: 0.6; }
+            50% { filter: hue-rotate(180deg); }
+            90% { opacity: 0.6; }
+            100% {
+                transform: translateY(-10vh) translateX(100px) rotate(360deg);
+                opacity: 0;
+                filter: hue-rotate(360deg);
+            }
         }
 
+        /* Enhanced Header */
         header {
             position: fixed;
             top: 0;
             width: 100%;
             background: rgba(10, 10, 15, 0.95);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px) saturate(180%);
             z-index: 1000;
             padding: 1rem 0;
-            border-bottom: 1px solid var(--border-glow);
-            box-shadow: 0 5px 30px rgba(77, 166, 255, 0.1);
+            border-bottom: 2px solid var(--border-glow);
+            box-shadow: 0 5px 30px rgba(77, 166, 255, 0.2);
+            transition: all 0.3s ease;
         }
 
         nav {
@@ -111,99 +126,192 @@
         }
 
         .logo {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 900;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(45deg, #ff0080, #00ffff, #8000ff, #00ff80);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.5));
         }
 
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
             color: var(--text-light);
             text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+            padding: 0.7rem 1.2rem;
+            border-radius: 25px;
             transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
         }
 
         .nav-links a:hover {
             color: var(--primary-color);
+            text-shadow: 0 0 15px currentColor;
             background: rgba(0, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.3);
         }
 
+        .nav-links a[style*="protocol-blue"] {
+            color: var(--protocol-blue);
+            background: rgba(77, 166, 255, 0.1);
+            box-shadow: 0 0 20px rgba(77, 166, 255, 0.3);
+        }
+
+        /* Hero Section */
         .hero {
             height: 70vh;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            background: radial-gradient(circle at 50% 50%, rgba(77, 166, 255, 0.1) 0%, transparent 70%);
             position: relative;
             overflow: hidden;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(77, 166, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.15) 0%, transparent 50%);
         }
 
         .hero::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background:
-                radial-gradient(circle at 20% 80%, rgba(77, 166, 255, 0.1), transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.1), transparent 50%);
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(77, 166, 255, 0.05), transparent, rgba(0, 255, 136, 0.05), transparent);
+            animation: rotate 45s linear infinite;
             z-index: 1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
         }
 
         .hero-content {
             position: relative;
             z-index: 2;
+            max-width: 1000px;
+            padding: 2rem;
         }
 
+        .hero-title {
+            font-size: clamp(3rem, 7vw, 5rem);
+            margin-bottom: 1rem;
+            background: var(--gradient-protocol);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -3px;
+            opacity: 0;
+            animation: titleReveal 2s ease-out 0.5s forwards;
+            text-shadow: 0 0 50px rgba(77, 166, 255, 0.3);
+        }
+
+        @keyframes titleReveal {
+            0% { opacity: 0; transform: translateY(50px) scale(0.8); filter: blur(10px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 3vw, 1.8rem);
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 1s forwards;
+        }
+
+        .hero-description {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 1.5s forwards;
+            line-height: 1.8;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        /* Enhanced Section Styling */
         .section {
             padding: 8rem 0;
             max-width: 1600px;
             margin: 0 auto;
             padding-left: 2rem;
             padding-right: 2rem;
+            position: relative;
         }
 
         .section h2 {
-            font-size: 3.5rem;
+            font-size: clamp(2.5rem, 5vw, 4rem);
             margin-bottom: 3rem;
-            color: var(--protocol-color);
+            color: var(--protocol-blue);
             text-align: center;
             position: relative;
             font-weight: 800;
+            text-shadow: 0 0 30px rgba(77, 166, 255, 0.3);
         }
 
         .section h2::after {
             content: '';
             position: absolute;
-            bottom: -15px;
+            bottom: -20px;
             left: 50%;
             transform: translateX(-50%);
-            width: 120px;
+            width: 150px;
             height: 4px;
-            background: linear-gradient(45deg, var(--protocol-color), var(--primary-color));
+            background: var(--gradient-protocol);
             border-radius: 2px;
+            box-shadow: 0 0 20px rgba(77, 166, 255, 0.5);
         }
 
-        /* Protocol Stack Visualization */
+        /* Enhanced Protocol Stack Visualization */
         .protocol-stack-visual {
-            background: var(--bg-section);
+            background: rgba(22, 22, 32, 0.9);
+            backdrop-filter: blur(20px);
             border-radius: 30px;
             padding: 5rem;
             margin: 6rem 0;
-            border: 1px solid var(--border-glow);
+            border: 2px solid var(--border-glow);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
         .protocol-stack-visual::before {
@@ -225,15 +333,23 @@
         }
 
         .protocol-layer {
-            background: var(--bg-card);
+            background: rgba(17, 17, 24, 0.95);
+            backdrop-filter: blur(15px);
             margin: 2rem 0;
-            padding: 3rem;
-            border-radius: 20px;
+            padding: 3.5rem;
+            border-radius: 25px;
             border: 2px solid;
-            transition: all 0.4s ease;
+            transition: all 0.5s ease;
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            transform: translateX(-20px);
+            opacity: 0;
+        }
+
+        .protocol-layer.animate {
+            transform: translateX(0);
+            opacity: 1;
         }
 
         .protocol-layer::before {
@@ -243,7 +359,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(77, 166, 255, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
             transition: left 0.6s ease;
         }
 
@@ -252,17 +368,39 @@
         }
 
         .protocol-layer:hover {
-            transform: translateX(20px) scale(1.02);
-            box-shadow: 0 20px 50px rgba(77, 166, 255, 0.3);
+            transform: translateX(25px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
         }
 
-        .layer-application { border-color: #ff6b6b; }
-        .layer-presentation { border-color: #4ecdc4; }
-        .layer-session { border-color: #45b7d1; }
-        .layer-transport { border-color: #96ceb4; }
-        .layer-network { border-color: #ffeaa7; }
-        .layer-datalink { border-color: #dda0dd; }
-        .layer-physical { border-color: #98d8c8; }
+        /* Layer-specific colors */
+        .layer-application {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.2);
+        }
+        .layer-presentation {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.2);
+        }
+        .layer-session {
+            border-color: #45b7d1;
+            box-shadow: 0 0 30px rgba(69, 183, 209, 0.2);
+        }
+        .layer-transport {
+            border-color: #96ceb4;
+            box-shadow: 0 0 30px rgba(150, 206, 180, 0.2);
+        }
+        .layer-network {
+            border-color: #ffeaa7;
+            box-shadow: 0 0 30px rgba(255, 234, 167, 0.2);
+        }
+        .layer-datalink {
+            border-color: #dda0dd;
+            box-shadow: 0 0 30px rgba(221, 160, 221, 0.2);
+        }
+        .layer-physical {
+            border-color: #98d8c8;
+            box-shadow: 0 0 30px rgba(152, 216, 200, 0.2);
+        }
 
         .layer-header {
             display: flex;
@@ -274,8 +412,8 @@
         }
 
         .layer-number {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -284,28 +422,37 @@
             font-weight: bold;
             color: var(--bg-dark);
             margin-right: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
         }
 
-        .layer-application .layer-number { background: #ff6b6b; }
-        .layer-presentation .layer-number { background: #4ecdc4; }
-        .layer-session .layer-number { background: #45b7d1; }
-        .layer-transport .layer-number { background: #96ceb4; }
-        .layer-network .layer-number { background: #ffeaa7; }
-        .layer-datalink .layer-number { background: #dda0dd; }
-        .layer-physical .layer-number { background: #98d8c8; }
+        .layer-number:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Layer number colors */
+        .layer-application .layer-number { background: linear-gradient(45deg, #ff6b6b, #ff8787); }
+        .layer-presentation .layer-number { background: linear-gradient(45deg, #4ecdc4, #6bcf7f); }
+        .layer-session .layer-number { background: linear-gradient(45deg, #45b7d1, #67c3f3); }
+        .layer-transport .layer-number { background: linear-gradient(45deg, #96ceb4, #b8e6d1); }
+        .layer-network .layer-number { background: linear-gradient(45deg, #ffeaa7, #fdcb6e); }
+        .layer-datalink .layer-number { background: linear-gradient(45deg, #dda0dd, #e84393); }
+        .layer-physical .layer-number { background: linear-gradient(45deg, #98d8c8, #6c5ce7); }
 
         .layer-info {
             flex: 1;
         }
 
         .layer-name {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
             position: relative;
             z-index: 1;
         }
 
+        /* Layer name colors */
         .layer-application .layer-name { color: #ff6b6b; }
         .layer-presentation .layer-name { color: #4ecdc4; }
         .layer-session .layer-name { color: #45b7d1; }
@@ -321,8 +468,19 @@
             z-index: 1;
         }
 
+        .layer-icon {
+            font-size: 4rem;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .layer-icon:hover {
+            transform: scale(1.2) rotate(10deg);
+            opacity: 1;
+        }
+
         .layer-protocols {
-            margin-top: 2rem;
+            margin-top: 2.5rem;
             position: relative;
             z-index: 1;
         }
@@ -335,184 +493,191 @@
         }
 
         .protocol-tag {
-            padding: 0.7rem 1.5rem;
+            padding: 0.8rem 1.6rem;
             border-radius: 25px;
             font-size: 0.9rem;
             font-weight: 600;
             color: var(--bg-dark);
             transition: all 0.3s ease;
             cursor: pointer;
-        }
-
-        .protocol-tag:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .layer-application .protocol-tag { background: #ff6b6b; }
-        .layer-presentation .protocol-tag { background: #4ecdc4; }
-        .layer-session .protocol-tag { background: #45b7d1; }
-        .layer-transport .protocol-tag { background: #96ceb4; }
-        .layer-network .protocol-tag { background: #ffeaa7; }
-        .layer-datalink .protocol-tag { background: #dda0dd; }
-        .layer-physical .protocol-tag { background: #98d8c8; }
-
-        /* Interactive Protocol Explorer */
-        .protocol-explorer {
-            background: var(--bg-card);
-            border-radius: 30px;
-            padding: 5rem;
-            margin: 6rem 0;
-            border: 1px solid var(--border-glow);
-        }
-
-        .explorer-tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .explorer-tab {
-            background: var(--bg-section);
-            border: 2px solid var(--border-glow);
-            border-radius: 15px;
-            padding: 1rem 2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .explorer-tab.active {
-            background: var(--protocol-color);
-            color: var(--bg-dark);
-            border-color: var(--protocol-color);
-        }
-
-        .explorer-tab:hover {
-            border-color: var(--protocol-color);
-            background: rgba(77, 166, 255, 0.1);
-        }
-
-        .explorer-content {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .explorer-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .protocol-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 3rem;
-            margin: 3rem 0;
-        }
-
-        .protocol-card {
-            background: var(--bg-section);
-            border-radius: 20px;
-            padding: 3rem;
-            border: 1px solid var(--border-glow);
-            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .protocol-card::before {
+        .protocol-tag::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(77, 166, 255, 0.05), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
         }
 
-        .protocol-card:hover::before {
-            opacity: 1;
+        .protocol-tag:hover::before {
+            left: 100%;
         }
 
-        .protocol-card:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 25px 50px rgba(77, 166, 255, 0.3);
-            border-color: var(--protocol-color);
+        .protocol-tag:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
-        .protocol-header {
+        /* Protocol tag colors by layer */
+        .layer-application .protocol-tag { background: linear-gradient(45deg, #ff6b6b, #ff8787); }
+        .layer-presentation .protocol-tag { background: linear-gradient(45deg, #4ecdc4, #6bcf7f); }
+        .layer-session .protocol-tag { background: linear-gradient(45deg, #45b7d1, #67c3f3); }
+        .layer-transport .protocol-tag { background: linear-gradient(45deg, #96ceb4, #b8e6d1); }
+        .layer-network .protocol-tag { background: linear-gradient(45deg, #ffeaa7, #fdcb6e); }
+        .layer-datalink .protocol-tag { background: linear-gradient(45deg, #dda0dd, #e84393); }
+        .layer-physical .protocol-tag { background: linear-gradient(45deg, #98d8c8, #6c5ce7); }
+
+        /* Enhanced Interactive Elements */
+        .interactive-demo {
+            background: rgba(22, 22, 32, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 5rem;
+            margin: 6rem 0;
+            border: 2px solid var(--border-glow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-controls {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .demo-button {
+            background: var(--gradient-protocol);
+            color: white;
+            border: none;
+            padding: 1.5rem 3rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .demo-button:hover::before {
+            left: 100%;
+        }
+
+        .demo-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(77, 166, 255, 0.4);
+        }
+
+        /* Packet Visualization */
+        .packet-visualization {
+            background: rgba(17, 17, 24, 0.95);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 3rem 0;
+            border: 1px solid var(--border-glow);
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .network-path {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            margin: 3rem 0;
             position: relative;
-            z-index: 1;
         }
 
-        .protocol-name {
-            color: var(--protocol-color);
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .protocol-port {
-            background: var(--accent-color);
-            color: var(--bg-dark);
-            padding: 0.5rem 1rem;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-
-        .protocol-description {
-            margin-bottom: 2rem;
+        .network-node {
+            background: rgba(17, 17, 24, 0.9);
+            border: 3px solid var(--protocol-blue);
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            z-index: 2;
             position: relative;
-            z-index: 1;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(77, 166, 255, 0.3);
         }
 
-        .protocol-features {
-            list-style: none;
-            margin-bottom: 2rem;
-            position: relative;
-            z-index: 1;
+        .network-node:hover {
+            transform: scale(1.2);
+            box-shadow: 0 20px 50px rgba(77, 166, 255, 0.5);
+            border-color: var(--primary-color);
         }
 
-        .protocol-features li {
-            margin-bottom: 0.8rem;
-            padding-left: 2rem;
-            position: relative;
-            color: var(--text-dim);
-        }
-
-        .protocol-features li::before {
-            content: '▶';
+        .network-connection {
             position: absolute;
+            top: 50%;
             left: 0;
-            color: var(--accent-color);
-            font-size: 0.8rem;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--protocol-blue), var(--primary-color), var(--protocol-blue));
+            z-index: 1;
+            border-radius: 2px;
+            animation: connectionPulse 2s ease-in-out infinite;
         }
 
-        .protocol-security {
-            background: rgba(0, 255, 136, 0.1);
-            padding: 1.5rem;
-            border-radius: 10px;
-            border-left: 4px solid var(--accent-color);
-            margin-top: 2rem;
-            position: relative;
-            z-index: 1;
+        @keyframes connectionPulse {
+            0%, 100% { opacity: 0.6; transform: scaleY(1); }
+            50% { opacity: 1; transform: scaleY(1.5); }
+        }
+
+        .traveling-packet {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--warning-color);
+            border-radius: 50%;
+            transform: translateY(-50%);
+            z-index: 3;
+            opacity: 0;
+            box-shadow: 0 0 30px var(--warning-color);
+            transition: all 0.3s ease;
+        }
+
+        .packet-traveling {
+            animation: packetTravel 4s ease-in-out infinite;
+        }
+
+        @keyframes packetTravel {
+            0% { left: 5%; opacity: 1; transform: translateY(-50%) scale(1); }
+            25% { left: 32%; opacity: 1; transform: translateY(-50%) scale(1.3); }
+            50% { left: 50%; opacity: 1; transform: translateY(-50%) scale(1); }
+            75% { left: 68%; opacity: 1; transform: translateY(-50%) scale(1.3); }
+            100% { left: 95%; opacity: 1; transform: translateY(-50%) scale(1); }
         }
 
         /* Real-time Protocol Usage */
         .protocol-usage {
-            background: var(--bg-section);
+            background: rgba(22, 22, 32, 0.9);
+            backdrop-filter: blur(20px);
             border-radius: 25px;
             padding: 4rem;
             margin: 6rem 0;
@@ -527,24 +692,26 @@
         }
 
         .usage-card {
-            background: var(--bg-card);
+            background: rgba(17, 17, 24, 0.9);
+            backdrop-filter: blur(15px);
             padding: 3rem;
             border-radius: 20px;
             border: 1px solid var(--border-glow);
             text-align: center;
             position: relative;
             overflow: hidden;
+            transition: all 0.4s ease;
         }
 
         .usage-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
             background: conic-gradient(from 0deg, transparent, rgba(77, 166, 255, 0.1), transparent);
-            animation: rotate 4s linear infinite;
+            animation: rotate 6s linear infinite;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -553,19 +720,17 @@
             opacity: 1;
         }
 
-        @keyframes rotate {
-            100% { transform: rotate(360deg); }
-        }
-
         .usage-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(77, 166, 255, 0.3);
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(77, 166, 255, 0.3);
         }
 
         .usage-icon {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 1.5rem;
-            color: var(--protocol-color);
+            color: var(--protocol-blue);
+            position: relative;
+            z-index: 1;
         }
 
         .usage-percentage {
@@ -573,6 +738,9 @@
             font-weight: bold;
             color: var(--primary-color);
             margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 20px currentColor;
         }
 
         .usage-label {
@@ -596,244 +764,70 @@
             color: var(--success-color);
         }
 
-        .trend-down {
-            background: rgba(255, 68, 68, 0.2);
-            color: var(--danger-color);
-        }
-
-        /* Interactive Packet Demo */
-        .packet-demo {
-            background: var(--bg-card);
-            border-radius: 25px;
-            padding: 4rem;
-            margin: 6rem 0;
-            border: 1px solid var(--border-glow);
-        }
-
-        .demo-controls {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
-        }
-
-        .demo-button {
-            background: linear-gradient(45deg, var(--protocol-color), var(--primary-color));
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .demo-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(77, 166, 255, 0.3);
-        }
-
-        .packet-visualization {
-            background: var(--bg-section);
-            border-radius: 20px;
-            padding: 3rem;
-            margin: 3rem 0;
-            border: 1px solid var(--border-glow);
-            min-height: 400px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .network-path {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 3rem 0;
-            position: relative;
-        }
-
-        .network-node {
-            background: var(--bg-card);
-            border: 3px solid var(--protocol-color);
-            border-radius: 50%;
-            width: 100px;
-            height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            z-index: 2;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .network-node:hover {
-            transform: scale(1.2);
-            box-shadow: 0 0 30px var(--protocol-color);
-        }
-
-        .network-connection {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--protocol-color), var(--primary-color));
-            z-index: 1;
-        }
-
-        .traveling-packet {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 30px;
-            height: 30px;
-            background: var(--warning-color);
-            border-radius: 50%;
-            transform: translateY(-50%);
-            z-index: 3;
+        /* Scroll Animations */
+        .fade-in {
             opacity: 0;
-            box-shadow: 0 0 20px var(--warning-color);
+            transform: translateY(50px);
+            transition: all 0.8s ease;
         }
 
-        .packet-traveling {
-            animation: packetTravel 4s ease-in-out infinite;
-        }
-
-        @keyframes packetTravel {
-            0% { left: 5%; opacity: 1; transform: translateY(-50%) scale(1); }
-            25% { left: 32%; opacity: 1; transform: translateY(-50%) scale(1.2); }
-            50% { left: 50%; opacity: 1; transform: translateY(-50%) scale(1); }
-            75% { left: 68%; opacity: 1; transform: translateY(-50%) scale(1.2); }
-            100% { left: 95%; opacity: 1; transform: translateY(-50%) scale(1); }
-        }
-
-        /* Port Reference Guide */
-        .port-reference {
-            background: var(--bg-section);
-            border-radius: 25px;
-            padding: 4rem;
-            margin: 6rem 0;
-            border: 1px solid var(--border-glow);
-        }
-
-        .port-search {
-            max-width: 600px;
-            margin: 0 auto 3rem;
-            position: relative;
-        }
-
-        .port-search input {
-            width: 100%;
-            padding: 1.5rem;
-            background: var(--bg-card);
-            border: 2px solid var(--border-glow);
-            border-radius: 25px;
-            color: var(--text-light);
-            font-size: 1.1rem;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .port-search input:focus {
-            border-color: var(--protocol-color);
-            box-shadow: 0 0 20px rgba(77, 166, 255, 0.3);
-        }
-
-        .port-categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .port-category {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 2rem;
-            border: 1px solid var(--border-glow);
-        }
-
-        .port-category h4 {
-            color: var(--protocol-color);
-            margin-bottom: 1.5rem;
-            font-size: 1.3rem;
-        }
-
-        .port-list {
-            list-style: none;
-        }
-
-        .port-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.8rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .port-item:hover {
-            background: rgba(77, 166, 255, 0.1);
-            padding-left: 1rem;
-            border-radius: 5px;
-        }
-
-        .port-number {
-            color: var(--accent-color);
-            font-weight: bold;
-            font-family: 'Courier New', monospace;
-        }
-
-        .port-service {
-            color: var(--text-light);
+        .fade-in.animate {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* Footer */
         footer {
-            background: var(--bg-darker);
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
             padding: 4rem 0;
             text-align: center;
-            border-top: 1px solid var(--border-glow);
+            border-top: 2px solid var(--border-glow);
             margin-top: 6rem;
+            position: relative;
         }
 
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-protocol);
+            box-shadow: 0 0 20px rgba(77, 166, 255, 0.5);
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .hero h1 { font-size: 3rem; }
+            .hero-title { font-size: 3rem; letter-spacing: -1px; }
             .nav-links { display: none; }
-            .protocol-grid { grid-template-columns: 1fr; }
-            .usage-grid { grid-template-columns: repeat(2, 1fr); }
-            .port-categories { grid-template-columns: 1fr; }
-            .section { padding: 4rem 1rem; }
+            .protocol-layer { padding: 2rem; }
+            .layer-header { flex-direction: column; text-align: center; }
+            .layer-number { margin-right: 0; margin-bottom: 1rem; }
             .network-path { flex-direction: column; gap: 2rem; }
             .network-connection { display: none; }
+            .usage-grid { grid-template-columns: repeat(2, 1fr); }
+            .demo-controls { flex-direction: column; align-items: center; }
         }
 
-        /* Loading animations */
-        .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
-        .fade-in.animate { opacity: 1; transform: translateY(0); }
+        @media (max-width: 480px) {
+            .usage-grid { grid-template-columns: 1fr; }
+            .protocol-tags { justify-content: center; }
+        }
     </style>
 </head>
 <body>
-    <!-- Enhanced background effects -->
-    <div class="bg-particles" id="particles"></div>
-    <div class="protocol-stream" id="protocolStream"></div>
+    <!-- Enhanced Background Effects -->
+    <div class="protocol-matrix"></div>
+    <div class="protocol-particles" id="protocolParticles"></div>
 
     <!-- Header -->
     <header>
         <nav>
-            <div class="logo"><a href="/" style="color: inherit; text-decoration: none;">NetworkHub.ch</a></div>
+            <a href="/" class="logo">tcp-ip.ch</a>
             <ul class="nav-links">
                 <li><a href="/">🏠 Hub</a></li>
-                <li><a href="/protocols" style="color: var(--protocol-color);">📡 Protocols</a></li>
+                <li><a href="/protocols" style="color: var(--protocol-blue);">📡 Protocols</a></li>
                 <li><a href="/security">🔒 Security</a></li>
                 <li><a href="/modern-tech">🚀 Modern Tech</a></li>
                 <li><a href="/tools">🛠️ Tools</a></li>
@@ -848,14 +842,13 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1 style="font-size: 4.5rem; color: var(--protocol-color); font-weight: 900;">Network Protocols</h1>
-            <p style="font-size: 1.5rem; margin-bottom: 2rem; color: var(--text-light);">
-                The Universal Languages of Digital Communication
-            </p>
-            <p style="font-size: 1.1rem; color: var(--text-dim); max-width: 700px; margin: 0 auto;">
+            <h1 class="hero-title">Network Protocols</h1>
+            <div class="hero-subtitle">The Universal Languages of Digital Communication</div>
+            <div class="hero-description">
                 Explore the protocols that enable billions of devices to communicate seamlessly across the globe.
-                From HTTP to TCP/IP, discover how these digital languages power our connected world.
-            </p>
+                From HTTP to TCP/IP, discover how these digital languages power our connected world with interactive
+                demonstrations and real-time examples.
+            </div>
         </div>
     </section>
 
@@ -864,7 +857,7 @@
         <h2>The Protocol Stack</h2>
         <div class="protocol-stack-visual">
             <h3 style="color: var(--primary-color); margin-bottom: 3rem; text-align: center; font-size: 2.5rem;">
-                Interactive OSI Model with Key Protocols
+                Interactive TCP/IP Model with Protocol Deep Dive
             </h3>
             <div class="stack-container">
                 <!-- Layer 7 - Application -->
@@ -873,12 +866,12 @@
                         <div class="layer-number">7</div>
                         <div class="layer-info">
                             <div class="layer-name">Application Layer</div>
-                            <div class="layer-description">Network services directly to end-user applications</div>
+                            <div class="layer-description">Network services directly to end-user applications and processes</div>
                         </div>
-                        <div style="font-size: 3rem;">🖥️</div>
+                        <div class="layer-icon">🖥️</div>
                     </div>
                     <div class="layer-protocols">
-                        <strong style="color: #ff6b6b;">Major Protocols:</strong>
+                        <strong style="color: #ff6b6b;">Key Protocols:</strong>
                         <div class="protocol-tags">
                             <span class="protocol-tag" onclick="showProtocolDetails('HTTP', event)">HTTP/HTTPS</span>
                             <span class="protocol-tag" onclick="showProtocolDetails('FTP', event)">FTP/SFTP</span>
@@ -889,9 +882,9 @@
                             <span class="protocol-tag" onclick="showProtocolDetails('Telnet', event)">Telnet</span>
                             <span class="protocol-tag" onclick="showProtocolDetails('SNMP', event)">SNMP</span>
                         </div>
-                        <div style="margin-top: 2rem; color: var(--text-dim);">
+                        <div style="margin-top: 2rem; color: var(--text-dim); line-height: 1.8;">
                             <strong>Function:</strong> Provides network services to user applications like web browsers, email clients, and file transfer programs.
-                            This is where users directly interact with network protocols.
+                            This is where users directly interact with network protocols and where most business logic resides.
                         </div>
                     </div>
                 </div>
@@ -902,9 +895,9 @@
                         <div class="layer-number">6</div>
                         <div class="layer-info">
                             <div class="layer-name">Presentation Layer</div>
-                            <div class="layer-description">Data translation, encryption, and compression</div>
+                            <div class="layer-description">Data translation, encryption, compression, and format conversion</div>
                         </div>
-                        <div style="font-size: 3rem;">🔒</div>
+                        <div class="layer-icon">🔒</div>
                     </div>
                     <div class="layer-protocols">
                         <strong style="color: #4ecdc4;">Key Technologies:</strong>
@@ -918,9 +911,9 @@
                             <span class="protocol-tag">Compression</span>
                             <span class="protocol-tag">Encryption</span>
                         </div>
-                        <div style="margin-top: 2rem; color: var(--text-dim);">
+                        <div style="margin-top: 2rem; color: var(--text-dim); line-height: 1.8;">
                             <strong>Function:</strong> Transforms data between application and network formats. Handles encryption/decryption,
-                            compression/decompression, and character encoding to ensure data compatibility.
+                            compression/decompression, and character encoding to ensure data compatibility across different systems and platforms.
                         </div>
                     </div>
                 </div>
@@ -931,9 +924,9 @@
                         <div class="layer-number">5</div>
                         <div class="layer-info">
                             <div class="layer-name">Session Layer</div>
-                            <div class="layer-description">Session establishment, management, and termination</div>
+                            <div class="layer-description">Session establishment, management, and termination between applications</div>
                         </div>
-                        <div style="font-size: 3rem;">🔗</div>
+                        <div class="layer-icon">🔗</div>
                     </div>
                     <div class="layer-protocols">
                         <strong style="color: #45b7d1;">Session Protocols:</strong>
@@ -947,9 +940,9 @@
                             <span class="protocol-tag">SOCKS</span>
                             <span class="protocol-tag">LDAP</span>
                         </div>
-                        <div style="margin-top: 2rem; color: var(--text-dim);">
+                        <div style="margin-top: 2rem; color: var(--text-dim); line-height: 1.8;">
                             <strong>Function:</strong> Manages communication sessions between applications. Controls dialogue,
-                            authentication, and session recovery to maintain reliable connections.
+                            authentication, session recovery, and maintains reliable connections across network interruptions.
                         </div>
                     </div>
                 </div>
@@ -960,9 +953,9 @@
                         <div class="layer-number">4</div>
                         <div class="layer-info">
                             <div class="layer-name">Transport Layer</div>
-                            <div class="layer-description">End-to-end data delivery and error recovery</div>
+                            <div class="layer-description">End-to-end data delivery, error recovery, and flow control</div>
                         </div>
-                        <div style="font-size: 3rem;">🚚</div>
+                        <div class="layer-icon">🚚</div>
                     </div>
                     <div class="layer-protocols">
                         <strong style="color: #96ceb4;">Transport Protocols:</strong>
@@ -974,9 +967,9 @@
                             <span class="protocol-tag">QUIC</span>
                             <span class="protocol-tag">SPX</span>
                         </div>
-                        <div style="margin-top: 2rem; color: var(--text-dim);">
+                        <div style="margin-top: 2rem; color: var(--text-dim); line-height: 1.8;">
                             <strong>Function:</strong> Ensures reliable data transmission with error checking, flow control, and segmentation.
-                            TCP provides reliability while UDP offers speed for real-time applications.
+                            TCP provides guaranteed delivery while UDP offers speed for real-time applications like gaming and streaming.
                         </div>
                     </div>
                 </div>
@@ -987,9 +980,9 @@
                         <div class="layer-number">3</div>
                         <div class="layer-info">
                             <div class="layer-name">Network Layer</div>
-                            <div class="layer-description">Routing, logical addressing, and path determination</div>
+                            <div class="layer-description">Routing, logical addressing, and path determination across networks</div>
                         </div>
-                        <div style="font-size: 3rem;">🌐</div>
+                        <div class="layer-icon">🌐</div>
                     </div>
                     <div class="layer-protocols">
                         <strong style="color: #ffeaa7;">Network Protocols:</strong>
@@ -1003,9 +996,9 @@
                             <span class="protocol-tag">RIP</span>
                             <span class="protocol-tag">EIGRP</span>
                         </div>
-                        <div style="margin-top: 2rem; color: var(--text-dim);">
+                        <div style="margin-top: 2rem; color: var(--text-dim); line-height: 1.8;">
                             <strong>Function:</strong> Handles packet routing between networks using IP addresses.
-                            Determines optimal paths and enables internetwork communication across the globe.
+                            Determines optimal paths through complex network topologies and enables global internet connectivity.
                         </div>
                     </div>
                 </div>
@@ -1016,9 +1009,9 @@
                         <div class="layer-number">2</div>
                         <div class="layer-info">
                             <div class="layer-name">Data Link Layer</div>
-                            <div class="layer-description">Node-to-node delivery and frame formatting</div>
+                            <div class="layer-description">Node-to-node delivery, frame formatting, and error detection</div>
                         </div>
-                        <div style="font-size: 3rem;">🔗</div>
+                        <div class="layer-icon">🔗</div>
                     </div>
                     <div class="layer-protocols">
                         <strong style="color: #dda0dd;">Data Link Technologies:</strong>
@@ -1032,9 +1025,9 @@
                             <span class="protocol-tag">Bluetooth</span>
                             <span class="protocol-tag">Token Ring</span>
                         </div>
-                        <div style="margin-top: 2rem; color: var(--text-dim);">
+                        <div style="margin-top: 2rem; color: var(--text-dim); line-height: 1.8;">
                             <strong>Function:</strong> Provides reliable frame transmission over physical links.
-                            Handles MAC addressing, error detection, and flow control between directly connected nodes.
+                            Handles MAC addressing, error detection, and flow control between directly connected network nodes.
                         </div>
                     </div>
                 </div>
@@ -1045,12 +1038,12 @@
                         <div class="layer-number">1</div>
                         <div class="layer-info">
                             <div class="layer-name">Physical Layer</div>
-                            <div class="layer-description">Raw bit transmission over physical medium</div>
+                            <div class="layer-description">Raw bit transmission over physical transmission medium</div>
                         </div>
-                        <div style="font-size: 3rem;">⚡</div>
+                        <div class="layer-icon">⚡</div>
                     </div>
                     <div class="layer-protocols">
-                        <strong style="color: #98d8c8;">Physical Media:</strong>
+                        <strong style="color: #98d8c8;">Physical Media & Standards:</strong>
                         <div class="protocol-tags">
                             <span class="protocol-tag">Copper Cable</span>
                             <span class="protocol-tag">Fiber Optic</span>
@@ -1061,9 +1054,9 @@
                             <span class="protocol-tag">USB</span>
                             <span class="protocol-tag">Thunderbolt</span>
                         </div>
-                        <div style="margin-top: 2rem; color: var(--text-dim);">
+                        <div style="margin-top: 2rem; color: var(--text-dim); line-height: 1.8;">
                             <strong>Function:</strong> Defines electrical, mechanical, and timing specifications for transmitting raw bits.
-                            The actual hardware foundation that carries all digital communication.
+                            The actual hardware foundation that carries all digital communication across various transmission media.
                         </div>
                     </div>
                 </div>
@@ -1071,462 +1064,62 @@
         </div>
     </section>
 
-    <!-- Interactive Protocol Explorer -->
+    <!-- Interactive Packet Demonstration -->
     <section class="section fade-in">
-        <h2>Protocol Deep Dive</h2>
-        <div class="protocol-explorer">
-            <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">
-                🔍 Comprehensive Protocol Analysis
+        <h2>Protocol in Action</h2>
+        <div class="interactive-demo">
+            <h3 style="color: var(--primary-color); margin-bottom: 2rem;">
+                🎬 Live Network Communication Demo
             </h3>
-            <div class="explorer-tabs">
-                <div class="explorer-tab active" onclick="switchTab('web')">Web Protocols</div>
-                <div class="explorer-tab" onclick="switchTab('email')">Email Protocols</div>
-                <div class="explorer-tab" onclick="switchTab('file')">File Transfer</div>
-                <div class="explorer-tab" onclick="switchTab('network')">Network Services</div>
-                <div class="explorer-tab" onclick="switchTab('routing')">Routing Protocols</div>
-                <div class="explorer-tab" onclick="switchTab('security')">Security Protocols</div>
+            <p style="color: var(--text-dim); margin-bottom: 3rem;">
+                Watch how protocols work together to deliver data across networks in real-time
+            </p>
+
+            <div class="demo-controls">
+                <button class="demo-button" onclick="startDemo('http')">📄 HTTP Request</button>
+                <button class="demo-button" onclick="startDemo('email')">📧 Email Delivery</button>
+                <button class="demo-button" onclick="startDemo('file')">📁 File Transfer</button>
+                <button class="demo-button" onclick="startDemo('video')">🎥 Video Stream</button>
             </div>
 
-            <!-- Web Protocols -->
-            <div class="explorer-content active" id="web">
-                <div class="protocol-grid">
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">HTTP/HTTPS</div>
-                            <div class="protocol-port">80/443</div>
-                        </div>
-                        <div class="protocol-description">
-                            HyperText Transfer Protocol is the foundation of data communication on the World Wide Web.
-                            HTTPS adds security through SSL/TLS encryption, protecting data in transit.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Stateless request-response protocol</li>
-                            <li>Supports multiple request methods (GET, POST, PUT, DELETE)</li>
-                            <li>Header-based metadata transmission</li>
-                            <li>Content negotiation and caching support</li>
-                            <li>HTTP/2 and HTTP/3 improvements for performance</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Always use HTTPS for sensitive data. Implement proper authentication,
-                            validate all inputs, and use security headers to prevent common attacks.
-                        </div>
-                    </div>
+            <div class="packet-visualization">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h4 style="color: var(--protocol-blue);" id="demoTitle">Select a demonstration above</h4>
+                    <p style="color: var(--text-dim);" id="demoDescription">Choose a protocol demonstration to see how data travels through the network stack</p>
+                </div>
 
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">WebSocket</div>
-                            <div class="protocol-port">80/443</div>
-                        </div>
-                        <div class="protocol-description">
-                            Provides full-duplex communication channels over a single TCP connection.
-                            Essential for real-time applications like chat, gaming, and live data feeds.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Persistent bidirectional connection</li>
-                            <li>Low latency real-time communication</li>
-                            <li>Built on top of HTTP upgrade mechanism</li>
-                            <li>Binary and text message support</li>
-                            <li>Automatic connection management</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Use WSS (WebSocket Secure) for encryption. Implement proper origin validation
-                            and rate limiting to prevent abuse.
-                        </div>
-                    </div>
+                <div class="network-path">
+                    <div class="network-connection"></div>
+                    <div class="traveling-packet" id="travelingPacket"></div>
+                    <div class="network-node" title="Client Device">📱</div>
+                    <div class="network-node" title="Local Router">🔀</div>
+                    <div class="network-node" title="Internet">🌐</div>
+                    <div class="network-node" title="Server">🖥️</div>
+                </div>
 
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">HTTP/3 (QUIC)</div>
-                            <div class="protocol-port">443</div>
-                        </div>
-                        <div class="protocol-description">
-                            The latest HTTP protocol built on QUIC (Quick UDP Internet Connections).
-                            Provides improved performance, reduced latency, and better connection resilience.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>UDP-based transport for reduced latency</li>
-                            <li>Built-in encryption and security</li>
-                            <li>Multiplexed streams without head-of-line blocking</li>
-                            <li>Connection migration support</li>
-                            <li>0-RTT connection establishment</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            QUIC has security built-in by design. Monitor for proper certificate validation
-                            and ensure firewall rules accommodate UDP traffic.
-                        </div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 3rem; text-align: center;">
+                    <div>
+                        <strong style="color: var(--protocol-blue);">Client</strong><br>
+                        <small style="color: var(--text-dim);" id="clientStep">Ready to send</small>
+                    </div>
+                    <div>
+                        <strong style="color: var(--protocol-blue);">Router</strong><br>
+                        <small style="color: var(--text-dim);" id="routerStep">Forwarding packets</small>
+                    </div>
+                    <div>
+                        <strong style="color: var(--protocol-blue);">Internet</strong><br>
+                        <small style="color: var(--text-dim);" id="internetStep">Routing globally</small>
+                    </div>
+                    <div>
+                        <strong style="color: var(--protocol-blue);">Server</strong><br>
+                        <small style="color: var(--text-dim);" id="serverStep">Processing request</small>
                     </div>
                 </div>
-            </div>
 
-            <!-- Email Protocols -->
-            <div class="explorer-content" id="email">
-                <div class="protocol-grid">
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">SMTP</div>
-                            <div class="protocol-port">25/587/465</div>
-                        </div>
-                        <div class="protocol-description">
-                            Simple Mail Transfer Protocol handles the sending of email messages between servers
-                            and from email clients to servers. Essential for email delivery infrastructure.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Text-based command/response protocol</li>
-                            <li>Relay capability for message routing</li>
-                            <li>Support for authentication (SMTP AUTH)</li>
-                            <li>TLS encryption for secure transmission</li>
-                            <li>Extended SMTP (ESMTP) with additional features</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Use SMTPS or STARTTLS for encryption. Implement SPF, DKIM, and DMARC
-                            to prevent email spoofing and improve deliverability.
-                        </div>
-                    </div>
-
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">IMAP</div>
-                            <div class="protocol-port">143/993</div>
-                        </div>
-                        <div class="protocol-description">
-                            Internet Message Access Protocol allows email clients to access and manage
-                            email messages stored on a remote server. Supports multiple device access.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Server-side message storage</li>
-                            <li>Multiple folder hierarchy support</li>
-                            <li>Partial message downloading</li>
-                            <li>Server-side search capabilities</li>
-                            <li>Flag and label management</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Always use IMAPS for encrypted connections. Implement strong authentication
-                            and consider OAuth2 for modern applications.
-                        </div>
-                    </div>
-
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">POP3</div>
-                            <div class="protocol-port">110/995</div>
-                        </div>
-                        <div class="protocol-description">
-                            Post Office Protocol version 3 downloads email messages from server to client,
-                            typically removing them from the server. Simpler than IMAP but less flexible.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Download and delete model</li>
-                            <li>Single device access pattern</li>
-                            <li>Minimal server storage requirements</li>
-                            <li>Simple command set</li>
-                            <li>Offline email access</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Use POP3S for secure connections. Consider IMAP for better security
-                            and multi-device support in modern environments.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- File Transfer Protocols -->
-            <div class="explorer-content" id="file">
-                <div class="protocol-grid">
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">FTP</div>
-                            <div class="protocol-port">21</div>
-                        </div>
-                        <div class="protocol-description">
-                            File Transfer Protocol enables file sharing between computers over a network.
-                            Uses separate control and data connections for efficient file transfer.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Separate control (port 21) and data connections</li>
-                            <li>Active and passive transfer modes</li>
-                            <li>ASCII and binary transfer types</li>
-                            <li>Directory listing and navigation</li>
-                            <li>Resume capability for interrupted transfers</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            FTP transmits data in clear text. Use FTPS or SFTP for secure file transfers.
-                            Implement proper access controls and monitoring.
-                        </div>
-                    </div>
-
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">SFTP</div>
-                            <div class="protocol-port">22</div>
-                        </div>
-                        <div class="protocol-description">
-                            SSH File Transfer Protocol provides secure file transfer over SSH.
-                            Encrypts both commands and data, making it the preferred choice for secure file operations.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Built on SSH for security</li>
-                            <li>Encrypted file transfer and commands</li>
-                            <li>Public key authentication support</li>
-                            <li>File integrity verification</li>
-                            <li>Platform independent</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Use key-based authentication instead of passwords. Regularly update SSH
-                            configurations and monitor access logs for suspicious activity.
-                        </div>
-                    </div>
-
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">FTPS</div>
-                            <div class="protocol-port">990/21</div>
-                        </div>
-                        <div class="protocol-description">
-                            FTP Secure adds SSL/TLS encryption to traditional FTP. Available in explicit
-                            and implicit modes for securing file transfers while maintaining FTP compatibility.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>SSL/TLS encryption for FTP</li>
-                            <li>Explicit and implicit security modes</li>
-                            <li>Certificate-based authentication</li>
-                            <li>Backward compatibility with FTP clients</li>
-                            <li>Data and control channel encryption</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Ensure proper certificate validation. Use strong cipher suites and
-                            regularly update SSL/TLS configurations.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Network Services -->
-            <div class="explorer-content" id="network">
-                <div class="protocol-grid">
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">DNS</div>
-                            <div class="protocol-port">53</div>
-                        </div>
-                        <div class="protocol-description">
-                            Domain Name System translates human-readable domain names into IP addresses.
-                            Critical infrastructure service that enables user-friendly internet navigation.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Hierarchical namespace structure</li>
-                            <li>Distributed database system</li>
-                            <li>Caching for performance optimization</li>
-                            <li>Multiple record types (A, AAAA, MX, CNAME, etc.)</li>
-                            <li>Load balancing and failover support</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Implement DNSSEC for authenticity. Use DNS over HTTPS (DoH) or DNS over TLS (DoT)
-                            for privacy. Monitor for DNS poisoning and cache pollution attacks.
-                        </div>
-                    </div>
-
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">DHCP</div>
-                            <div class="protocol-port">67/68</div>
-                        </div>
-                        <div class="protocol-description">
-                            Dynamic Host Configuration Protocol automatically assigns IP addresses and network
-                            configuration to devices. Simplifies network administration and device connectivity.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Automatic IP address assignment</li>
-                            <li>Network configuration distribution</li>
-                            <li>Lease management and renewal</li>
-                            <li>DHCP reservations for specific devices</li>
-                            <li>Option sets for additional configuration</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Secure DHCP servers against rogue DHCP attacks. Use DHCP snooping
-                            and implement proper VLAN segmentation.
-                        </div>
-                    </div>
-
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">NTP</div>
-                            <div class="protocol-port">123</div>
-                        </div>
-                        <div class="protocol-description">
-                            Network Time Protocol synchronizes computer clocks across networks.
-                            Essential for logging, security, and distributed system coordination.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Hierarchical time distribution</li>
-                            <li>Microsecond precision synchronization</li>
-                            <li>Automatic server selection</li>
-                            <li>Authentication support</li>
-                            <li>Leap second handling</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Use authenticated NTP to prevent time manipulation attacks.
-                            Secure NTP servers and monitor for unusual time changes.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Routing Protocols -->
-            <div class="explorer-content" id="routing">
-                <div class="protocol-grid">
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">BGP</div>
-                            <div class="protocol-port">179</div>
-                        </div>
-                        <div class="protocol-description">
-                            Border Gateway Protocol is the routing protocol of the internet.
-                            Manages routing between autonomous systems and enables global internet connectivity.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Path vector routing protocol</li>
-                            <li>Policy-based routing decisions</li>
-                            <li>Loop prevention mechanisms</li>
-                            <li>Attribute-based path selection</li>
-                            <li>Incremental updates for efficiency</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Implement BGP security features like RPKI. Monitor for route hijacking
-                            and use route filtering to prevent unauthorized announcements.
-                        </div>
-                    </div>
-
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">OSPF</div>
-                            <div class="protocol-port">89</div>
-                        </div>
-                        <div class="protocol-description">
-                            Open Shortest Path First is a link-state routing protocol used within
-                            autonomous systems. Provides fast convergence and efficient routing.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Link-state routing algorithm</li>
-                            <li>Hierarchical area design</li>
-                            <li>Fast convergence after topology changes</li>
-                            <li>VLSM and CIDR support</li>
-                            <li>Authentication mechanisms</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Enable OSPF authentication to prevent routing attacks.
-                            Secure area borders and monitor for LSA flooding attacks.
-                        </div>
-                    </div>
-
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">RIP</div>
-                            <div class="protocol-port">520</div>
-                        </div>
-                        <div class="protocol-description">
-                            Routing Information Protocol is one of the oldest distance-vector routing protocols.
-                            Simple to configure but limited in scalability and convergence speed.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Distance-vector algorithm</li>
-                            <li>Hop count metric (max 15)</li>
-                            <li>Periodic route updates</li>
-                            <li>Split horizon loop prevention</li>
-                            <li>RIPv2 adds subnet mask support</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            RIP has limited security features. Use RIPv2 with authentication
-                            and consider migration to more secure protocols for critical networks.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Security Protocols -->
-            <div class="explorer-content" id="security">
-                <div class="protocol-grid">
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">IPSec</div>
-                            <div class="protocol-port">500/4500</div>
-                        </div>
-                        <div class="protocol-description">
-                            Internet Protocol Security provides cryptographic security for IP communications.
-                            Supports both tunnel and transport modes for VPN and end-to-end encryption.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Authentication Header (AH) protocol</li>
-                            <li>Encapsulating Security Payload (ESP)</li>
-                            <li>Internet Key Exchange (IKE) for key management</li>
-                            <li>Tunnel and transport modes</li>
-                            <li>Perfect forward secrecy support</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Use strong encryption algorithms and regularly update keys.
-                            Monitor for configuration errors that could weaken security.
-                        </div>
-                    </div>
-
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">TLS/SSL</div>
-                            <div class="protocol-port">443</div>
-                        </div>
-                        <div class="protocol-description">
-                            Transport Layer Security provides cryptographic protocols for secure communication.
-                            Widely used for HTTPS, email security, and application-level encryption.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Handshake protocol for key exchange</li>
-                            <li>Record protocol for data encryption</li>
-                            <li>Certificate-based authentication</li>
-                            <li>Perfect forward secrecy</li>
-                            <li>TLS 1.3 with improved security and performance</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Use TLS 1.2 or higher with strong cipher suites. Implement proper
-                            certificate validation and consider certificate pinning for critical applications.
-                        </div>
-                    </div>
-
-                    <div class="protocol-card">
-                        <div class="protocol-header">
-                            <div class="protocol-name">SSH</div>
-                            <div class="protocol-port">22</div>
-                        </div>
-                        <div class="protocol-description">
-                            Secure Shell provides encrypted remote access and secure communication channels.
-                            Essential for secure system administration and encrypted tunneling.
-                        </div>
-                        <ul class="protocol-features">
-                            <li>Strong cryptographic authentication</li>
-                            <li>Encrypted command execution</li>
-                            <li>Port forwarding and tunneling</li>
-                            <li>Public key authentication</li>
-                            <li>Agent forwarding for key management</li>
-                        </ul>
-                        <div class="protocol-security">
-                            <strong style="color: var(--accent-color);">Security Considerations:</strong><br>
-                            Disable password authentication when possible. Use key-based authentication,
-                            change default ports, and implement fail2ban for brute force protection.
-                        </div>
+                <div style="margin-top: 3rem; padding: 2rem; background: rgba(17, 17, 24, 0.95); border-radius: 15px; border: 1px solid var(--border-glow);">
+                    <h5 style="color: var(--accent-color); margin-bottom: 1rem;">Protocol Stack Analysis:</h5>
+                    <div id="protocolStack" style="font-family: 'Courier New', monospace; color: var(--text-light); line-height: 1.8;">
+                        Click a demo button to see the protocol stack in action
                     </div>
                 </div>
             </div>
@@ -1538,10 +1131,10 @@
         <h2>Global Protocol Usage</h2>
         <div class="protocol-usage">
             <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">
-                📊 Live Protocol Adoption Statistics
+                📊 Live Protocol Adoption & Traffic Statistics
             </h3>
             <p style="text-align: center; color: var(--text-dim); margin-bottom: 3rem;">
-                Real-time data showing how different protocols are used across the global internet
+                Real-time data showing how different protocols are used across the global internet infrastructure
             </p>
             <div class="usage-grid">
                 <div class="usage-card">
@@ -1585,137 +1178,19 @@
                     <div class="usage-label">IPv6 Adoption</div>
                     <div class="usage-trend trend-up">↗ +5% annually</div>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Interactive Packet Demonstration -->
-    <section class="section fade-in">
-        <h2>Protocol in Action</h2>
-        <div class="packet-demo">
-            <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">
-                🎬 Interactive Network Communication Demo
-            </h3>
-            <p style="text-align: center; color: var(--text-dim); margin-bottom: 3rem;">
-                Watch how protocols work together to deliver data across networks
-            </p>
-
-            <div class="demo-controls">
-                <button class="demo-button" onclick="startDemo('http')">📄 HTTP Request</button>
-                <button class="demo-button" onclick="startDemo('email')">📧 Email Delivery</button>
-                <button class="demo-button" onclick="startDemo('file')">📁 File Transfer</button>
-                <button class="demo-button" onclick="startDemo('video')">🎥 Video Stream</button>
-            </div>
-
-            <div class="packet-visualization">
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <h4 style="color: var(--protocol-color);" id="demoTitle">Select a demonstration above</h4>
-                    <p style="color: var(--text-dim);" id="demoDescription">Choose a protocol demonstration to see how data travels through the network stack</p>
+                <div class="usage-card">
+                    <div class="usage-icon">🚀</div>
+                    <div class="usage-percentage" id="quicUsage">18%</div>
+                    <div class="usage-label">QUIC/HTTP3</div>
+                    <div class="usage-trend trend-up">↗ Rapidly growing</div>
                 </div>
 
-                <div class="network-path">
-                    <div class="network-connection"></div>
-                    <div class="traveling-packet" id="travelingPacket"></div>
-                    <div class="network-node" title="Client Device">📱</div>
-                    <div class="network-node" title="Local Router">🔀</div>
-                    <div class="network-node" title="Internet">🌐</div>
-                    <div class="network-node" title="Server">🖥️</div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 3rem; text-align: center;">
-                    <div>
-                        <strong style="color: var(--protocol-color);">Client</strong><br>
-                        <small style="color: var(--text-dim);" id="clientStep">Ready to send</small>
-                    </div>
-                    <div>
-                        <strong style="color: var(--protocol-color);">Router</strong><br>
-                        <small style="color: var(--text-dim);" id="routerStep">Forwarding packets</small>
-                    </div>
-                    <div>
-                        <strong style="color: var(--protocol-color);">Internet</strong><br>
-                        <small style="color: var(--text-dim);" id="internetStep">Routing globally</small>
-                    </div>
-                    <div>
-                        <strong style="color: var(--protocol-color);">Server</strong><br>
-                        <small style="color: var(--text-dim);" id="serverStep">Processing request</small>
-                    </div>
-                </div>
-
-                <div style="margin-top: 3rem; padding: 2rem; background: var(--bg-card); border-radius: 15px;">
-                    <h5 style="color: var(--accent-color); margin-bottom: 1rem;">Protocol Stack Analysis:</h5>
-                    <div id="protocolStack" style="font-family: 'Courier New', monospace; color: var(--text-light); line-height: 1.8;">
-                        Click a demo button to see the protocol stack in action
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Port Reference Guide -->
-    <section class="section fade-in">
-        <h2>Protocol Port Reference</h2>
-        <div class="port-reference">
-            <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">
-                🔢 Comprehensive Port Number Guide
-            </h3>
-            <div class="port-search">
-                <input type="text" placeholder="🔍 Search protocols or port numbers..." onkeyup="filterPorts(this.value)">
-            </div>
-
-            <div class="port-categories">
-                <div class="port-category">
-                    <h4>Well-Known Ports (0-1023)</h4>
-                    <ul class="port-list" id="wellKnownPorts">
-                        <li class="port-item"><span class="port-number">20/21</span><span class="port-service">FTP Data/Control</span></li>
-                        <li class="port-item"><span class="port-number">22</span><span class="port-service">SSH/SFTP</span></li>
-                        <li class="port-item"><span class="port-number">23</span><span class="port-service">Telnet</span></li>
-                        <li class="port-item"><span class="port-number">25</span><span class="port-service">SMTP</span></li>
-                        <li class="port-item"><span class="port-number">53</span><span class="port-service">DNS</span></li>
-                        <li class="port-item"><span class="port-number">67/68</span><span class="port-service">DHCP</span></li>
-                        <li class="port-item"><span class="port-number">80</span><span class="port-service">HTTP</span></li>
-                        <li class="port-item"><span class="port-number">110</span><span class="port-service">POP3</span></li>
-                        <li class="port-item"><span class="port-number">143</span><span class="port-service">IMAP</span></li>
-                        <li class="port-item"><span class="port-number">443</span><span class="port-service">HTTPS</span></li>
-                        <li class="port-item"><span class="port-number">993</span><span class="port-service">IMAPS</span></li>
-                        <li class="port-item"><span class="port-number">995</span><span class="port-service">POP3S</span></li>
-                    </ul>
-                </div>
-
-                <div class="port-category">
-                    <h4>Registered Ports (1024-49151)</h4>
-                    <ul class="port-list" id="registeredPorts">
-                        <li class="port-item"><span class="port-number">1433</span><span class="port-service">SQL Server</span></li>
-                        <li class="port-item"><span class="port-number">1521</span><span class="port-service">Oracle DB</span></li>
-                        <li class="port-item"><span class="port-number">3306</span><span class="port-service">MySQL</span></li>
-                        <li class="port-item"><span class="port-number">3389</span><span class="port-service">RDP</span></li>
-                        <li class="port-item"><span class="port-number">5432</span><span class="port-service">PostgreSQL</span></li>
-                        <li class="port-item"><span class="port-number">5900</span><span class="port-service">VNC</span></li>
-                        <li class="port-item"><span class="port-number">8080</span><span class="port-service">HTTP Alt</span></li>
-                        <li class="port-item"><span class="port-number">8443</span><span class="port-service">HTTPS Alt</span></li>
-                    </ul>
-                </div>
-
-                <div class="port-category">
-                    <h4>Network Management</h4>
-                    <ul class="port-list" id="managementPorts">
-                        <li class="port-item"><span class="port-number">161</span><span class="port-service">SNMP</span></li>
-                        <li class="port-item"><span class="port-number">162</span><span class="port-service">SNMP Trap</span></li>
-                        <li class="port-item"><span class="port-number">179</span><span class="port-service">BGP</span></li>
-                        <li class="port-item"><span class="port-number">389</span><span class="port-service">LDAP</span></li>
-                        <li class="port-item"><span class="port-number">636</span><span class="port-service">LDAPS</span></li>
-                        <li class="port-item"><span class="port-number">514</span><span class="port-service">Syslog</span></li>
-                    </ul>
-                </div>
-
-                <div class="port-category">
-                    <h4>Security & VPN</h4>
-                    <ul class="port-list" id="securityPorts">
-                        <li class="port-item"><span class="port-number">500</span><span class="port-service">IPSec IKE</span></li>
-                        <li class="port-item"><span class="port-number">1723</span><span class="port-service">PPTP</span></li>
-                        <li class="port-item"><span class="port-number">1812</span><span class="port-service">RADIUS Auth</span></li>
-                        <li class="port-item"><span class="port-number">1813</span><span class="port-service">RADIUS Acct</span></li>
-                        <li class="port-item"><span class="port-number">4500</span><span class="port-service">IPSec NAT-T</span></li>
-                    </ul>
+                <div class="usage-card">
+                    <div class="usage-icon">📧</div>
+                    <div class="usage-percentage" id="smtpUsage">95%</div>
+                    <div class="usage-label">Email Protocols</div>
+                    <div class="usage-trend trend-up">↗ Still essential</div>
                 </div>
             </div>
         </div>
@@ -1723,16 +1198,17 @@
 
     <!-- Footer -->
     <footer>
-        <div class="footer-content">
-            <h3 style="color: var(--protocol-color); margin-bottom: 1rem; font-size: 2rem;">NetworkHub.ch Protocols</h3>
-            <p style="color: var(--text-dim); margin-bottom: 2rem; font-size: 1.1rem;">
-                Mastering the languages that enable global digital communication
+        <div style="max-width: 1400px; margin: 0 auto; padding: 0 2rem;">
+            <h3 style="color: var(--protocol-blue); margin-bottom: 1rem; font-size: 2.5rem; font-weight: 800;">tcp-ip.ch Protocols</h3>
+            <p style="color: var(--text-light); margin-bottom: 3rem; font-size: 1.2rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                Mastering the languages that enable global digital communication. From basic TCP/IP to advanced protocols,
+                we provide comprehensive education for the next generation of network engineers.
             </p>
-            <div style="background: rgba(77, 166, 255, 0.1); padding: 2rem; border-radius: 15px; margin: 2rem 0;">
-                <p style="color: var(--text-light); font-size: 1rem; font-style: italic;">
+            <div style="background: rgba(77, 166, 255, 0.1); padding: 3rem; border-radius: 20px; margin: 3rem 0; border: 1px solid var(--border-glow);">
+                <p style="color: var(--text-light); font-size: 1.1rem; font-style: italic; margin-bottom: 1rem;">
                     "The internet is really a network of networks, all exchanging information seamlessly through standardized protocols."
                 </p>
-                <p style="color: var(--protocol-color); font-weight: bold; margin-top: 0.5rem;">
+                <p style="color: var(--protocol-blue); font-weight: bold;">
                     — The Foundation of Digital Communication
                 </p>
             </div>
@@ -1743,89 +1219,74 @@
     </footer>
 
     <script>
-        // Enhanced particle system for protocols page
-        function createParticles() {
-            const container = document.getElementById('particles');
-            const particleCount = 100;
+        // Enhanced Protocol Particles
+        function createProtocolParticles() {
+            const container = document.getElementById('protocolParticles');
+            const protocols = [
+                'TCP SYN', 'HTTP/2', 'DNS A?', 'TLS 1.3', 'UDP:53', 'ICMP',
+                'BGP UPDATE', 'SMTP 250', 'SSH-2.0', 'HTTPS/3', 'QUIC', 'IPv6',
+                'ARP REQ', 'DHCP ACK', 'OSPF LSA', 'RTP', 'SNMP GET', 'NTP',
+                'FTP DATA', 'IMAP IDLE', 'POP3 STAT', 'LDAP BIND', 'SIP INVITE'
+            ];
 
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                const size = Math.random() > 0.7 ? 'large' : Math.random() > 0.4 ? 'medium' : 'small';
-                particle.className = `particle ${size}`;
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 20 + 's';
-                container.appendChild(particle);
-            }
-        }
-
-        // Protocol data stream effect
-        function createProtocolStream() {
-            const container = document.getElementById('protocolStream');
-            const protocols = ['HTTP/1.1', 'TCP SYN', 'DNS A?', 'TLS 1.3', 'UDP 53', 'ICMP', 'BGP UPDATE', 'SMTP 250'];
-
-            setInterval(() => {
-                if (Math.random() > 0.6) {
+            function createPacket() {
+                if (Math.random() > 0.65) {
                     const packet = document.createElement('div');
-                    packet.className = 'stream-packet';
+                    packet.className = 'protocol-packet';
                     packet.textContent = protocols[Math.floor(Math.random() * protocols.length)];
-                    packet.style.top = Math.random() * 100 + '%';
-                    packet.style.animationDelay = Math.random() * 2 + 's';
+                    packet.style.left = Math.random() * 100 + '%';
+                    packet.style.animationDelay = Math.random() * 3 + 's';
+                    packet.style.animationDuration = (15 + Math.random() * 10) + 's';
                     container.appendChild(packet);
 
                     setTimeout(() => {
                         if (packet.parentNode) {
                             packet.parentNode.removeChild(packet);
                         }
-                    }, 15000);
+                    }, 18000);
                 }
-            }, 1500);
+            }
+
+            setInterval(createPacket, 1200);
         }
 
-        // Protocol usage statistics updates
+        // Enhanced Protocol Usage Updates
         function updateProtocolUsage() {
-            const stats = {
-                'httpUsage': { base: 82, variance: 3 },
-                'tcpUsage': { base: 91, variance: 2 },
-                'udpUsage': { base: 23, variance: 5 },
-                'dnsUsage': { base: 99.9, variance: 0.1 },
-                'tlsUsage': { base: 87, variance: 3 },
-                'ipv6Usage': { base: 38, variance: 2 }
-            };
+            fetch('/api/protocol-usage')
+                .then(response => response.json())
+                .then(data => {
+                    const updates = [
+                        { id: 'httpUsage', value: data.http_https?.percentage || 82 },
+                        { id: 'tcpUsage', value: data.tcp?.percentage || 91 },
+                        { id: 'udpUsage', value: data.udp?.percentage || 23 },
+                        { id: 'dnsUsage', value: data.dns?.percentage || 99.9 },
+                        { id: 'tlsUsage', value: data.tls?.percentage || 87 },
+                        { id: 'ipv6Usage', value: data.ipv6?.percentage || 38 },
+                        { id: 'quicUsage', value: data.quic?.percentage || 18 },
+                        { id: 'smtpUsage', value: 95 }
+                    ];
 
-            Object.keys(stats).forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    const { base, variance } = stats[id];
-                    const value = base + (Math.random() - 0.5) * variance;
-                    element.textContent = value.toFixed(id === 'dnsUsage' ? 1 : 0) + '%';
-                }
-            });
+                    updates.forEach(update => {
+                        const element = document.getElementById(update.id);
+                        if (element) {
+                            const newValue = update.value + '%';
+                            if (element.textContent !== newValue) {
+                                element.style.transform = 'scale(1.1)';
+                                element.style.textShadow = '0 0 30px currentColor';
+                                element.textContent = newValue;
+
+                                setTimeout(() => {
+                                    element.style.transform = 'scale(1)';
+                                    element.style.textShadow = '0 0 20px currentColor';
+                                }, 300);
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.log('Protocol usage update info:', error));
         }
 
-        // Tab switching functionality
-        function switchTab(tabName) {
-            // Remove active class from all tabs and content
-            document.querySelectorAll('.explorer-tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.explorer-content').forEach(content => content.classList.remove('active'));
-
-            // Add active class to clicked tab and corresponding content
-            event.target.classList.add('active');
-            document.getElementById(tabName).classList.add('active');
-        }
-
-        // Protocol details popup (placeholder)
-        function showProtocolDetails(protocol, event) {
-            event.stopPropagation();
-            alert(`Detailed information about ${protocol} protocol would be displayed here in a modal or expanded section.`);
-        }
-
-        // Layer details toggle
-        function toggleLayerDetails(layer) {
-            // This could expand to show more detailed information about each layer
-            console.log(`Layer details for: ${layer.querySelector('.layer-name').textContent}`);
-        }
-
-        // Demo functionality
+        // Enhanced Demo Functionality
         function startDemo(type) {
             const packet = document.getElementById('travelingPacket');
             const title = document.getElementById('demoTitle');
@@ -1834,40 +1295,48 @@
 
             const demos = {
                 'http': {
-                    title: 'HTTP Web Request',
-                    description: 'Watch how a web page request travels through the network',
-                    stack: `Application Layer: HTTP GET request for webpage
-Transport Layer: TCP connection establishment (3-way handshake)
-Network Layer: IP routing to destination server
-Data Link Layer: Ethernet frame transmission
-Physical Layer: Electrical signals over copper/fiber`
+                    title: 'HTTP Web Request Flow',
+                    description: 'Watch how a web page request travels through each protocol layer',
+                    stack: `Layer 7 (Application): HTTP GET request for webpage
+Layer 6 (Presentation): TLS encryption and content encoding
+Layer 5 (Session): TCP session establishment
+Layer 4 (Transport): TCP segments with sequence numbers
+Layer 3 (Network): IP packets with routing information
+Layer 2 (Data Link): Ethernet frames with MAC addresses
+Layer 1 (Physical): Electrical signals over network medium`
                 },
                 'email': {
-                    title: 'Email Message Delivery',
-                    description: 'See how an email travels from sender to recipient',
-                    stack: `Application Layer: SMTP email transmission
-Transport Layer: TCP reliable delivery
-Network Layer: IP packet routing through mail servers
-Data Link Layer: Frame forwarding at each hop
-Physical Layer: Signal transmission across links`
+                    title: 'Email Message Transmission',
+                    description: 'See how an email travels from sender to recipient through mail servers',
+                    stack: `Layer 7 (Application): SMTP protocol for email transfer
+Layer 6 (Presentation): MIME encoding and TLS encryption
+Layer 5 (Session): SMTP session with authentication
+Layer 4 (Transport): TCP reliable delivery with flow control
+Layer 3 (Network): IP routing through mail server infrastructure
+Layer 2 (Data Link): Frame transmission across network links
+Layer 1 (Physical): Signal transmission across physical media`
                 },
                 'file': {
-                    title: 'File Transfer Operation',
-                    description: 'Observe how large files are transferred securely',
-                    stack: `Application Layer: SFTP secure file transfer
-Transport Layer: TCP with flow control for large data
-Network Layer: IP fragmentation and reassembly
-Data Link Layer: Frame sequencing and acknowledgment
-Physical Layer: High-speed data transmission`
+                    title: 'Secure File Transfer',
+                    description: 'Observe how large files are transferred securely using SFTP',
+                    stack: `Layer 7 (Application): SFTP secure file transfer protocol
+Layer 6 (Presentation): SSH encryption and compression
+Layer 5 (Session): SSH session with key exchange
+Layer 4 (Transport): TCP with congestion control for large data
+Layer 3 (Network): IP fragmentation and reassembly
+Layer 2 (Data Link): Frame sequencing and error detection
+Layer 1 (Physical): High-speed data transmission`
                 },
                 'video': {
-                    title: 'Video Stream Delivery',
-                    description: 'Watch real-time video streaming in action',
-                    stack: `Application Layer: RTSP/HTTP streaming protocol
-Transport Layer: UDP for low-latency delivery
-Network Layer: IP multicast for efficiency
-Data Link Layer: Priority queuing for real-time data
-Physical Layer: High-bandwidth channels`
+                    title: 'Real-time Video Streaming',
+                    description: 'Watch real-time video streaming protocols in action',
+                    stack: `Layer 7 (Application): HTTP/3 and WebRTC streaming
+Layer 6 (Presentation): Video compression and encryption
+Layer 5 (Session): Media session management
+Layer 4 (Transport): UDP for low-latency delivery
+Layer 3 (Network): IP with QoS markings for priority
+Layer 2 (Data Link): Priority queuing for real-time data
+Layer 1 (Physical): High-bandwidth wireless/fiber channels`
                 }
             };
 
@@ -1876,28 +1345,25 @@ Physical Layer: High-bandwidth channels`
             description.textContent = demo.description;
             protocolStack.textContent = demo.stack;
 
-            // Start packet animation
+            // Enhanced packet animation
             packet.classList.remove('packet-traveling');
             setTimeout(() => {
                 packet.classList.add('packet-traveling');
             }, 100);
 
-            // Update step descriptions
-            setTimeout(() => {
-                document.getElementById('clientStep').textContent = 'Sending request';
-            }, 500);
+            // Update step descriptions with timing
+            const steps = [
+                { id: 'clientStep', text: 'Sending request', delay: 500 },
+                { id: 'routerStep', text: 'Routing packet', delay: 1500 },
+                { id: 'internetStep', text: 'Global routing', delay: 2500 },
+                { id: 'serverStep', text: 'Processing & responding', delay: 3500 }
+            ];
 
-            setTimeout(() => {
-                document.getElementById('routerStep').textContent = 'Routing packet';
-            }, 1500);
-
-            setTimeout(() => {
-                document.getElementById('internetStep').textContent = 'Global routing';
-            }, 2500);
-
-            setTimeout(() => {
-                document.getElementById('serverStep').textContent = 'Processing & responding';
-            }, 3500);
+            steps.forEach(step => {
+                setTimeout(() => {
+                    document.getElementById(step.id).textContent = step.text;
+                }, step.delay);
+            });
 
             // Reset after animation
             setTimeout(() => {
@@ -1908,52 +1374,83 @@ Physical Layer: High-bandwidth channels`
             }, 8000);
         }
 
-        // Port filtering functionality
-        function filterPorts(searchTerm) {
-            const allPortItems = document.querySelectorAll('.port-item');
-            const searchLower = searchTerm.toLowerCase();
-
-            allPortItems.forEach(item => {
-                const portNumber = item.querySelector('.port-number').textContent.toLowerCase();
-                const service = item.querySelector('.port-service').textContent.toLowerCase();
-
-                if (portNumber.includes(searchLower) || service.includes(searchLower)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        // Scroll animations
+        // Enhanced Scroll Animations
         function handleScrollAnimations() {
-            const elements = document.querySelectorAll('.fade-in');
+            const elements = document.querySelectorAll('.fade-in, .protocol-layer');
 
-            elements.forEach(element => {
+            elements.forEach((element, index) => {
                 const elementTop = element.getBoundingClientRect().top;
                 const elementVisible = 150;
 
                 if (elementTop < window.innerHeight - elementVisible) {
-                    element.classList.add('animate');
+                    setTimeout(() => {
+                        element.classList.add('animate');
+                    }, index * 150); // Stagger the animations
                 }
             });
         }
 
-        // Initialize page
+        // Protocol Details (placeholder)
+        function showProtocolDetails(protocol, event) {
+            event.stopPropagation();
+
+            // Create a visual feedback
+            const tag = event.target;
+            const originalTransform = tag.style.transform;
+            tag.style.transform = 'scale(1.2)';
+            tag.style.boxShadow = '0 0 30px rgba(255, 255, 255, 0.5)';
+
+            setTimeout(() => {
+                tag.style.transform = originalTransform;
+                tag.style.boxShadow = '';
+            }, 200);
+
+            console.log(`Protocol details for: ${protocol}`);
+            // Future: Implement modal with detailed protocol information
+        }
+
+        // Layer Details Toggle
+        function toggleLayerDetails(layer) {
+            // Add visual feedback
+            const layerNumber = layer.querySelector('.layer-number');
+            layerNumber.style.transform = 'scale(1.2)';
+            layerNumber.style.boxShadow = '0 0 30px rgba(255, 255, 255, 0.5)';
+
+            setTimeout(() => {
+                layerNumber.style.transform = 'scale(1)';
+                layerNumber.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
+            }, 300);
+
+            console.log(`Layer details for: ${layer.querySelector('.layer-name').textContent}`);
+        }
+
+        // Initialize Everything
         document.addEventListener('DOMContentLoaded', function() {
-            createParticles();
-            createProtocolStream();
-            updateProtocolUsage();
+            // Create visual effects
+            createProtocolParticles();
+
+            // Setup interactions
             handleScrollAnimations();
+            updateProtocolUsage();
 
-            // Update stats periodically
-            setInterval(updateProtocolUsage, 8000);
+            // Update data periodically
+            setInterval(updateProtocolUsage, 12000);
 
-            // Scroll event listener
-            window.addEventListener('scroll', handleScrollAnimations);
+            // Event listeners
+            window.addEventListener('scroll', handleScrollAnimations, { passive: true });
 
-            console.log('Enhanced Network Protocols page loaded');
+            console.log('🌐 Enhanced tcp-ip.ch Protocols page loaded!');
         });
+
+        // Performance monitoring
+        if ('performance' in window) {
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                    console.log(`🚀 Protocols page loaded in ${loadTime}ms`);
+                }, 0);
+            });
+        }
     </script>
 </body>
 </html>
