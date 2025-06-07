@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Security - NetworkHub.ch</title>
+    <style>
+        /* Inherit main styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-color: #00ffff;
+            --secondary-color: #ff00ff;
+            --accent-color: #00ff88;
+            --warning-color: #ffaa00;
+            --danger-color: #ff4444;
+            --success-color: #00ff44;
+            --bg-dark: #0a0a0f;
+            --bg-darker: #050508;
+            --bg-card: #111118;
+            --bg-section: #161620;
+            --text-light: #e0e0ff;
+            --text-dim: #a0a0c0;
+            --text-muted: #606080;
+            --border-glow: rgba(0, 255, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        nav {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .hero {
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 68, 68, 0.1) 0%, transparent 70%);
+        }
+
+        .section {
+            padding: 6rem 0;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .section h2 {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: var(--danger-color);
+            text-align: center;
+            position: relative;
+        }
+
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin: 4rem 0;
+        }
+
+        .security-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .security-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 68, 68, 0.05), rgba(255, 170, 0, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .security-card:hover::before {
+            opacity: 1;
+        }
+
+        .security-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 68, 68, 0.3);
+            border-color: var(--danger-color);
+        }
+
+        .security-icon {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: var(--danger-color);
+        }
+
+        .security-title {
+            color: var(--danger-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .security-type {
+            color: var(--warning-color);
+            font-size: 0.9rem;
+            background: rgba(255, 170, 0, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .threat-level {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 4rem 0;
+            padding: 3rem;
+            background: var(--bg-section);
+            border-radius: 25px;
+            border: 1px solid var(--border-glow);
+        }
+
+        .threat-meter {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--success-color) 0deg 120deg,
+                var(--warning-color) 120deg 240deg,
+                var(--danger-color) 240deg 360deg
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .threat-meter::before {
+            content: '';
+            width: 160px;
+            height: 160px;
+            background: var(--bg-dark);
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .threat-indicator {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--warning-color);
+            z-index: 1;
+        }
+
+        .live-threats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .threat-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--danger-color);
+            text-align: center;
+        }
+
+        .threat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--danger-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .threat-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        footer {
+            background: var(--bg-darker);
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-glow);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo"><a href="/" style="color: inherit; text-decoration: none;">NetworkHub.ch</a></div>
+            <ul class="nav-links">
+                <li><a href="/">🏠 Hub</a></li>
+                <li><a href="/protocols">📡 Protocols</a></li>
+                <li><a href="/security" style="color: var(--danger-color);">🔒 Security</a></li>
+                <li><a href="/modern-tech">🚀 Modern Tech</a></li>
+                <li><a href="/tools">🛠️ Tools</a></li>
+                <li><a href="/cloud">☁️ Cloud</a></li>
+                <li><a href="/performance">⚡ Performance</a></li>
+                <li><a href="/osi-model">📊 OSI Model</a></li>
+                <li><a href="/troubleshooting">🔧 Troubleshooting</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 style="font-size: 4rem; color: var(--danger-color);">Network Security</h1>
+            <p style="font-size: 1.4rem; margin-bottom: 2rem;">
+                Defending the digital realm from evolving cyber threats
+            </p>
+        </div>
+    </section>
+
+    <!-- Current Threat Level -->
+    <section class="section">
+        <h2>Global Threat Landscape</h2>
+        <div class="threat-level">
+            <div>
+                <div class="threat-meter">
+                    <div class="threat-indicator" id="threatLevel">MODERATE</div>
+                </div>
+                <h3 style="color: var(--warning-color); text-align: center; margin-top: 2rem;">Current Threat Level</h3>
+                <p style="color: var(--text-dim); text-align: center;">Updated in real-time based on global security intelligence</p>
+            </div>
+        </div>
+
+        <div class="live-threats">
+            <div class="threat-card">
+                <div class="threat-number" id="malwareFamilies">1,247</div>
+                <div class="threat-label">Active Malware Families</div>
+            </div>
+            <div class="threat-card">
+                <div class="threat-number" id="phishingSites">89</div>
+                <div class="threat-label">New Phishing Sites/Hour</div>
+            </div>
+            <div class="threat-card">
+                <div class="threat-number" id="botnetsActive">18</div>
+                <div class="threat-label">Active Botnets</div>
+            </div>
+            <div class="threat-card">
+                <div class="threat-number" id="zeroDays">23</div>
+                <div class="threat-label">Known Zero-Days</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Technologies -->
+    <section class="section">
+        <h2>Essential Security Technologies</h2>
+        <div class="security-grid">
+            {% for topic in security_topics %}
+            <div class="security-card">
+                <div class="security-icon">
+                    {% if topic.name == 'Firewalls' %}🛡️
+                    {% elif topic.name == 'VPN' %}🔐
+                    {% elif topic.name == 'IDS/IPS' %}🚨
+                    {% elif topic.name == 'Network Segmentation' %}🔀
+                    {% elif topic.name == 'DDoS Protection' %}⚔️
+                    {% else %}🔒
+                    {% endif %}
+                </div>
+                <div class="security-title">{{ topic.name }}</div>
+                <div class="security-type">{{ topic.type }}</div>
+                <p style="margin-bottom: 2rem; position: relative; z-index: 1;">
+                    {% if topic.name == 'Firewalls' %}
+                        Network traffic filtering and access control. Modern firewalls inspect packets at multiple layers,
+                        providing deep packet inspection and application-aware filtering.
+                    {% elif topic.name == 'VPN' %}
+                        Secure encrypted tunnels for remote access and site-to-site connectivity.
+                        Essential for protecting data in transit and enabling secure remote work.
+                    {% elif topic.name == 'IDS/IPS' %}
+                        Real-time threat detection and automated response systems.
+                        Monitor network traffic for suspicious activities and known attack patterns.
+                    {% elif topic.name == 'Network Segmentation' %}
+                        Logical separation of network resources to limit attack spread.
+                        Implements principle of least privilege and containment strategies.
+                    {% elif topic.name == 'DDoS Protection' %}
+                        Distributed denial of service attack mitigation and traffic scrubbing.
+                        Ensures service availability during volumetric and application layer attacks.
+                    {% else %}
+                        End-to-end encryption and cryptographic protection for data confidentiality.
+                        Implements modern encryption standards and key management practices.
+                    {% endif %}
+                </p>
+                <div style="position: relative; z-index: 1;">
+                    <strong style="color: var(--accent-color);">Technologies:</strong><br>
+                    <div style="margin-top: 0.5rem;">
+                        {% for tech in topic.technologies %}
+                        <span style="background: rgba(0, 255, 136, 0.2); padding: 0.3rem 0.6rem; border-radius: 8px; margin: 0.2rem; display: inline-block; font-size: 0.9rem;">
+                            {{ tech }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Security Frameworks -->
+    <section class="section">
+        <h2>Security Frameworks & Standards</h2>
+        <div style="background: var(--bg-section); border-radius: 25px; padding: 4rem; border: 1px solid var(--border-glow);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem;">
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🛡️</div>
+                    <h3 style="color: var(--danger-color); margin-bottom: 1rem;">NIST Cybersecurity Framework</h3>
+                    <p style="color: var(--text-dim);">Identify, Protect, Detect, Respond, Recover - comprehensive approach to cybersecurity risk management</p>
+                </div>
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔐</div>
+                    <h3 style="color: var(--danger-color); margin-bottom: 1rem;">Zero Trust Architecture</h3>
+                    <p style="color: var(--text-dim);">Never trust, always verify - identity-centric security model for modern networks</p>
+                </div>
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+                    <h3 style="color: var(--danger-color); margin-bottom: 1rem;">ISO 27001</h3>
+                    <p style="color: var(--text-dim);">International standard for information security management systems and risk assessment</p>
+                </div>
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+                    <h3 style="color: var(--danger-color); margin-bottom: 1rem;">OWASP Top 10</h3>
+                    <p style="color: var(--text-dim);">Most critical web application security risks and mitigation strategies</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Best Practices -->
+    <section class="section">
+        <h2>Network Security Best Practices</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;">
+            <div>
+                <h3 style="color: var(--accent-color); margin-bottom: 2rem;">Defense in Depth</h3>
+                <div style="background: var(--bg-card); padding: 2rem; border-radius: 15px; border: 1px solid var(--border-glow);">
+                    <ul style="list-style: none; space-y: 1rem;">
+                        <li style="margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--danger-color);">🛡️</span>
+                            <strong>Perimeter Security:</strong> Firewalls, IPS, and gateway protection
+                        </li>
+                        <li style="margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--danger-color);">🔗</span>
+                            <strong>Network Segmentation:</strong> VLANs, subnets, and micro-segmentation
+                        </li>
+                        <li style="margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--danger-color);">👤</span>
+                            <strong>Identity & Access:</strong> Multi-factor authentication and privilege management
+                        </li>
+                        <li style="margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--danger-color);">📊</span>
+                            <strong>Monitoring & Analytics:</strong> SIEM, behavioral analysis, and threat hunting
+                        </li>
+                        <li style="margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--danger-color);">💾</span>
+                            <strong>Data Protection:</strong> Encryption at rest and in transit
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <h3 style="color: var(--accent-color); margin-bottom: 2rem;">Incident Response</h3>
+                <div style="background: var(--bg-card); padding: 2rem; border-radius: 15px; border: 1px solid var(--border-glow);">
+                    <div style="display: flex; align-items: center; margin-bottom: 2rem;">
+                        <div style="width: 50px; height: 50px; background: var(--danger-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">1</div>
+                        <div>
+                            <strong>Preparation</strong><br>
+                            <small style="color: var(--text-dim);">Policies, procedures, and response team</small>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 2rem;">
+                        <div style="width: 50px; height: 50px; background: var(--warning-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">2</div>
+                        <div>
+                            <strong>Detection & Analysis</strong><br>
+                            <small style="color: var(--text-dim);">Identify and assess security incidents</small>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 2rem;">
+                        <div style="width: 50px; height: 50px; background: var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">3</div>
+                        <div>
+                            <strong>Containment & Eradication</strong><br>
+                            <small style="color: var(--text-dim);">Stop the spread and eliminate threats</small>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <div style="width: 50px; height: 50px; background: var(--success-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">4</div>
+                        <div>
+                            <strong>Recovery & Lessons Learned</strong><br>
+                            <small style="color: var(--text-dim);">Restore services and improve defenses</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+            <h3 style="color: var(--danger-color); margin-bottom: 1rem;">NetworkHub.ch Security</h3>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">
+                Fortifying networks against evolving cyber threats
+            </p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                Security through education • <a href="/" style="color: var(--accent-color);">Return to Hub</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Update security threat statistics
+        function updateThreatStats() {
+            fetch('/api/security-threats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('malwareFamilies').textContent = data.malware_families.toLocaleString();
+                    document.getElementById('phishingSites').textContent = data.phishing_sites;
+                    document.getElementById('botnetsActive').textContent = data.botnets_active;
+                    document.getElementById('zeroDays').textContent = data.zero_days;
+                    document.getElementById('threatLevel').textContent = data.threat_level;
+                })
+                .catch(error => console.log('Threat stats update failed:', error));
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateThreatStats();
+            setInterval(updateThreatStats, 20000);
+        });
+    </script>
+</body>
+</html>

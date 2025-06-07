@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Technologies - NetworkHub.ch</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-color: #00ffff;
+            --secondary-color: #ff00ff;
+            --accent-color: #00ff88;
+            --future-color: #8a2be2;
+            --quantum-color: #ff1493;
+            --bg-dark: #0a0a0f;
+            --bg-darker: #050508;
+            --bg-card: #111118;
+            --bg-section: #161620;
+            --text-light: #e0e0ff;
+            --text-dim: #a0a0c0;
+            --border-glow: rgba(0, 255, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Futuristic background animation */
+        .future-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+            background-image:
+                linear-gradient(45deg, var(--future-color) 1px, transparent 1px),
+                linear-gradient(-45deg, var(--quantum-color) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridShift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes gridShift {
+            0% { transform: translateX(0) translateY(0); opacity: 0.1; }
+            100% { transform: translateX(30px) translateY(30px); opacity: 0.2; }
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        nav {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .hero {
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.15) 0%, transparent 70%);
+        }
+
+        .section {
+            padding: 6rem 0;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .section h2 {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: var(--future-color);
+            text-align: center;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 3rem;
+            margin: 4rem 0;
+        }
+
+        .tech-card {
+            background: var(--bg-card);
+            border-radius: 25px;
+            padding: 3rem;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .tech-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.05), rgba(255, 20, 147, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tech-card:hover::before {
+            opacity: 1;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(138, 43, 226, 0.4);
+            border-color: var(--future-color);
+        }
+
+        .tech-icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, var(--future-color), var(--quantum-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tech-title {
+            color: var(--future-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tech-category {
+            background: rgba(138, 43, 226, 0.2);
+            color: var(--future-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tech-features {
+            list-style: none;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tech-features li {
+            margin-bottom: 0.8rem;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--text-light);
+        }
+
+        .tech-features li::before {
+            content: '🚀';
+            position: absolute;
+            left: 0;
+            color: var(--quantum-color);
+        }
+
+        .tech-timeline {
+            background: var(--bg-section);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .timeline-road {
+            position: relative;
+            padding: 3rem 0;
+        }
+
+        .timeline-road::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--future-color), var(--quantum-color));
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .timeline-milestone {
+            position: relative;
+            margin: 4rem 0;
+            opacity: 0;
+            animation: slideInMilestone 1s ease-out forwards;
+        }
+
+        .timeline-milestone:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+
+        .timeline-milestone:nth-child(odd) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes slideInMilestone {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .timeline-milestone::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            width: 25px;
+            height: 25px;
+            background: var(--quantum-color);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            box-shadow: 0 0 20px var(--quantum-color);
+        }
+
+        .timeline-milestone:nth-child(odd) .milestone-content {
+            margin-right: 55%;
+            padding-right: 2rem;
+            text-align: right;
+        }
+
+        .timeline-milestone:nth-child(even) .milestone-content {
+            margin-left: 55%;
+            padding-left: 2rem;
+        }
+
+        .milestone-content {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .milestone-content:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(138, 43, 226, 0.3);
+        }
+
+        .milestone-year {
+            color: var(--quantum-color);
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .milestone-title {
+            color: var(--future-color);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .innovation-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .innovation-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid var(--border-glow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .innovation-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(138, 43, 226, 0.1), transparent);
+            animation: rotate 6s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .innovation-card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .innovation-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .innovation-title {
+            color: var(--future-color);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .innovation-description {
+            color: var(--text-light);
+            position: relative;
+            z-index: 1;
+        }
+
+        .quantum-section {
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(255, 20, 147, 0.1));
+            border-radius: 30px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quantum-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="%23ff1493" opacity="0.3"/><circle cx="20" cy="20" r="1" fill="%238a2be2" opacity="0.4"/><circle cx="80" cy="30" r="1.5" fill="%23ff1493" opacity="0.3"/><circle cx="30" cy="80" r="1" fill="%238a2be2" opacity="0.5"/><circle cx="70" cy="70" r="2" fill="%23ff1493" opacity="0.2"/></svg>') repeat;
+            animation: quantumFloat 15s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes quantumFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .ai-ml-section {
+            background: var(--bg-section);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .ai-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .ai-feature {
+            background: rgba(0, 255, 136, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            text-align: center;
+        }
+
+        .ai-feature h4 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        footer {
+            background: var(--bg-darker);
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-glow);
+        }
+
+        @media (max-width: 768px) {
+            .tech-grid { grid-template-columns: 1fr; }
+            .timeline-milestone:nth-child(odd) .milestone-content,
+            .timeline-milestone:nth-child(even) .milestone-content {
+                margin-left: 50px;
+                margin-right: 0;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                text-align: left;
+            }
+            .timeline-road::before { left: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="future-grid"></div>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo"><a href="/" style="color: inherit; text-decoration: none;">NetworkHub.ch</a></div>
+            <ul class="nav-links">
+                <li><a href="/">🏠 Hub</a></li>
+                <li><a href="/protocols">📡 Protocols</a></li>
+                <li><a href="/security">🔒 Security</a></li>
+                <li><a href="/modern-tech" style="color: var(--future-color);">🚀 Modern Tech</a></li>
+                <li><a href="/tools">🛠️ Tools</a></li>
+                <li><a href="/cloud">☁️ Cloud</a></li>
+                <li><a href="/performance">⚡ Performance</a></li>
+                <li><a href="/osi-model">📊 OSI Model</a></li>
+                <li><a href="/troubleshooting">🔧 Troubleshooting</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div>
+            <h1 style="font-size: 4rem; background: linear-gradient(45deg, var(--future-color), var(--quantum-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Modern Technologies</h1>
+            <p style="font-size: 1.4rem; margin-bottom: 2rem;">
+                Pioneering the next generation of network innovation
+            </p>
+        </div>
+    </section>
+
+    <!-- Cutting-Edge Technologies -->
+    <section class="section">
+        <h2>Revolutionary Network Technologies</h2>
+        <div class="tech-grid">
+            {% for tech in technologies %}
+            <div class="tech-card">
+                <div class="tech-icon">
+                    {% if tech.name == '5G Networks' %}📡
+                    {% elif tech.name == 'SD-WAN' %}🌐
+                    {% elif tech.name == 'Edge Computing' %}⚡
+                    {% elif tech.name == 'Network Function Virtualization' %}🔄
+                    {% elif tech.name == 'Intent-Based Networking' %}🧠
+                    {% else %}🔮
+                    {% endif %}
+                </div>
+                <div class="tech-title">{{ tech.name }}</div>
+                <div class="tech-category">{{ tech.category }}</div>
+                <div style="margin-bottom: 2rem; position: relative; z-index: 1; color: var(--text-light);">
+                    {% if tech.name == '5G Networks' %}
+                        Fifth-generation wireless technology revolutionizing mobile connectivity with ultra-low latency,
+                        massive device capacity, and network slicing capabilities for diverse use cases.
+                    {% elif tech.name == 'SD-WAN' %}
+                        Software-defined wide area networking that centralizes network control, optimizes traffic routing,
+                        and integrates cloud services for enhanced performance and simplified management.
+                    {% elif tech.name == 'Edge Computing' %}
+                        Distributed computing paradigm bringing processing closer to data sources, reducing latency
+                        and enabling real-time applications for IoT and mobile users.
+                    {% elif tech.name == 'Network Function Virtualization' %}
+                        Virtualizing network services traditionally run on proprietary hardware, enabling flexible,
+                        scalable, and cost-effective network service deployment.
+                    {% elif tech.name == 'Intent-Based Networking' %}
+                        AI-driven network management that translates business intent into network policies,
+                        automatically configuring and optimizing network behavior.
+                    {% else %}
+                        Quantum networking leveraging quantum entanglement for ultra-secure communication channels
+                        and the foundation of future quantum internet infrastructure.
+                    {% endif %}
+                </div>
+                <ul class="tech-features">
+                    {% for feature in tech.features %}
+                    <li>{{ feature }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Technology Evolution Timeline -->
+    <section class="section">
+        <h2>Innovation Timeline</h2>
+        <div class="tech-timeline">
+            <h3 style="color: var(--future-color); margin-bottom: 3rem; text-align: center;">
+                The Journey to Next-Gen Networking
+            </h3>
+            <div class="timeline-road">
+                <div class="timeline-milestone">
+                    <div class="milestone-content">
+                        <div class="milestone-year">2020-2025</div>
+                        <div class="milestone-title">5G Global Rollout</div>
+                        <p>Worldwide deployment of 5G networks, enabling unprecedented mobile speeds and IoT connectivity.
+                        Network slicing becomes mainstream for specialized applications.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-milestone">
+                    <div class="milestone-content">
+                        <div class="milestone-year">2025-2030</div>
+                        <div class="milestone-title">Edge Computing Dominance</div>
+                        <p>Edge infrastructure becomes ubiquitous, processing data at the network edge for autonomous vehicles,
+                        smart cities, and real-time AI applications.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-milestone">
+                    <div class="milestone-content">
+                        <div class="milestone-year">2030-2035</div>
+                        <div class="milestone-title">Quantum Internet Emergence</div>
+                        <p>First quantum networks connecting major research institutions and financial centers,
+                        providing unbreakable quantum encryption for critical communications.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-milestone">
+                    <div class="milestone-content">
+                        <div class="milestone-year">2035-2040</div>
+                        <div class="milestone-title">Brain-Computer Interfaces</div>
+                        <p>Neural interfaces enable direct brain-to-network communication, revolutionizing how humans
+                        interact with digital systems and each other.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-milestone">
+                    <div class="milestone-content">
+                        <div class="milestone-year">2040-2050</div>
+                        <div class="milestone-title">Interplanetary Networks</div>
+                        <p>Robust internet connectivity established between Earth, Moon, and Mars colonies,
+                        extending human digital civilization across the solar system.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quantum Networking -->
+    <section class="section">
+        <h2>Quantum Networking Revolution</h2>
+        <div class="quantum-section">
+            <h3 style="color: var(--quantum-color); margin-bottom: 2rem; text-align: center; position: relative; z-index: 1;">
+                The Quantum Advantage
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; position: relative; z-index: 1;">
+                <div>
+                    <h4 style="color: var(--future-color); margin-bottom: 1.5rem;">Quantum Entanglement</h4>
+                    <p style="margin-bottom: 1.5rem;">
+                        Quantum entanglement creates instantaneous, unbreakable connections between particles across any distance.
+                        This phenomenon enables ultra-secure communication channels that are fundamentally impossible to intercept.
+                    </p>
+                    <h4 style="color: var(--future-color); margin-bottom: 1.5rem;">Quantum Key Distribution</h4>
+                    <p style="margin-bottom: 1.5rem;">
+                        QKD protocols use quantum mechanics to detect any eavesdropping attempts, providing provably secure
+                        key exchange for critical communications.
+                    </p>
+                    <h4 style="color: var(--future-color); margin-bottom: 1.5rem;">Current Progress</h4>
+                    <p>
+                        China has deployed a 2,000km quantum network, while Europe and the US are building quantum internet
+                        testbeds connecting major research institutions.
+                    </p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 10rem; margin-bottom: 2rem; background: linear-gradient(45deg, var(--quantum-color), var(--future-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">⚛️</div>
+                    <div style="background: rgba(255, 20, 147, 0.2); padding: 2rem; border-radius: 15px; border: 1px solid rgba(255, 20, 147, 0.4);">
+                        <h4 style="color: var(--quantum-color); margin-bottom: 1rem;">Quantum Specs</h4>
+                        <div style="color: var(--text-dim); font-size: 0.9rem;">
+                            <strong>Speed:</strong> Instantaneous entanglement<br>
+                            <strong>Security:</strong> Quantum-safe encryption<br>
+                            <strong>Range:</strong> Unlimited (in theory)<br>
+                            <strong>Applications:</strong> Banking, Government, Research
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI & Machine Learning in Networks -->
+    <section class="section">
+        <h2>AI-Powered Networking</h2>
+        <div class="ai-ml-section">
+            <h3 style="color: var(--accent-color); margin-bottom: 2rem; text-align: center;">
+                Intelligent Network Management
+            </h3>
+            <p style="text-align: center; margin-bottom: 3rem; color: var(--text-dim);">
+                Artificial intelligence and machine learning are transforming network operations,
+                enabling self-healing, self-optimizing, and predictive network infrastructures.
+            </p>
+
+            <div class="ai-features">
+                <div class="ai-feature">
+                    <h4>Predictive Analytics</h4>
+                    <p style="color: var(--text-dim);">
+                        ML algorithms analyze network patterns to predict failures, capacity needs,
+                        and performance bottlenecks before they impact users.
+                    </p>
+                </div>
+
+                <div class="ai-feature">
+                    <h4>Automated Remediation</h4>
+                    <p style="color: var(--text-dim);">
+                        AI systems automatically detect and resolve network issues,
+                        reducing mean time to recovery from hours to seconds.
+                    </p>
+                </div>
+
+                <div class="ai-feature">
+                    <h4>Traffic Optimization</h4>
+                    <p style="color: var(--text-dim);">
+                        Intelligent routing algorithms dynamically optimize traffic flows
+                        based on real-time conditions and historical patterns.
+                    </p>
+                </div>
+
+                <div class="ai-feature">
+                    <h4>Security Enhancement</h4>
+                    <p style="color: var(--text-dim);">
+                        ML-powered security systems detect anomalies and threats
+                        in real-time, adapting to new attack vectors automatically.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation Showcase -->
+    <section class="section">
+        <h2>Breakthrough Innovations</h2>
+        <div class="innovation-showcase">
+            <div class="innovation-card">
+                <div class="innovation-icon">🛰️</div>
+                <div class="innovation-title">Satellite Mesh Networks</div>
+                <div class="innovation-description">
+                    Low Earth Orbit constellations creating global internet coverage,
+                    connecting the most remote regions of our planet.
+                </div>
+            </div>
+
+            <div class="innovation-card">
+                <div class="innovation-icon">🌊</div>
+                <div class="innovation-title">Li-Fi Technology</div>
+                <div class="innovation-description">
+                    Light-based wireless communication achieving gigabit speeds
+                    while providing inherent security through optical containment.
+                </div>
+            </div>
+
+            <div class="innovation-card">
+                <div class="innovation-icon">🔬</div>
+                <div class="innovation-title">Molecular Networks</div>
+                <div class="innovation-description">
+                    Nano-scale communication systems using chemical signals,
+                    enabling networks inside the human body for medical applications.
+                </div>
+            </div>
+
+            <div class="innovation-card">
+                <div class="innovation-icon">🌐</div>
+                <div class="innovation-title">Mesh Protocols</div>
+                <div class="innovation-description">
+                    Self-organizing networks that automatically discover optimal paths,
+                    creating resilient communications without central infrastructure.
+                </div>
+            </div>
+
+            <div class="innovation-card">
+                <div class="innovation-icon">⚡</div>
+                <div class="innovation-title">Energy Harvesting</div>
+                <div class="innovation-description">
+                    Network devices powered by ambient energy sources,
+                    creating sustainable, maintenance-free networking infrastructure.
+                </div>
+            </div>
+
+            <div class="innovation-card">
+                <div class="innovation-icon">🎭</div>
+                <div class="innovation-title">Holographic Networks</div>
+                <div class="innovation-description">
+                    Ultra-high bandwidth systems enabling real-time holographic communication
+                    and immersive virtual presence across global distances.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+            <h3 style="color: var(--future-color); margin-bottom: 1rem;">NetworkHub.ch Future</h3>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">
+                Exploring the cutting edge of network innovation
+            </p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                Tomorrow's networks, today • <a href="/" style="color: var(--accent-color);">Return to Hub</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Quantum effect animation
+        function createQuantumEffects() {
+            const quantum = document.querySelector('.quantum-section');
+            setInterval(() => {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = '4px';
+                particle.style.height = '4px';
+                particle.style.background = 'var(--quantum-color)';
+                particle.style.borderRadius = '50%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animation = 'quantumBlink 2s ease-in-out infinite';
+                particle.style.pointerEvents = 'none';
+                quantum.appendChild(particle);
+
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, 2000);
+            }, 500);
+        }
+
+        // Add quantum blink animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes quantumBlink {
+                0%, 100% { opacity: 0; transform: scale(1); }
+                50% { opacity: 1; transform: scale(1.5); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createQuantumEffects();
+            console.log('Modern Technologies loaded with quantum effects');
+        });
+    </script>
+</body>
+</html>

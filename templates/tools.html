@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Tools - NetworkHub.ch</title>
+    <style>
+        /* Base styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-color: #00ffff;
+            --secondary-color: #ff00ff;
+            --accent-color: #00ff88;
+            --warning-color: #ffaa00;
+            --bg-dark: #0a0a0f;
+            --bg-darker: #050508;
+            --bg-card: #111118;
+            --bg-section: #161620;
+            --text-light: #e0e0ff;
+            --text-dim: #a0a0c0;
+            --border-glow: rgba(0, 255, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        nav {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .hero {
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+        }
+
+        .section {
+            padding: 6rem 0;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .section h2 {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: var(--accent-color);
+            text-align: center;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin: 4rem 0;
+        }
+
+        .tool-card {
+            background: var(--bg-card);
+            border-radius: 25px;
+            padding: 3rem;
+            border: 1px solid var(--border-glow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.05), rgba(0, 255, 255, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tool-card:hover::before {
+            opacity: 1;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px rgba(0, 255, 136, 0.3);
+            border-color: var(--accent-color);
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tool-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-right: 1.5rem;
+        }
+
+        .tool-info h3 {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-category {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--accent-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        .tool-description {
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+            color: var(--text-light);
+        }
+
+        .tool-features {
+            list-style: none;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tool-features li {
+            margin-bottom: 0.8rem;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--text-dim);
+        }
+
+        .tool-features li::before {
+            content: '⚡';
+            position: absolute;
+            left: 0;
+            color: var(--warning-color);
+        }
+
+        .interactive-demo {
+            background: var(--bg-section);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .demo-terminal {
+            background: #000;
+            border-radius: 10px;
+            padding: 2rem;
+            font-family: 'Courier New', monospace;
+            margin: 2rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .terminal-button.red { background: #ff5f56; }
+        .terminal-button.yellow { background: #ffbd2e; }
+        .terminal-button.green { background: #27ca3f; }
+
+        .terminal-title {
+            color: #fff;
+            margin-left: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .terminal-command {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .terminal-output {
+            color: var(--text-light);
+            white-space: pre-wrap;
+            line-height: 1.4;
+        }
+
+        .performance-test {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 4rem 0;
+            border: 1px solid var(--border-glow);
+            text-align: center;
+        }
+
+        .test-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .test-metric {
+            padding: 2rem;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .run-test-btn {
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            color: var(--bg-dark);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .run-test-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
+        }
+
+        footer {
+            background: var(--bg-darker);
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-glow);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo"><a href="/" style="color: inherit; text-decoration: none;">NetworkHub.ch</a></div>
+            <ul class="nav-links">
+                <li><a href="/">🏠 Hub</a></li>
+                <li><a href="/protocols">📡 Protocols</a></li>
+                <li><a href="/security">🔒 Security</a></li>
+                <li><a href="/modern-tech">🚀 Modern Tech</a></li>
+                <li><a href="/tools" style="color: var(--accent-color);">🛠️ Tools</a></li>
+                <li><a href="/cloud">☁️ Cloud</a></li>
+                <li><a href="/performance">⚡ Performance</a></li>
+                <li><a href="/osi-model">📊 OSI Model</a></li>
+                <li><a href="/troubleshooting">🔧 Troubleshooting</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div>
+            <h1 style="font-size: 4rem; color: var(--accent-color);">Network Tools</h1>
+            <p style="font-size: 1.4rem; margin-bottom: 2rem;">
+                Master the professional toolkit for network analysis and optimization
+            </p>
+        </div>
+    </section>
+
+    <!-- Essential Tools -->
+    <section class="section">
+        <h2>Professional Network Toolkit</h2>
+        <div class="tools-grid">
+            {% for tool in tools %}
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">
+                        {% if tool.name == 'Wireshark' %}🔍
+                        {% elif tool.name == 'Nmap' %}🎯
+                        {% elif tool.name == 'ping' %}📡
+                        {% elif tool.name == 'traceroute' %}🗺️
+                        {% elif tool.name == 'iperf3' %}⚡
+                        {% elif tool.name == 'tcpdump' %}📊
+                        {% elif tool.name == 'Netstat' %}🔗
+                        {% else %}📈
+                        {% endif %}
+                    </div>
+                    <div class="tool-info">
+                        <h3>{{ tool.name }}</h3>
+                        <div class="tool-category">{{ tool.category }}</div>
+                    </div>
+                </div>
+                <div class="tool-description">{{ tool.use_case }}</div>
+                <ul class="tool-features">
+                    {% if tool.name == 'Wireshark' %}
+                    <li>3000+ protocol decoders</li>
+                    <li>Real-time packet capture</li>
+                    <li>Advanced filtering capabilities</li>
+                    <li>Statistical analysis tools</li>
+                    <li>Export to multiple formats</li>
+                    {% elif tool.name == 'Nmap' %}
+                    <li>Host discovery and enumeration</li>
+                    <li>Port scanning techniques</li>
+                    <li>OS and service detection</li>
+                    <li>Vulnerability assessment</li>
+                    <li>Scripting engine (NSE)</li>
+                    {% elif tool.name == 'iperf3' %}
+                    <li>TCP and UDP bandwidth testing</li>
+                    <li>Multi-threaded performance</li>
+                    <li>JSON output support</li>
+                    <li>Bidirectional testing</li>
+                    <li>Custom test parameters</li>
+                    {% else %}
+                    <li>Cross-platform compatibility</li>
+                    <li>Command-line interface</li>
+                    <li>Scriptable automation</li>
+                    <li>Real-time monitoring</li>
+                    <li>Professional reporting</li>
+                    {% endif %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Interactive Demo Section -->
+    <section class="section">
+        <h2>Live Tool Demonstrations</h2>
+        <div class="interactive-demo">
+            <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">
+                Network Diagnostic Commands
+            </h3>
+
+            <!-- Ping Demo -->
+            <div class="demo-terminal">
+                <div class="terminal-header">
+                    <div class="terminal-button red"></div>
+                    <div class="terminal-button yellow"></div>
+                    <div class="terminal-button green"></div>
+                    <div class="terminal-title">Terminal - ping google.com</div>
+                </div>
+                <div class="terminal-command">$ ping -c 4 google.com</div>
+                <div class="terminal-output">PING google.com (142.250.191.46): 56 data bytes
+64 bytes from 142.250.191.46: icmp_seq=0 ttl=117 time=12.345 ms
+64 bytes from 142.250.191.46: icmp_seq=1 ttl=117 time=11.234 ms
+64 bytes from 142.250.191.46: icmp_seq=2 ttl=117 time=13.456 ms
+64 bytes from 142.250.191.46: icmp_seq=3 ttl=117 time=10.987 ms
+
+--- google.com ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss
+round-trip min/avg/max/stddev = 10.987/12.006/13.456/1.021 ms</div>
+            </div>
+
+            <!-- Traceroute Demo -->
+            <div class="demo-terminal">
+                <div class="terminal-header">
+                    <div class="terminal-button red"></div>
+                    <div class="terminal-button yellow"></div>
+                    <div class="terminal-button green"></div>
+                    <div class="terminal-title">Terminal - traceroute google.com</div>
+                </div>
+                <div class="terminal-command">$ traceroute google.com</div>
+                <div class="terminal-output">traceroute to google.com (142.250.191.46), 30 hops max, 60 byte packets
+ 1  gateway (192.168.1.1)  1.234 ms  1.123 ms  1.456 ms
+ 2  isp-router (10.0.0.1)  15.234 ms  14.567 ms  16.123 ms
+ 3  regional-hub (172.16.1.1)  25.678 ms  24.234 ms  26.789 ms
+ 4  backbone (203.0.113.1)  35.123 ms  34.567 ms  36.234 ms
+ 5  peer-network (198.51.100.1)  45.678 ms  44.234 ms  47.123 ms
+ 6  google.com (142.250.191.46)  52.345 ms  51.234 ms  53.456 ms</div>
+            </div>
+
+            <!-- Nmap Demo -->
+            <div class="demo-terminal">
+                <div class="terminal-header">
+                    <div class="terminal-button red"></div>
+                    <div class="terminal-button yellow"></div>
+                    <div class="terminal-button green"></div>
+                    <div class="terminal-title">Terminal - nmap scan</div>
+                </div>
+                <div class="terminal-command">$ nmap -sS -O 192.168.1.1</div>
+                <div class="terminal-output">Starting Nmap 7.94 ( https://nmap.org ) at 2025-06-06 14:30 UTC
+Nmap scan report for gateway (192.168.1.1)
+Host is up (0.001s latency).
+Not shown: 997 closed ports
+PORT     STATE SERVICE
+22/tcp   open  ssh
+80/tcp   open  http
+443/tcp  open  https
+MAC Address: AA:BB:CC:DD:EE:FF (Router Manufacturer)
+Device type: router
+Running: Linux 4.X|5.X
+OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5
+OS details: Linux 4.15 - 5.8
+
+Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Testing -->
+    <section class="section">
+        <h2>Network Performance Testing</h2>
+        <div class="performance-test">
+            <h3 style="color: var(--primary-color); margin-bottom: 2rem;">
+                Live Network Speed Test
+            </h3>
+            <p style="color: var(--text-dim); margin-bottom: 3rem;">
+                Test your network performance with our integrated speed testing tool
+            </p>
+
+            <div class="test-results" id="testResults">
+                <div class="test-metric">
+                    <div class="metric-value" id="downloadSpeed">--</div>
+                    <div class="metric-label">Download Speed (Mbps)</div>
+                </div>
+                <div class="test-metric">
+                    <div class="metric-value" id="uploadSpeed">--</div>
+                    <div class="metric-label">Upload Speed (Mbps)</div>
+                </div>
+                <div class="test-metric">
+                    <div class="metric-value" id="latency">--</div>
+                    <div class="metric-label">Latency (ms)</div>
+                </div>
+                <div class="test-metric">
+                    <div class="metric-value" id="jitter">--</div>
+                    <div class="metric-label">Jitter (ms)</div>
+                </div>
+                <div class="test-metric">
+                    <div class="metric-value" id="packetLoss">--</div>
+                    <div class="metric-label">Packet Loss (%)</div>
+                </div>
+            </div>
+
+            <button class="run-test-btn" onclick="runPerformanceTest()">
+                🚀 Run Speed Test
+            </button>
+        </div>
+    </section>
+
+    <!-- Tool Categories -->
+    <section class="section">
+        <h2>Tools by Category</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem;">
+            <div style="background: var(--bg-card); padding: 3rem; border-radius: 20px; border: 1px solid var(--border-glow);">
+                <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">📊 Monitoring</h3>
+                <ul style="list-style: none; color: var(--text-dim);">
+                    <li style="margin-bottom: 1rem;">• PRTG Network Monitor</li>
+                    <li style="margin-bottom: 1rem;">• SolarWinds NPM</li>
+                    <li style="margin-bottom: 1rem;">• Nagios Core</li>
+                    <li style="margin-bottom: 1rem;">• Zabbix</li>
+                    <li style="margin-bottom: 1rem;">• LibreNMS</li>
+                </ul>
+            </div>
+
+            <div style="background: var(--bg-card); padding: 3rem; border-radius: 20px; border: 1px solid var(--border-glow);">
+                <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">🔍 Analysis</h3>
+                <ul style="list-style: none; color: var(--text-dim);">
+                    <li style="margin-bottom: 1rem;">• Wireshark</li>
+                    <li style="margin-bottom: 1rem;">• tcpdump</li>
+                    <li style="margin-bottom: 1rem;">• NetworkMiner</li>
+                    <li style="margin-bottom: 1rem;">• Kismet</li>
+                    <li style="margin-bottom: 1rem;">• Ntopng</li>
+                </ul>
+            </div>
+
+            <div style="background: var(--bg-card); padding: 3rem; border-radius: 20px; border: 1px solid var(--border-glow);">
+                <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">🎯 Discovery</h3>
+                <ul style="list-style: none; color: var(--text-dim);">
+                    <li style="margin-bottom: 1rem;">• Nmap</li>
+                    <li style="margin-bottom: 1rem;">• Masscan</li>
+                    <li style="margin-bottom: 1rem;">• Zenmap</li>
+                    <li style="margin-bottom: 1rem;">• Advanced IP Scanner</li>
+                    <li style="margin-bottom: 1rem;">• Angry IP Scanner</li>
+                </ul>
+            </div>
+
+            <div style="background: var(--bg-card); padding: 3rem; border-radius: 20px; border: 1px solid var(--border-glow);">
+                <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">⚡ Performance</h3>
+                <ul style="list-style: none; color: var(--text-dim);">
+                    <li style="margin-bottom: 1rem;">• iperf3</li>
+                    <li style="margin-bottom: 1rem;">• Speedtest CLI</li>
+                    <li style="margin-bottom: 1rem;">• bmon</li>
+                    <li style="margin-bottom: 1rem;">• iftop</li>
+                    <li style="margin-bottom: 1rem;">• vnStat</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+            <h3 style="color: var(--accent-color); margin-bottom: 1rem;">NetworkHub.ch Tools</h3>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">
+                Empowering network professionals with the right tools for every task
+            </p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                Professional toolkit • <a href="/" style="color: var(--accent-color);">Return to Hub</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Performance test simulation
+        function runPerformanceTest() {
+            const button = document.querySelector('.run-test-btn');
+            button.textContent = '🔄 Testing...';
+            button.disabled = true;
+
+            // Simulate testing phases
+            setTimeout(() => {
+                document.getElementById('downloadSpeed').textContent = '0.0';
+                document.getElementById('uploadSpeed').textContent = '0.0';
+                document.getElementById('latency').textContent = 'Testing...';
+                document.getElementById('jitter').textContent = 'Testing...';
+                document.getElementById('packetLoss').textContent = 'Testing...';
+            }, 500);
+
+            // Get test results from API
+            setTimeout(() => {
+                fetch('/api/performance-test')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('downloadSpeed').textContent = data.download_speed.replace(' Mbps', '');
+                        document.getElementById('uploadSpeed').textContent = data.upload_speed.replace(' Mbps', '');
+                        document.getElementById('latency').textContent = data.latency.replace(' ms', '');
+                        document.getElementById('jitter').textContent = data.jitter.replace(' ms', '');
+                        document.getElementById('packetLoss').textContent = data.packet_loss.replace('%', '');
+
+                        button.textContent = '✅ Test Complete';
+                        setTimeout(() => {
+                            button.textContent = '🚀 Run Speed Test';
+                            button.disabled = false;
+                        }, 3000);
+                    })
+                    .catch(error => {
+                        console.log('Performance test failed:', error);
+                        button.textContent = '❌ Test Failed';
+                        setTimeout(() => {
+                            button.textContent = '🚀 Run Speed Test';
+                            button.disabled = false;
+                        }, 3000);
+                    });
+            }, 3000);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Network Tools page loaded');
+        });
+    </script>
+</body>
+</html>

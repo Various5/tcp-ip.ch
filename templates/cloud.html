@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Networking - NetworkHub.ch</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-color: #00ffff;
+            --secondary-color: #ff00ff;
+            --cloud-blue: #4a90e2;
+            --cloud-white: #f0f8ff;
+            --aws-orange: #ff9900;
+            --azure-blue: #0078d4;
+            --gcp-color: #4285f4;
+            --bg-dark: #0a0a0f;
+            --bg-darker: #050508;
+            --bg-card: #111118;
+            --bg-section: #161620;
+            --text-light: #e0e0ff;
+            --text-dim: #a0a0c0;
+            --border-glow: rgba(0, 255, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Cloud animation background */
+        .cloud-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(74, 144, 226, 0.1);
+            border-radius: 50px;
+            opacity: 0.6;
+            animation: cloudFloat 20s ease-in-out infinite;
+        }
+
+        .cloud::before {
+            content: '';
+            position: absolute;
+            background: rgba(74, 144, 226, 0.15);
+            border-radius: 50px;
+        }
+
+        .cloud1 {
+            width: 100px;
+            height: 40px;
+            top: 20%;
+            left: -100px;
+            animation-duration: 25s;
+        }
+
+        .cloud1::before {
+            width: 50px;
+            height: 50px;
+            top: -25px;
+            left: 10px;
+        }
+
+        .cloud2 {
+            width: 80px;
+            height: 30px;
+            top: 60%;
+            left: -80px;
+            animation-duration: 30s;
+            animation-delay: -10s;
+        }
+
+        @keyframes cloudFloat {
+            0% { transform: translateX(-100px); }
+            50% { transform: translateX(calc(100vw + 100px)); }
+            51% { transform: translateX(-100px); }
+            100% { transform: translateX(-100px); }
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        nav {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .hero {
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, rgba(74, 144, 226, 0.15) 0%, transparent 70%);
+        }
+
+        .section {
+            padding: 6rem 0;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .section h2 {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: var(--cloud-blue);
+            text-align: center;
+        }
+
+        .cloud-platforms {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin: 4rem 0;
+        }
+
+        .platform-card {
+            background: var(--bg-card);
+            border-radius: 25px;
+            padding: 3rem;
+            border: 1px solid var(--border-glow);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .platform-card.aws {
+            border-color: rgba(255, 153, 0, 0.5);
+        }
+
+        .platform-card.azure {
+            border-color: rgba(0, 120, 212, 0.5);
+        }
+
+        .platform-card.gcp {
+            border-color: rgba(66, 133, 244, 0.5);
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .platform-card.aws::before {
+            background: linear-gradient(135deg, rgba(255, 153, 0, 0.05), rgba(255, 204, 0, 0.05));
+        }
+
+        .platform-card.azure::before {
+            background: linear-gradient(135deg, rgba(0, 120, 212, 0.05), rgba(0, 164, 239, 0.05));
+        }
+
+        .platform-card.gcp::before {
+            background: linear-gradient(135deg, rgba(66, 133, 244, 0.05), rgba(52, 168, 83, 0.05));
+        }
+
+        .platform-card:hover::before {
+            opacity: 1;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px rgba(74, 144, 226, 0.3);
+        }
+
+        .platform-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .platform-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-right: 1.5rem;
+            font-weight: bold;
+        }
+
+        .aws-logo {
+            background: var(--aws-orange);
+            color: white;
+        }
+
+        .azure-logo {
+            background: var(--azure-blue);
+            color: white;
+        }
+
+        .gcp-logo {
+            background: var(--gcp-color);
+            color: white;
+        }
+
+        .platform-name {
+            color: var(--cloud-blue);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .service-list {
+            list-style: none;
+            margin: 2rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-list li {
+            margin-bottom: 0.8rem;
+            padding: 0.8rem 1rem;
+            background: rgba(74, 144, 226, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid var(--cloud-blue);
+            transition: all 0.3s ease;
+        }
+
+        .service-list li:hover {
+            background: rgba(74, 144, 226, 0.2);
+            transform: translateX(5px);
+        }
+
+        .architecture-diagram {
+            background: var(--bg-section);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .diagram-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+            position: relative;
+        }
+
+        .diagram-node {
+            background: var(--bg-card);
+            border: 2px solid var(--cloud-blue);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .diagram-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(74, 144, 226, 0.3);
+        }
+
+        .node-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--cloud-blue);
+        }
+
+        .node-title {
+            color: var(--cloud-blue);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .node-description {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .connection-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cloud-blue), transparent);
+            animation: dataFlow 3s ease-in-out infinite;
+        }
+
+        @keyframes dataFlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .hybrid-cloud {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.1), rgba(0, 255, 255, 0.1));
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .hybrid-diagram {
+            display: grid;
+            grid-template-columns: 1fr 100px 1fr;
+            gap: 2rem;
+            align-items: center;
+            margin: 3rem 0;
+        }
+
+        .cloud-section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 2px solid var(--cloud-blue);
+        }
+
+        .on-premise {
+            border-color: var(--aws-orange);
+        }
+
+        .connection-bridge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--cloud-blue);
+        }
+
+        .bridge-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .multi-cloud {
+            background: var(--bg-section);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .provider-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .comparison-metric {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-glow);
+            text-align: center;
+        }
+
+        .metric-title {
+            color: var(--cloud-blue);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .metric-bars {
+            display: flex;
+            justify-content: space-around;
+            align-items: end;
+            height: 100px;
+            margin: 1rem 0;
+        }
+
+        .metric-bar {
+            width: 60px;
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .metric-bar:hover {
+            transform: scale(1.1);
+        }
+
+        .aws-bar {
+            background: var(--aws-orange);
+        }
+
+        .azure-bar {
+            background: var(--azure-blue);
+        }
+
+        .gcp-bar {
+            background: var(--gcp-color);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .best-practices {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .practice-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--border-glow);
+            text-align: center;
+        }
+
+        .practice-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--cloud-blue);
+        }
+
+        .practice-title {
+            color: var(--cloud-blue);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        footer {
+            background: var(--bg-darker);
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-glow);
+        }
+
+        @media (max-width: 768px) {
+            .cloud-platforms { grid-template-columns: 1fr; }
+            .hybrid-diagram { grid-template-columns: 1fr; }
+            .provider-comparison { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cloud-bg">
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo"><a href="/" style="color: inherit; text-decoration: none;">NetworkHub.ch</a></div>
+            <ul class="nav-links">
+                <li><a href="/">🏠 Hub</a></li>
+                <li><a href="/protocols">📡 Protocols</a></li>
+                <li><a href="/security">🔒 Security</a></li>
+                <li><a href="/modern-tech">🚀 Modern Tech</a></li>
+                <li><a href="/tools">🛠️ Tools</a></li>
+                <li><a href="/cloud" style="color: var(--cloud-blue);">☁️ Cloud</a></li>
+                <li><a href="/performance">⚡ Performance</a></li>
+                <li><a href="/osi-model">📊 OSI Model</a></li>
+                <li><a href="/troubleshooting">🔧 Troubleshooting</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div>
+            <h1 style="font-size: 4rem; color: var(--cloud-blue);">Cloud Networking</h1>
+            <p style="font-size: 1.4rem; margin-bottom: 2rem;">
+                Mastering the infrastructure that powers the digital world
+            </p>
+        </div>
+    </section>
+
+    <!-- Cloud Platforms -->
+    <section class="section">
+        <h2>Major Cloud Platforms</h2>
+        <div class="cloud-platforms">
+            <!-- AWS -->
+            <div class="platform-card aws">
+                <div class="platform-header">
+                    <div class="platform-logo aws-logo">AWS</div>
+                    <div>
+                        <div class="platform-name">Amazon Web Services</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 1;">Market Leader • 34% Share</div>
+                    </div>
+                </div>
+                <p style="margin-bottom: 2rem; position: relative; z-index: 1; color: var(--text-light);">
+                    The world's most comprehensive cloud platform with over 200 services spanning compute,
+                    storage, networking, databases, analytics, AI/ML, and IoT.
+                </p>
+                <ul class="service-list">
+                    {% for service in cloud_data.aws %}
+                    <li>{{ service }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Azure -->
+            <div class="platform-card azure">
+                <div class="platform-header">
+                    <div class="platform-logo azure-logo">AZ</div>
+                    <div>
+                        <div class="platform-name">Microsoft Azure</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 1;">Enterprise Focus • 21% Share</div>
+                    </div>
+                </div>
+                <p style="margin-bottom: 2rem; position: relative; z-index: 1; color: var(--text-light);">
+                    Microsoft's cloud computing platform offering integrated services for analytics, computing,
+                    database, mobile, networking, storage, and web applications.
+                </p>
+                <ul class="service-list">
+                    {% for service in cloud_data.azure %}
+                    <li>{{ service }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Google Cloud -->
+            <div class="platform-card gcp">
+                <div class="platform-header">
+                    <div class="platform-logo gcp-logo">GCP</div>
+                    <div>
+                        <div class="platform-name">Google Cloud Platform</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem; position: relative; z-index: 1;">AI/ML Leader • 11% Share</div>
+                    </div>
+                </div>
+                <p style="margin-bottom: 2rem; position: relative; z-index: 1; color: var(--text-light);">
+                    Google's suite of cloud computing services running on the same infrastructure
+                    that Google uses internally for products like Search and YouTube.
+                </p>
+                <ul class="service-list">
+                    {% for service in cloud_data.gcp %}
+                    <li>{{ service }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cloud Architecture -->
+    <section class="section">
+        <h2>Cloud Network Architecture</h2>
+        <div class="architecture-diagram">
+            <h3 style="color: var(--cloud-blue); margin-bottom: 2rem; text-align: center;">
+                Modern Cloud Infrastructure
+            </h3>
+            <div class="diagram-container">
+                <div class="connection-lines">
+                    <div class="connection-line" style="top: 50%; left: 20%; width: 15%; animation-delay: 0s;"></div>
+                    <div class="connection-line" style="top: 50%; left: 40%; width: 15%; animation-delay: 0.5s;"></div>
+                    <div class="connection-line" style="top: 50%; left: 60%; width: 15%; animation-delay: 1s;"></div>
+                </div>
+
+                <div class="diagram-node">
+                    <div class="node-icon">👥</div>
+                    <div class="node-title">Users</div>
+                    <div class="node-description">Global user base accessing applications</div>
+                </div>
+
+                <div class="diagram-node">
+                    <div class="node-icon">🌐</div>
+                    <div class="node-title">CDN</div>
+                    <div class="node-description">Content delivery and edge caching</div>
+                </div>
+
+                <div class="diagram-node">
+                    <div class="node-icon">⚖️</div>
+                    <div class="node-title">Load Balancer</div>
+                    <div class="node-description">Traffic distribution and failover</div>
+                </div>
+
+                <div class="diagram-node">
+                    <div class="node-icon">🖥️</div>
+                    <div class="node-title">Compute</div>
+                    <div class="node-description">Virtual machines and containers</div>
+                </div>
+
+                <div class="diagram-node">
+                    <div class="node-icon">💾</div>
+                    <div class="node-title">Storage</div>
+                    <div class="node-description">Object, block, and file storage</div>
+                </div>
+
+                <div class="diagram-node">
+                    <div class="node-icon">🗄️</div>
+                    <div class="node-title">Database</div>
+                    <div class="node-description">Managed database services</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hybrid Cloud -->
+    <section class="section">
+        <h2>Hybrid & Multi-Cloud</h2>
+        <div class="hybrid-cloud">
+            <h3 style="color: var(--cloud-blue); margin-bottom: 2rem; text-align: center;">
+                Hybrid Cloud Architecture
+            </h3>
+            <p style="text-align: center; margin-bottom: 3rem; color: var(--text-dim);">
+                Seamlessly connecting on-premises infrastructure with cloud services for optimal flexibility,
+                compliance, and cost management.
+            </p>
+
+            <div class="hybrid-diagram">
+                <div class="cloud-section on-premise">
+                    <h4 style="color: var(--aws-orange); margin-bottom: 1.5rem; text-align: center;">On-Premises</h4>
+                    <ul style="list-style: none; color: var(--text-light);">
+                        <li style="margin-bottom: 0.8rem;">🏢 Legacy Systems</li>
+                        <li style="margin-bottom: 0.8rem;">🔒 Sensitive Data</li>
+                        <li style="margin-bottom: 0.8rem;">⚡ Low Latency Apps</li>
+                        <li style="margin-bottom: 0.8rem;">📊 Compliance Requirements</li>
+                    </ul>
+                </div>
+
+                <div class="connection-bridge">
+                    <div class="bridge-icon">🌉</div>
+                    <div style="font-size: 0.9rem; text-align: center;">Secure<br>Connection</div>
+                </div>
+
+                <div class="cloud-section">
+                    <h4 style="color: var(--cloud-blue); margin-bottom: 1.5rem; text-align: center;">Public Cloud</h4>
+                    <ul style="list-style: none; color: var(--text-light);">
+                        <li style="margin-bottom: 0.8rem;">☁️ Scalable Compute</li>
+                        <li style="margin-bottom: 0.8rem;">🌍 Global Reach</li>
+                        <li style="margin-bottom: 0.8rem;">🤖 AI/ML Services</li>
+                        <li style="margin-bottom: 0.8rem;">💰 Cost Optimization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Multi-Cloud Comparison -->
+    <section class="section">
+        <h2>Provider Comparison</h2>
+        <div class="multi-cloud">
+            <h3 style="color: var(--cloud-blue); margin-bottom: 2rem; text-align: center;">
+                Platform Performance Metrics
+            </h3>
+
+            <div class="provider-comparison">
+                <div class="comparison-metric">
+                    <div class="metric-title">Global Infrastructure</div>
+                    <div class="metric-bars">
+                        <div class="metric-bar aws-bar" style="height: 95%;">
+                            <div class="bar-label">AWS</div>
+                        </div>
+                        <div class="metric-bar azure-bar" style="height: 85%;">
+                            <div class="bar-label">Azure</div>
+                        </div>
+                        <div class="metric-bar gcp-bar" style="height: 75%;">
+                            <div class="bar-label">GCP</div>
+                        </div>
+                    </div>
+                    <div style="color: var(--text-dim); font-size: 0.9rem;">
+                        AWS: 31 regions • Azure: 30 regions • GCP: 27 regions
+                    </div>
+                </div>
+
+                <div class="comparison-metric">
+                    <div class="metric-title">Service Portfolio</div>
+                    <div class="metric-bars">
+                        <div class="metric-bar aws-bar" style="height: 100%;">
+                            <div class="bar-label">AWS</div>
+                        </div>
+                        <div class="metric-bar azure-bar" style="height: 80%;">
+                            <div class="bar-label">Azure</div>
+                        </div>
+                        <div class="metric-bar gcp-bar" style="height: 70%;">
+                            <div class="bar-label">GCP</div>
+                        </div>
+                    </div>
+                    <div style="color: var(--text-dim); font-size: 0.9rem;">
+                        AWS: 200+ services • Azure: 150+ services • GCP: 100+ services
+                    </div>
+                </div>
+
+                <div class="comparison-metric">
+                    <div class="metric-title">AI/ML Capabilities</div>
+                    <div class="metric-bars">
+                        <div class="metric-bar gcp-bar" style="height: 95%;">
+                            <div class="bar-label">GCP</div>
+                        </div>
+                        <div class="metric-bar aws-bar" style="height: 85%;">
+                            <div class="bar-label">AWS</div>
+                        </div>
+                        <div class="metric-bar azure-bar" style="height: 80%;">
+                            <div class="bar-label">Azure</div>
+                        </div>
+                    </div>
+                    <div style="color: var(--text-dim); font-size: 0.9rem;">
+                        Based on machine learning model performance
+                    </div>
+                </div>
+
+                <div class="comparison-metric">
+                    <div class="metric-title">Enterprise Integration</div>
+                    <div class="metric-bars">
+                        <div class="metric-bar azure-bar" style="height: 95%;">
+                            <div class="bar-label">Azure</div>
+                        </div>
+                        <div class="metric-bar aws-bar" style="height: 85%;">
+                            <div class="bar-label">AWS</div>
+                        </div>
+                        <div class="metric-bar gcp-bar" style="height: 70%;">
+                            <div class="bar-label">GCP</div>
+                        </div>
+                    </div>
+                    <div style="color: var(--text-dim); font-size: 0.9rem;">
+                        Microsoft ecosystem and enterprise tools
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cloud Networking Concepts -->
+    <section class="section">
+        <h2>Core Networking Concepts</h2>
+        <div class="best-practices">
+            {% for concept in cloud_data.concepts %}
+            <div class="practice-card">
+                <div class="practice-icon">
+                    {% if concept == 'Software-Defined Networking' %}🌐
+                    {% elif concept == 'Micro-segmentation' %}🔀
+                    {% elif concept == 'Service Mesh' %}🕸️
+                    {% else %}📦
+                    {% endif %}
+                </div>
+                <div class="practice-title">{{ concept }}</div>
+                <div style="color: var(--text-dim);">
+                    {% if concept == 'Software-Defined Networking' %}
+                        Programmable network control separated from hardware, enabling dynamic configuration and automation.
+                    {% elif concept == 'Micro-segmentation' %}
+                        Granular security controls creating isolated network zones for enhanced protection and compliance.
+                    {% elif concept == 'Service Mesh' %}
+                        Infrastructure layer handling service-to-service communication with security, observability, and traffic management.
+                    {% else %}
+                        Container networking solutions providing connectivity, security, and load balancing for containerized applications.
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section class="section">
+        <h2>Cloud Networking Best Practices</h2>
+        <div class="best-practices">
+            <div class="practice-card">
+                <div class="practice-icon">🔒</div>
+                <div class="practice-title">Security First</div>
+                <div style="color: var(--text-dim);">
+                    Implement zero-trust principles, encrypt data in transit and at rest,
+                    and use least-privilege access controls.
+                </div>
+            </div>
+
+            <div class="practice-card">
+                <div class="practice-icon">⚡</div>
+                <div class="practice-title">Performance Optimization</div>
+                <div style="color: var(--text-dim);">
+                    Use CDNs, optimize routing, implement auto-scaling,
+                    and monitor performance metrics continuously.
+                </div>
+            </div>
+
+            <div class="practice-card">
+                <div class="practice-icon">💰</div>
+                <div class="practice-title">Cost Management</div>
+                <div style="color: var(--text-dim);">
+                    Right-size resources, use reserved instances, implement automated shutdown,
+                    and monitor spending with budgets and alerts.
+                </div>
+            </div>
+
+            <div class="practice-card">
+                <div class="practice-icon">🔄</div>
+                <div class="practice-title">High Availability</div>
+                <div style="color: var(--text-dim);">
+                    Design for failure, use multiple availability zones,
+                    implement backup and disaster recovery strategies.
+                </div>
+            </div>
+
+            <div class="practice-card">
+                <div class="practice-icon">📊</div>
+                <div class="practice-title">Monitoring & Observability</div>
+                <div style="color: var(--text-dim);">
+                    Implement comprehensive logging, metrics collection,
+                    distributed tracing, and alerting systems.
+                </div>
+            </div>
+
+            <div class="practice-card">
+                <div class="practice-icon">🏗️</div>
+                <div class="practice-title">Infrastructure as Code</div>
+                <div style="color: var(--text-dim);">
+                    Use declarative configuration, version control infrastructure,
+                    and automate deployment pipelines.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+            <h3 style="color: var(--cloud-blue); margin-bottom: 1rem;">NetworkHub.ch Cloud</h3>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">
+                Navigating the cloud networking landscape
+            </p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                Built for the cloud • <a href="/" style="color: var(--primary-color);">Return to Hub</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Cloud animation effects
+        function createCloudEffects() {
+            const cloudBg = document.querySelector('.cloud-bg');
+
+            // Add more dynamic clouds
+            for (let i = 0; i < 3; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud';
+                cloud.style.width = Math.random() * 60 + 40 + 'px';
+                cloud.style.height = Math.random() * 20 + 20 + 'px';
+                cloud.style.top = Math.random() * 80 + 10 + '%';
+                cloud.style.left = '-100px';
+                cloud.style.animationDuration = Math.random() * 10 + 15 + 's';
+                cloud.style.animationDelay = Math.random() * 10 + 's';
+                cloudBg.appendChild(cloud);
+            }
+        }
+
+        // Platform card hover effects
+        function initPlatformEffects() {
+            document.querySelectorAll('.platform-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-15px) scale(1.02)';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createCloudEffects();
+            initPlatformEffects();
+            console.log('Cloud Networking page loaded');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSI Reference Model - NetworkHub.ch</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-color: #00ffff;
+            --secondary-color: #ff00ff;
+            --accent-color: #00ff88;
+            --layer7-color: #ff6b6b;
+            --layer6-color: #4ecdc4;
+            --layer5-color: #45b7d1;
+            --layer4-color: #96ceb4;
+            --layer3-color: #ffeaa7;
+            --layer2-color: #dda0dd;
+            --layer1-color: #98d8c8;
+            --bg-dark: #0a0a0f;
+            --bg-darker: #050508;
+            --bg-card: #111118;
+            --bg-section: #161620;
+            --text-light: #e0e0ff;
+            --text-dim: #a0a0c0;
+            --border-glow: rgba(0, 255, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        nav {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .hero {
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 107, 107, 0.1) 0%, transparent 70%);
+        }
+
+        .section {
+            padding: 6rem 0;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .section h2 {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: var(--layer7-color);
+            text-align: center;
+        }
+
+        .osi-stack {
+            max-width: 1000px;
+            margin: 5rem auto;
+            background: var(--bg-section);
+            border-radius: 30px;
+            padding: 4rem;
+            border: 1px solid var(--border-glow);
+            position: relative;
+        }
+
+        .stack-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 3rem;
+            font-weight: 800;
+        }
+
+        .osi-layer {
+            background: var(--bg-card);
+            margin: 1rem 0;
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 2px solid;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .osi-layer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .osi-layer:hover::before {
+            left: 100%;
+        }
+
+        .osi-layer:hover {
+            transform: translateX(20px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .layer-7 { border-color: var(--layer7-color); }
+        .layer-6 { border-color: var(--layer6-color); }
+        .layer-5 { border-color: var(--layer5-color); }
+        .layer-4 { border-color: var(--layer4-color); }
+        .layer-3 { border-color: var(--layer3-color); }
+        .layer-2 { border-color: var(--layer2-color); }
+        .layer-1 { border-color: var(--layer1-color); }
+
+        .layer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .layer-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--bg-dark);
+        }
+
+        .layer-7 .layer-number { background: var(--layer7-color); }
+        .layer-6 .layer-number { background: var(--layer6-color); }
+        .layer-5 .layer-number { background: var(--layer5-color); }
+        .layer-4 .layer-number { background: var(--layer4-color); }
+        .layer-3 .layer-number { background: var(--layer3-color); }
+        .layer-2 .layer-number { background: var(--layer2-color); }
+        .layer-1 .layer-number { background: var(--layer1-color); }
+
+        .layer-info {
+            flex: 1;
+            margin: 0 2rem;
+        }
+
+        .layer-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .layer-7 .layer-name { color: var(--layer7-color); }
+        .layer-6 .layer-name { color: var(--layer6-color); }
+        .layer-5 .layer-name { color: var(--layer5-color); }
+        .layer-4 .layer-name { color: var(--layer4-color); }
+        .layer-3 .layer-name { color: var(--layer3-color); }
+        .layer-2 .layer-name { color: var(--layer2-color); }
+        .layer-1 .layer-name { color: var(--layer1-color); }
+
+        .layer-purpose {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .layer-icon {
+            font-size: 3rem;
+            opacity: 0.8;
+        }
+
+        .layer-details {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .protocols-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .protocol-tag {
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--bg-dark);
+        }
+
+        .layer-7 .protocol-tag { background: var(--layer7-color); }
+        .layer-6 .protocol-tag { background: var(--layer6-color); }
+        .layer-5 .protocol-tag { background: var(--layer5-color); }
+        .layer-4 .protocol-tag { background: var(--layer4-color); }
+        .layer-3 .protocol-tag { background: var(--layer3-color); }
+        .layer-2 .protocol-tag { background: var(--layer2-color); }
+        .layer-1 .protocol-tag { background: var(--layer1-color); }
+
+        .data-flow {
+            background: var(--bg-card);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .flow-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 3rem 0;
+            position: relative;
+        }
+
+        .flow-step {
+            background: var(--bg-section);
+            border: 2px solid var(--primary-color);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            min-width: 150px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .flow-arrow {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            z-index: 1;
+        }
+
+        .encapsulation-demo {
+            background: var(--bg-section);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .encap-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin: 3rem 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .encap-layer {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid;
+            position: relative;
+        }
+
+        .encap-layer.layer-7 {
+            border-color: var(--layer7-color);
+            background: rgba(255, 107, 107, 0.1);
+        }
+        .encap-layer.layer-4 {
+            border-color: var(--layer4-color);
+            background: rgba(150, 206, 180, 0.1);
+            margin-left: 2rem;
+        }
+        .encap-layer.layer-3 {
+            border-color: var(--layer3-color);
+            background: rgba(255, 234, 167, 0.1);
+            margin-left: 4rem;
+        }
+        .encap-layer.layer-2 {
+            border-color: var(--layer2-color);
+            background: rgba(221, 160, 221, 0.1);
+            margin-left: 6rem;
+        }
+
+        .encap-header {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin-right: 1rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .layer-7 .encap-header { background: var(--layer7-color); color: var(--bg-dark); }
+        .layer-4 .encap-header { background: var(--layer4-color); color: var(--bg-dark); }
+        .layer-3 .encap-header { background: var(--layer3-color); color: var(--bg-dark); }
+        .layer-2 .encap-header { background: var(--layer2-color); color: var(--bg-dark); }
+
+        .troubleshooting-guide {
+            background: var(--bg-card);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .troubleshoot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin: 3rem 0;
+        }
+
+        .troubleshoot-item {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid;
+            transition: all 0.3s ease;
+        }
+
+        .troubleshoot-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .troubleshoot-item.physical {
+            border-color: var(--layer1-color);
+            background: rgba(152, 216, 200, 0.1);
+        }
+
+        .troubleshoot-item.datalink {
+            border-color: var(--layer2-color);
+            background: rgba(221, 160, 221, 0.1);
+        }
+
+        .troubleshoot-item.network {
+            border-color: var(--layer3-color);
+            background: rgba(255, 234, 167, 0.1);
+        }
+
+        .troubleshoot-item.transport {
+            border-color: var(--layer4-color);
+            background: rgba(150, 206, 180, 0.1);
+        }
+
+        .troubleshoot-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .troubleshoot-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .troubleshoot-item.physical .troubleshoot-title { color: var(--layer1-color); }
+        .troubleshoot-item.datalink .troubleshoot-title { color: var(--layer2-color); }
+        .troubleshoot-item.network .troubleshoot-title { color: var(--layer3-color); }
+        .troubleshoot-item.transport .troubleshoot-title { color: var(--layer4-color); }
+
+        footer {
+            background: var(--bg-darker);
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-glow);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo"><a href="/" style="color: inherit; text-decoration: none;">NetworkHub.ch</a></div>
+            <ul class="nav-links">
+                <li><a href="/">🏠 Hub</a></li>
+                <li><a href="/protocols">📡 Protocols</a></li>
+                <li><a href="/security">🔒 Security</a></li>
+                <li><a href="/modern-tech">🚀 Modern Tech</a></li>
+                <li><a href="/tools">🛠️ Tools</a></li>
+                <li><a href="/cloud">☁️ Cloud</a></li>
+                <li><a href="/performance">⚡ Performance</a></li>
+                <li><a href="/osi-model" style="color: var(--layer7-color);">📊 OSI Model</a></li>
+                <li><a href="/troubleshooting">🔧 Troubleshooting</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div>
+            <h1 style="font-size: 4rem; color: var(--layer7-color);">OSI Reference Model</h1>
+            <p style="font-size: 1.4rem; margin-bottom: 2rem;">
+                The seven-layer foundation of network communication
+            </p>
+        </div>
+    </section>
+
+    <!-- OSI Stack -->
+    <section class="section">
+        <div class="osi-stack">
+            <div class="stack-title">The Seven Layers of Network Communication</div>
+
+            <!-- Layer 7 - Application -->
+            <div class="osi-layer layer-7" onclick="toggleLayerDetails(this)">
+                <div class="layer-header">
+                    <div class="layer-number">7</div>
+                    <div class="layer-info">
+                        <div class="layer-name">Application Layer</div>
+                        <div class="layer-purpose">Network services to applications and end-users</div>
+                    </div>
+                    <div class="layer-icon">🖥️</div>
+                </div>
+                <div class="layer-details" style="display: none;">
+                    <p style="margin-bottom: 1rem;">
+                        The Application Layer provides network services directly to end-users and applications.
+                        It's the layer where users interact with the network through applications like web browsers,
+                        email clients, and file transfer programs.
+                    </p>
+                    <strong style="color: var(--layer7-color);">Common Protocols:</strong>
+                    <div class="protocols-list">
+                        <span class="protocol-tag">HTTP/HTTPS</span>
+                        <span class="protocol-tag">FTP</span>
+                        <span class="protocol-tag">SMTP</span>
+                        <span class="protocol-tag">POP3</span>
+                        <span class="protocol-tag">IMAP</span>
+                        <span class="protocol-tag">DNS</span>
+                        <span class="protocol-tag">DHCP</span>
+                        <span class="protocol-tag">SSH</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 6 - Presentation -->
+            <div class="osi-layer layer-6" onclick="toggleLayerDetails(this)">
+                <div class="layer-header">
+                    <div class="layer-number">6</div>
+                    <div class="layer-info">
+                        <div class="layer-name">Presentation Layer</div>
+                        <div class="layer-purpose">Data translation, encryption, and compression</div>
+                    </div>
+                    <div class="layer-icon">🔒</div>
+                </div>
+                <div class="layer-details" style="display: none;">
+                    <p style="margin-bottom: 1rem;">
+                        The Presentation Layer transforms data to and from the format required by the Application Layer.
+                        It handles encryption, decryption, compression, and data format conversion to ensure data from
+                        the sending application can be read by the receiving application.
+                    </p>
+                    <strong style="color: var(--layer6-color);">Key Functions:</strong>
+                    <div class="protocols-list">
+                        <span class="protocol-tag">SSL/TLS</span>
+                        <span class="protocol-tag">JPEG</span>
+                        <span class="protocol-tag">GIF</span>
+                        <span class="protocol-tag">MPEG</span>
+                        <span class="protocol-tag">ASCII</span>
+                        <span class="protocol-tag">EBCDIC</span>
+                        <span class="protocol-tag">MIME</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 5 - Session -->
+            <div class="osi-layer layer-5" onclick="toggleLayerDetails(this)">
+                <div class="layer-header">
+                    <div class="layer-number">5</div>
+                    <div class="layer-info">
+                        <div class="layer-name">Session Layer</div>
+                        <div class="layer-purpose">Session management and control</div>
+                    </div>
+                    <div class="layer-icon">🔗</div>
+                </div>
+                <div class="layer-details" style="display: none;">
+                    <p style="margin-bottom: 1rem;">
+                        The Session Layer establishes, manages, and terminates sessions between applications.
+                        It controls dialogues and connections between computers, including authentication,
+                        authorization, and session restoration.
+                    </p>
+                    <strong style="color: var(--layer5-color);">Session Management:</strong>
+                    <div class="protocols-list">
+                        <span class="protocol-tag">NetBIOS</span>
+                        <span class="protocol-tag">RPC</span>
+                        <span class="protocol-tag">SQL</span>
+                        <span class="protocol-tag">NFS</span>
+                        <span class="protocol-tag">SMB</span>
+                        <span class="protocol-tag">PPTP</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 4 - Transport -->
+            <div class="osi-layer layer-4" onclick="toggleLayerDetails(this)">
+                <div class="layer-header">
+                    <div class="layer-number">4</div>
+                    <div class="layer-info">
+                        <div class="layer-name">Transport Layer</div>
+                        <div class="layer-purpose">Reliable end-to-end data delivery</div>
+                    </div>
+                    <div class="layer-icon">🚚</div>
+                </div>
+                <div class="layer-details" style="display: none;">
+                    <p style="margin-bottom: 1rem;">
+                        The Transport Layer ensures reliable, error-free data transmission between end systems.
+                        It provides error detection and recovery, flow control, and segmentation of large messages
+                        into smaller packets for transmission.
+                    </p>
+                    <strong style="color: var(--layer4-color);">Transport Protocols:</strong>
+                    <div class="protocols-list">
+                        <span class="protocol-tag">TCP</span>
+                        <span class="protocol-tag">UDP</span>
+                        <span class="protocol-tag">SCTP</span>
+                        <span class="protocol-tag">DCCP</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 3 - Network -->
+            <div class="osi-layer layer-3" onclick="toggleLayerDetails(this)">
+                <div class="layer-header">
+                    <div class="layer-number">3</div>
+                    <div class="layer-info">
+                        <div class="layer-name">Network Layer</div>
+                        <div class="layer-purpose">Routing and logical addressing</div>
+                    </div>
+                    <div class="layer-icon">🌐</div>
+                </div>
+                <div class="layer-details" style="display: none;">
+                    <p style="margin-bottom: 1rem;">
+                        The Network Layer handles routing of data packets between different networks.
+                        It determines the best path for data transmission and provides logical addressing
+                        through IP addresses, enabling internetwork communication.
+                    </p>
+                    <strong style="color: var(--layer3-color);">Network Protocols:</strong>
+                    <div class="protocols-list">
+                        <span class="protocol-tag">IP (IPv4/IPv6)</span>
+                        <span class="protocol-tag">ICMP</span>
+                        <span class="protocol-tag">ARP</span>
+                        <span class="protocol-tag">OSPF</span>
+                        <span class="protocol-tag">BGP</span>
+                        <span class="protocol-tag">RIP</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 2 - Data Link -->
+            <div class="osi-layer layer-2" onclick="toggleLayerDetails(this)">
+                <div class="layer-header">
+                    <div class="layer-number">2</div>
+                    <div class="layer-info">
+                        <div class="layer-name">Data Link Layer</div>
+                        <div class="layer-purpose">Node-to-node delivery and error detection</div>
+                    </div>
+                    <div class="layer-icon">🔗</div>
+                </div>
+                <div class="layer-details" style="display: none;">
+                    <p style="margin-bottom: 1rem;">
+                        The Data Link Layer provides reliable transfer of data across the physical link.
+                        It handles error detection and correction, frame synchronization, and flow control
+                        between directly connected nodes.
+                    </p>
+                    <strong style="color: var(--layer2-color);">Data Link Technologies:</strong>
+                    <div class="protocols-list">
+                        <span class="protocol-tag">Ethernet</span>
+                        <span class="protocol-tag">Wi-Fi (802.11)</span>
+                        <span class="protocol-tag">PPP</span>
+                        <span class="protocol-tag">Frame Relay</span>
+                        <span class="protocol-tag">ATM</span>
+                        <span class="protocol-tag">HDLC</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layer 1 - Physical -->
+            <div class="osi-layer layer-1" onclick="toggleLayerDetails(this)">
+                <div class="layer-header">
+                    <div class="layer-number">1</div>
+                    <div class="layer-info">
+                        <div class="layer-name">Physical Layer</div>
+                        <div class="layer-purpose">Raw bit transmission over physical medium</div>
+                    </div>
+                    <div class="layer-icon">⚡</div>
+                </div>
+                <div class="layer-details" style="display: none;">
+                    <p style="margin-bottom: 1rem;">
+                        The Physical Layer defines the electrical, mechanical, and functional specifications
+                        for activating, maintaining, and deactivating physical connections. It deals with
+                        the actual transmission of raw bit streams over a physical medium.
+                    </p>
+                    <strong style="color: var(--layer1-color);">Physical Media:</strong>
+                    <div class="protocols-list">
+                        <span class="protocol-tag">Copper Cable</span>
+                        <span class="protocol-tag">Fiber Optic</span>
+                        <span class="protocol-tag">Radio Waves</span>
+                        <span class="protocol-tag">Infrared</span>
+                        <span class="protocol-tag">Bluetooth</span>
+                        <span class="protocol-tag">USB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Flow Visualization -->
+    <section class="section">
+        <h2>Data Flow Through the Stack</h2>
+        <div class="data-flow">
+            <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">
+                How Data Travels From Application to Wire
+            </h3>
+            <div class="flow-container">
+                <div class="flow-arrow"></div>
+                <div class="flow-step">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">📱</div>
+                    <strong>Application</strong><br>
+                    <small>User creates data</small>
+                </div>
+                <div class="flow-step">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">📦</div>
+                    <strong>Encapsulation</strong><br>
+                    <small>Headers added</small>
+                </div>
+                <div class="flow-step">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">🌐</div>
+                    <strong>Transmission</strong><br>
+                    <small>Sent over network</small>
+                </div>
+                <div class="flow-step">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">📤</div>
+                    <strong>Destination</strong><br>
+                    <small>Data received</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Encapsulation Demo -->
+    <section class="section">
+        <h2>Data Encapsulation Process</h2>
+        <div class="encapsulation-demo">
+            <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">
+                How Each Layer Adds Its Header
+            </h3>
+            <div class="encap-visual">
+                <div class="encap-layer layer-7">
+                    <div class="encap-header">DATA</div>
+                    <div>Application Layer: Raw user data (email, web request, file)</div>
+                </div>
+                <div class="encap-layer layer-4">
+                    <div class="encap-header">TCP</div>
+                    <div class="encap-header">DATA</div>
+                    <div>Transport Layer: Adds port numbers, sequence numbers, flow control</div>
+                </div>
+                <div class="encap-layer layer-3">
+                    <div class="encap-header">IP</div>
+                    <div class="encap-header">TCP</div>
+                    <div class="encap-header">DATA</div>
+                    <div>Network Layer: Adds source/destination IP addresses, routing info</div>
+                </div>
+                <div class="encap-layer layer-2">
+                    <div class="encap-header">ETH</div>
+                    <div class="encap-header">IP</div>
+                    <div class="encap-header">TCP</div>
+                    <div class="encap-header">DATA</div>
+                    <div class="encap-header">FCS</div>
+                    <div>Data Link Layer: Adds MAC addresses, frame check sequence</div>
+                </div>
+            </div>
+            <p style="text-align: center; color: var(--text-dim); margin-top: 2rem;">
+                At the destination, this process is reversed (de-encapsulation) as data moves up the stack
+            </p>
+        </div>
+    </section>
+
+    <!-- Troubleshooting by Layer -->
+    <section class="section">
+        <h2>Troubleshooting by OSI Layer</h2>
+        <div class="troubleshooting-guide">
+            <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">
+                Systematic Network Problem Diagnosis
+            </h3>
+            <div class="troubleshoot-grid">
+                <div class="troubleshoot-item physical">
+                    <div class="troubleshoot-icon">⚡</div>
+                    <div class="troubleshoot-title">Physical Layer Issues</div>
+                    <p style="color: var(--text-light);">
+                        Cable problems, port failures, power issues, signal interference.
+                        Check physical connections, LED indicators, and cable integrity.
+                    </p>
+                </div>
+                <div class="troubleshoot-item datalink">
+                    <div class="troubleshoot-icon">🔗</div>
+                    <div class="troubleshoot-title">Data Link Problems</div>
+                    <p style="color: var(--text-light);">
+                        MAC address conflicts, VLAN misconfigurations, spanning tree issues.
+                        Verify switch configurations and frame forwarding.
+                    </p>
+                </div>
+                <div class="troubleshoot-item network">
+                    <div class="troubleshoot-icon">🌐</div>
+                    <div class="troubleshoot-title">Network Layer Issues</div>
+                    <p style="color: var(--text-light);">
+                        IP address conflicts, routing problems, subnet misconfigurations.
+                        Check routing tables, IP assignments, and reachability.
+                    </p>
+                </div>
+                <div class="troubleshoot-item transport">
+                    <div class="troubleshoot-icon">🚚</div>
+                    <div class="troubleshoot-title">Transport Layer Problems</div>
+                    <p style="color: var(--text-light);">
+                        Port blocking, firewall issues, connection timeouts.
+                        Verify port accessibility and connection establishment.
+                    </p>
+                </div>
+            </div>
+            <div style="background: rgba(0, 255, 255, 0.1); padding: 3rem; border-radius: 20px; margin-top: 3rem; text-align: center;">
+                <h4 style="color: var(--primary-color); margin-bottom: 1rem;">
+                    💡 Pro Tip: Start from the Bottom
+                </h4>
+                <p style="color: var(--text-light);">
+                    Always troubleshoot from Layer 1 (Physical) upward. Many network issues are caused by
+                    simple physical problems like loose cables or power failures. Verify each layer works
+                    before moving to the next.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+            <h3 style="color: var(--layer7-color); margin-bottom: 1rem;">NetworkHub.ch OSI Model</h3>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">
+                Understanding the seven layers that enable all network communication
+            </p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                Layer by layer excellence • <a href="/" style="color: var(--accent-color);">Return to Hub</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle layer details
+        function toggleLayerDetails(layer) {
+            const details = layer.querySelector('.layer-details');
+            const isVisible = details.style.display !== 'none';
+
+            // Close all other layers
+            document.querySelectorAll('.layer-details').forEach(detail => {
+                detail.style.display = 'none';
+            });
+
+            // Toggle current layer
+            if (!isVisible) {
+                details.style.display = 'block';
+                details.style.opacity = '0';
+                details.style.transform = 'translateY(-20px)';
+
+                setTimeout(() => {
+                    details.style.transition = 'all 0.3s ease';
+                    details.style.opacity = '1';
+                    details.style.transform = 'translateY(0)';
+                }, 10);
+            }
+        }
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.layer-details').forEach(detail => {
+                    detail.style.display = 'none';
+                });
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('OSI Model page loaded');
+
+            // Add number key navigation (1-7 for layers)
+            document.addEventListener('keydown', function(e) {
+                const layerNum = parseInt(e.key);
+                if (layerNum >= 1 && layerNum <= 7) {
+                    const layer = document.querySelector(`.layer-${layerNum}`);
+                    if (layer) {
+                        layer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        toggleLayerDetails(layer);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

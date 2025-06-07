@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetworkHub.ch - Complete Networking Compendium</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00ffff;
+            --secondary-color: #ff00ff;
+            --accent-color: #00ff88;
+            --warning-color: #ffaa00;
+            --danger-color: #ff4444;
+            --success-color: #00ff44;
+            --bg-dark: #0a0a0f;
+            --bg-darker: #050508;
+            --bg-card: #111118;
+            --bg-section: #161620;
+            --text-light: #e0e0ff;
+            --text-dim: #a0a0c0;
+            --text-muted: #606080;
+            --border-glow: rgba(0, 255, 255, 0.3);
+            --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            --gradient-accent: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Enhanced Background Effects */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 8s infinite linear;
+            opacity: 0.6;
+        }
+
+        .particle.small { width: 2px; height: 2px; background: var(--primary-color); }
+        .particle.medium { width: 4px; height: 4px; background: var(--accent-color); animation-duration: 12s; }
+        .particle.large { width: 6px; height: 6px; background: var(--secondary-color); animation-duration: 16s; }
+        .particle.xl { width: 8px; height: 8px; background: var(--warning-color); animation-duration: 20s; }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Network Grid Background */
+        .network-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.05;
+            background-image:
+                linear-gradient(var(--primary-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--primary-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridPulse 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes gridPulse {
+            0% { opacity: 0.05; }
+            100% { opacity: 0.15; }
+        }
+
+        /* Data Flow Animation */
+        .data-flow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .data-packet {
+            position: absolute;
+            width: 4px;
+            height: 20px;
+            background: var(--accent-color);
+            border-radius: 2px;
+            animation: dataFlow 3s infinite linear;
+            opacity: 0.7;
+        }
+
+        @keyframes dataFlow {
+            0% { transform: translateX(-100px) translateY(0); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateX(calc(100vw + 100px)) translateY(0); opacity: 0; }
+        }
+
+        /* Enhanced Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-glow);
+            box-shadow: 0 5px 30px rgba(0, 255, 255, 0.1);
+        }
+
+        nav {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            letter-spacing: -1px;
+        }
+
+        .logo::after {
+            content: '⚡';
+            position: absolute;
+            top: -5px;
+            right: -25px;
+            font-size: 1rem;
+            color: var(--warning-color);
+            animation: sparkle 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes sparkle {
+            0% { opacity: 0.5; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.7rem 1.2rem;
+            border-radius: 25px;
+            position: relative;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 15px var(--primary-color);
+            background: rgba(0, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-primary);
+            border-radius: 25px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-links a:hover::before {
+            opacity: 0.15;
+        }
+
+        /* Enhanced Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.15) 0%, transparent 70%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 6rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+            font-weight: 900;
+            letter-spacing: -3px;
+            line-height: 0.9;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 20px var(--primary-color)); }
+            100% { filter: drop-shadow(0 0 50px var(--secondary-color)); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+        }
+
+        .hero-description {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Network Stats Dashboard */
+        .network-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1.5s forwards;
+        }
+
+        .dashboard-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-glow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            animation: rotate 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .dashboard-card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 255, 255, 0.3);
+        }
+
+        .dashboard-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dashboard-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dashboard-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* CTA Buttons */
+        .cta-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 2s forwards;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1.2rem 3rem;
+            background: var(--gradient-primary);
+            color: var(--bg-dark);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 255, 255, 0.5);
+        }
+
+        .cta-button.secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .cta-button.secondary:hover {
+            background: var(--primary-color);
+            color: var(--bg-dark);
+        }
+
+        /* Enhanced Sections */
+        .section {
+            padding: 8rem 0;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .section h2 {
+            font-size: 3.5rem;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+            text-align: center;
+            position: relative;
+            font-weight: 800;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        /* Topic Grid */
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin: 5rem 0;
+        }
+
+        .topic-card {
+            background: var(--bg-card);
+            border-radius: 25px;
+            padding: 3rem;
+            border: 1px solid var(--border-glow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .topic-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.05), rgba(255, 0, 255, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+
+        .topic-card:hover::before {
+            opacity: 1;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 255, 255, 0.3);
+            border-color: var(--primary-color);
+        }
+
+        .topic-icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .topic-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .topic-description {
+            color: var(--text-light);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .topic-features {
+            list-style: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .topic-features li {
+            color: var(--text-dim);
+            margin-bottom: 0.7rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .topic-features li::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-size: 0.8rem;
+        }
+
+        .topic-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .topic-link:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        /* Interactive Protocol Stack */
+        .protocol-visualization {
+            background: var(--bg-section);
+            border-radius: 30px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .protocol-visualization::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 70%, rgba(0, 255, 255, 0.1), transparent 50%),
+                        radial-gradient(circle at 70% 30%, rgba(255, 0, 255, 0.1), transparent 50%);
+            z-index: 0;
+        }
+
+        .protocol-stack {
+            position: relative;
+            z-index: 1;
+        }
+
+        .stack-layer {
+            background: rgba(0, 0, 0, 0.4);
+            margin: 1.5rem 0;
+            padding: 2.5rem;
+            border-radius: 20px;
+            border-left: 6px solid var(--accent-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stack-layer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .stack-layer:hover::before {
+            left: 100%;
+        }
+
+        .stack-layer:hover {
+            transform: translateX(15px);
+            background: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 15px 40px rgba(0, 255, 255, 0.2);
+            border-left-color: var(--primary-color);
+        }
+
+        .layer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .layer-title {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .layer-number {
+            background: var(--gradient-primary);
+            color: var(--bg-dark);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Real-time Monitoring */
+        .monitoring-section {
+            background: var(--bg-section);
+            border-radius: 30px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .monitoring-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin: 3rem 0;
+        }
+
+        .monitoring-card {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-glow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .monitoring-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+        }
+
+        .monitoring-title {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .metric-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .metric-unit {
+            color: var(--text-dim);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric-trend {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            background: rgba(0, 255, 68, 0.2);
+            color: var(--success-color);
+        }
+
+        .metric-trend.down {
+            background: rgba(255, 68, 68, 0.2);
+            color: var(--danger-color);
+        }
+
+        /* Tool Showcase */
+        .tools-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin: 4rem 0;
+        }
+
+        .tool-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid var(--border-glow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.2);
+        }
+
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-accent);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .tool-name {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .tool-category {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            padding: 0.3rem 0.8rem;
+            background: rgba(0, 255, 136, 0.2);
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        /* Footer Enhancement */
+        footer {
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            padding: 5rem 0 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-glow);
+            position: relative;
+            margin-top: 6rem;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin: 3rem 0;
+            text-align: left;
+        }
+
+        .footer-section h4 {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.3rem 0;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3.5rem; letter-spacing: -1px; }
+            .nav-links { display: none; }
+            .topic-grid { grid-template-columns: 1fr; }
+            .network-dashboard { grid-template-columns: repeat(2, 1fr); }
+            .monitoring-grid { grid-template-columns: 1fr; }
+            .tools-showcase { grid-template-columns: 1fr; }
+            .section { padding: 4rem 1rem; }
+        }
+
+        /* Loading Animations */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
+        .fade-in.animate { opacity: 1; transform: translateY(0); }
+        .slide-in-left { opacity: 0; transform: translateX(-100px); transition: all 0.8s ease; }
+        .slide-in-left.animate { opacity: 1; transform: translateX(0); }
+        .slide-in-right { opacity: 0; transform: translateX(100px); transition: all 0.8s ease; }
+        .slide-in-right.animate { opacity: 1; transform: translateX(0); }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Background Effects -->
+    <div class="bg-particles" id="particles"></div>
+    <div class="network-grid"></div>
+    <div class="data-flow" id="dataFlow"></div>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">NetworkHub.ch</div>
+            <ul class="nav-links">
+                <li><a href="/">🏠 Hub</a></li>
+                <li><a href="/protocols">📡 Protocols</a></li>
+                <li><a href="/security">🔒 Security</a></li>
+                <li><a href="/modern-tech">🚀 Modern Tech</a></li>
+                <li><a href="/tools">🛠️ Tools</a></li>
+                <li><a href="/cloud">☁️ Cloud</a></li>
+                <li><a href="/performance">⚡ Performance</a></li>
+                <li><a href="/osi-model">📊 OSI Model</a></li>
+                <li><a href="/troubleshooting">🔧 Troubleshooting</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">NetworkHub</h1>
+            <div class="hero-subtitle">Complete Networking Compendium</div>
+            <div class="hero-description">
+                Your ultimate resource for everything networking - from TCP/IP fundamentals to cutting-edge technologies.
+                Explore protocols, security, cloud networking, performance optimization, and the future of digital communication.
+            </div>
+
+            <!-- Real-time Network Dashboard -->
+            <div class="network-dashboard" id="networkDashboard">
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">🌐</div>
+                    <div class="dashboard-value" id="internetUsers">5.16B</div>
+                    <div class="dashboard-label">Internet Users</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">📊</div>
+                    <div class="dashboard-value" id="globalTraffic">4.8ZB</div>
+                    <div class="dashboard-label">Monthly Traffic</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">🔗</div>
+                    <div class="dashboard-value" id="connectedDevices">50B+</div>
+                    <div class="dashboard-label">Connected Devices</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">⚡</div>
+                    <div class="dashboard-value" id="bgpRoutes">930K</div>
+                    <div class="dashboard-label">BGP Routes</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">🛡️</div>
+                    <div class="dashboard-value" id="ddosAttacks">18/min</div>
+                    <div class="dashboard-label">DDoS Attacks</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">🎯</div>
+                    <div class="dashboard-value" id="dnsQueries">4.6T</div>
+                    <div class="dashboard-label">Daily DNS Queries</div>
+                </div>
+            </div>
+
+            <div class="cta-buttons">
+                <a href="#explore" class="cta-button">🚀 Start Exploring</a>
+                <a href="/protocols" class="cta-button secondary">📚 Learn Protocols</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comprehensive Topics Section -->
+    <section class="section fade-in" id="explore">
+        <h2>Networking Universe</h2>
+        <p style="text-align: center; font-size: 1.3rem; margin-bottom: 4rem; color: var(--text-dim); max-width: 900px; margin-left: auto; margin-right: auto;">
+            Dive deep into every aspect of computer networking. From foundational protocols to emerging technologies,
+            this comprehensive compendium covers everything you need to know about how the digital world connects.
+        </p>
+
+        <div class="topic-grid">
+            <!-- TCP/IP & Core Protocols -->
+            <div class="topic-card" onclick="window.location.href='/protocols'">
+                <div class="topic-icon">📡</div>
+                <div class="topic-title">Network Protocols</div>
+                <div class="topic-description">
+                    Master the fundamental protocols that power the internet. From TCP/IP and HTTP to DNS and DHCP,
+                    understand how data flows across networks and enables global communication.
+                </div>
+                <ul class="topic-features">
+                    <li>TCP/IP Suite Deep Dive</li>
+                    <li>Application Layer Protocols</li>
+                    <li>Routing Protocols (BGP, OSPF)</li>
+                    <li>Network Address Translation</li>
+                    <li>Protocol Analysis & Debugging</li>
+                </ul>
+                <a href="/protocols" class="topic-link">Explore Protocols →</a>
+            </div>
+
+            <!-- Network Security -->
+            <div class="topic-card" onclick="window.location.href='/security'">
+                <div class="topic-icon">🔒</div>
+                <div class="topic-title">Network Security</div>
+                <div class="topic-description">
+                    Comprehensive security frameworks, threat protection, and defensive strategies. Learn about firewalls,
+                    VPNs, intrusion detection, and how to build resilient network architectures.
+                </div>
+                <ul class="topic-features">
+                    <li>Firewall Technologies & Rules</li>
+                    <li>VPN Solutions & Tunneling</li>
+                    <li>Intrusion Detection Systems</li>
+                    <li>Network Segmentation</li>
+                    <li>Zero Trust Architecture</li>
+                </ul>
+                <a href="/security" class="topic-link">Secure Networks →</a>
+            </div>
+
+            <!-- Modern Technologies -->
+            <div class="topic-card" onclick="window.location.href='/modern-tech'">
+                <div class="topic-icon">🚀</div>
+                <div class="topic-title">Modern Technologies</div>
+                <div class="topic-description">
+                    Explore cutting-edge networking innovations transforming digital infrastructure. From 5G and edge computing
+                    to software-defined networks and quantum communication.
+                </div>
+                <ul class="topic-features">
+                    <li>5G & Beyond Wireless</li>
+                    <li>Software-Defined Networking</li>
+                    <li>Edge Computing Networks</li>
+                    <li>Network Function Virtualization</li>
+                    <li>Intent-Based Networking</li>
+                </ul>
+                <a href="/modern-tech" class="topic-link">Future Tech →</a>
+            </div>
+
+            <!-- Network Tools -->
+            <div class="topic-card" onclick="window.location.href='/tools'">
+                <div class="topic-icon">🛠️</div>
+                <div class="topic-title">Essential Tools</div>
+                <div class="topic-description">
+                    Master the professional toolkit for network analysis, monitoring, and troubleshooting. From Wireshark
+                    to advanced monitoring platforms and security scanners.
+                </div>
+                <ul class="topic-features">
+                    <li>Packet Analysis (Wireshark)</li>
+                    <li>Network Scanning (Nmap)</li>
+                    <li>Performance Testing Tools</li>
+                    <li>Monitoring & Alerting</li>
+                    <li>Security Assessment Tools</li>
+                </ul>
+                <a href="/tools" class="topic-link">Tool Arsenal →</a>
+            </div>
+
+            <!-- Cloud Networking -->
+            <div class="topic-card" onclick="window.location.href='/cloud'">
+                <div class="topic-icon">☁️</div>
+                <div class="topic-title">Cloud Networking</div>
+                <div class="topic-description">
+                    Navigate the complexities of cloud infrastructure across AWS, Azure, and Google Cloud. Learn about
+                    virtual networks, load balancing, and hybrid cloud architectures.
+                </div>
+                <ul class="topic-features">
+                    <li>Virtual Private Clouds</li>
+                    <li>Cloud Load Balancing</li>
+                    <li>CDN & Edge Networks</li>
+                    <li>Hybrid Connectivity</li>
+                    <li>Multi-Cloud Strategies</li>
+                </ul>
+                <a href="/cloud" class="topic-link">Cloud Networks →</a>
+            </div>
+
+            <!-- Performance Optimization -->
+            <div class="topic-card" onclick="window.location.href='/performance'">
+                <div class="topic-icon">⚡</div>
+                <div class="topic-title">Performance & Optimization</div>
+                <div class="topic-description">
+                    Maximize network efficiency with advanced optimization techniques. Learn about bandwidth management,
+                    latency reduction, and quality of service implementation.
+                </div>
+                <ul class="topic-features">
+                    <li>Bandwidth Optimization</li>
+                    <li>Latency Minimization</li>
+                    <li>Quality of Service (QoS)</li>
+                    <li>Traffic Engineering</li>
+                    <li>Network Capacity Planning</li>
+                </ul>
+                <a href="/performance" class="topic-link">Optimize Now →</a>
+            </div>
+
+            <!-- OSI Model -->
+            <div class="topic-card" onclick="window.location.href='/osi-model'">
+                <div class="topic-icon">📊</div>
+                <div class="topic-title">OSI Reference Model</div>
+                <div class="topic-description">
+                    Deep dive into the seven-layer OSI model that defines how network protocols interact. Understand
+                    encapsulation, data flow, and how each layer contributes to communication.
+                </div>
+                <ul class="topic-features">
+                    <li>7-Layer Architecture</li>
+                    <li>Protocol Mapping</li>
+                    <li>Data Encapsulation</li>
+                    <li>Layer Interactions</li>
+                    <li>Troubleshooting by Layer</li>
+                </ul>
+                <a href="/osi-model" class="topic-link">Layer by Layer →</a>
+            </div>
+
+            <!-- Troubleshooting -->
+            <div class="topic-card" onclick="window.location.href='/troubleshooting'">
+                <div class="topic-icon">🔧</div>
+                <div class="topic-title">Network Troubleshooting</div>
+                <div class="topic-description">
+                    Systematic approaches to diagnosing and resolving network issues. Learn methodologies, tools,
+                    and best practices for maintaining network reliability.
+                </div>
+                <ul class="topic-features">
+                    <li>Systematic Troubleshooting</li>
+                    <li>Common Network Problems</li>
+                    <li>Diagnostic Methodologies</li>
+                    <li>Performance Issues</li>
+                    <li>Root Cause Analysis</li>
+                </ul>
+                <a href="/troubleshooting" class="topic-link">Debug Networks →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Protocol Visualization -->
+    <section class="section slide-in-left">
+        <h2>TCP/IP Stack Interactive</h2>
+        <div class="protocol-visualization">
+            <h3 style="color: var(--primary-color); margin-bottom: 3rem; text-align: center; font-size: 2rem;">
+                The Foundation of Internet Communication
+            </h3>
+            <div class="protocol-stack">
+                <div class="stack-layer" onclick="showLayerDetails('application')">
+                    <div class="layer-header">
+                        <div class="layer-title">Application Layer</div>
+                        <div class="layer-number">7</div>
+                    </div>
+                    <p>HTTP/HTTPS, FTP, SMTP, DNS, DHCP - Where users interact with network services and applications communicate.</p>
+                    <div style="margin-top: 1rem; color: var(--accent-color); font-size: 0.9rem;">
+                        Examples: Web browsers, email clients, file transfer applications
+                    </div>
+                </div>
+
+                <div class="stack-layer" onclick="showLayerDetails('presentation')">
+                    <div class="layer-header">
+                        <div class="layer-title">Presentation Layer</div>
+                        <div class="layer-number">6</div>
+                    </div>
+                    <p>Data encryption, compression, and format conversion. Ensures data is readable by the receiving application.</p>
+                    <div style="margin-top: 1rem; color: var(--accent-color); font-size: 0.9rem;">
+                        Examples: SSL/TLS encryption, JPEG compression, ASCII/Unicode encoding
+                    </div>
+                </div>
+
+                <div class="stack-layer" onclick="showLayerDetails('session')">
+                    <div class="layer-header">
+                        <div class="layer-title">Session Layer</div>
+                        <div class="layer-number">5</div>
+                    </div>
+                    <p>Manages communication sessions between applications. Controls connections, sessions, and authentication.</p>
+                    <div style="margin-top: 1rem; color: var(--accent-color); font-size: 0.9rem;">
+                        Examples: SQL sessions, RPC calls, NetBIOS sessions
+                    </div>
+                </div>
+
+                <div class="stack-layer" onclick="showLayerDetails('transport')">
+                    <div class="layer-header">
+                        <div class="layer-title">Transport Layer</div>
+                        <div class="layer-number">4</div>
+                    </div>
+                    <p>TCP/UDP - Ensures reliable data transfer with error checking, flow control, and segmentation.</p>
+                    <div style="margin-top: 1rem; color: var(--accent-color); font-size: 0.9rem;">
+                        TCP: Reliable, connection-oriented | UDP: Fast, connectionless
+                    </div>
+                </div>
+
+                <div class="stack-layer" onclick="showLayerDetails('network')">
+                    <div class="layer-header">
+                        <div class="layer-title">Network Layer</div>
+                        <div class="layer-number">3</div>
+                    </div>
+                    <p>IP, ICMP, ARP - Handles routing, addressing, and path determination across interconnected networks.</p>
+                    <div style="margin-top: 1rem; color: var(--accent-color); font-size: 0.9rem;">
+                        IPv4: 4.3B addresses | IPv6: 340 undecillion addresses
+                    </div>
+                </div>
+
+                <div class="stack-layer" onclick="showLayerDetails('datalink')">
+                    <div class="layer-header">
+                        <div class="layer-title">Data Link Layer</div>
+                        <div class="layer-number">2</div>
+                    </div>
+                    <p>Ethernet, Wi-Fi, PPP - Provides node-to-node data transfer and error detection within a network segment.</p>
+                    <div style="margin-top: 1rem; color: var(--accent-color); font-size: 0.9rem;">
+                        MAC addresses, frame formatting, error detection
+                    </div>
+                </div>
+
+                <div class="stack-layer" onclick="showLayerDetails('physical')">
+                    <div class="layer-header">
+                        <div class="layer-title">Physical Layer</div>
+                        <div class="layer-number">1</div>
+                    </div>
+                    <p>Cables, radio waves, optical fibers - The actual hardware that transmits raw bit streams.</p>
+                    <div style="margin-top: 1rem; color: var(--accent-color); font-size: 0.9rem;">
+                        Electrical signals, fiber optics, wireless radio frequencies
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-time Monitoring Section -->
+    <section class="section slide-in-right">
+        <h2>Global Network Pulse</h2>
+        <div class="monitoring-section">
+            <h3 style="color: var(--accent-color); margin-bottom: 2rem; text-align: center;">Real-time Internet Statistics</h3>
+            <div class="monitoring-grid">
+                <div class="monitoring-card">
+                    <div class="monitoring-title">Global Bandwidth</div>
+                    <div class="metric-display" id="globalBandwidth">847</div>
+                    <div class="metric-unit">Terabits per second</div>
+                    <div class="metric-trend">↗ +12% this month</div>
+                </div>
+
+                <div class="monitoring-card">
+                    <div class="monitoring-title">Active Websites</div>
+                    <div class="metric-display" id="activeWebsites">1.13B</div>
+                    <div class="metric-unit">Live websites</div>
+                    <div class="metric-trend">↗ +5% this year</div>
+                </div>
+
+                <div class="monitoring-card">
+                    <div class="monitoring-title">Email Traffic</div>
+                    <div class="metric-display" id="emailTraffic">347B</div>
+                    <div class="metric-unit">Emails per day</div>
+                    <div class="metric-trend">↗ +3% annually</div>
+                </div>
+
+                <div class="monitoring-card">
+                    <div class="monitoring-title">IPv6 Adoption</div>
+                    <div class="metric-display" id="ipv6Adoption">37.2%</div>
+                    <div class="metric-unit">Global deployment</div>
+                    <div class="metric-trend">↗ +8% annually</div>
+                </div>
+
+                <div class="monitoring-card">
+                    <div class="monitoring-title">Data Centers</div>
+                    <div class="metric-display" id="dataCenters">8.9M</div>
+                    <div class="metric-unit">Worldwide facilities</div>
+                    <div class="metric-trend">↗ +15% growth</div>
+                </div>
+
+                <div class="monitoring-card">
+                    <div class="monitoring-title">Submarine Cables</div>
+                    <div class="metric-display" id="submarineCables">436</div>
+                    <div class="metric-unit">Active connections</div>
+                    <div class="metric-trend">↗ +25 new cables</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Tools Showcase -->
+    <section class="section fade-in">
+        <h2>Professional Toolkit</h2>
+        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 4rem; color: var(--text-dim);">
+            Essential tools every network professional should master
+        </p>
+
+        <div class="tools-showcase">
+            <div class="tool-card">
+                <div class="tool-icon">🔍</div>
+                <div class="tool-name">Wireshark</div>
+                <div class="tool-category">Packet Analysis</div>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">
+                    The world's foremost network protocol analyzer. Deep packet inspection, real-time capture, and comprehensive analysis capabilities.
+                </p>
+                <div style="color: var(--text-dim); font-size: 0.9rem;">
+                    ✓ 3000+ protocol decoders<br>
+                    ✓ Real-time capture<br>
+                    ✓ Advanced filtering
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-icon">🎯</div>
+                <div class="tool-name">Nmap</div>
+                <div class="tool-category">Network Discovery</div>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">
+                    Network discovery and security auditing. Port scanning, OS detection, and network mapping capabilities.
+                </p>
+                <div style="color: var(--text-dim); font-size: 0.9rem;">
+                    ✓ Host discovery<br>
+                    ✓ Port scanning<br>
+                    ✓ Service detection
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-icon">📊</div>
+                <div class="tool-name">PRTG</div>
+                <div class="tool-category">Network Monitoring</div>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">
+                    Comprehensive network monitoring solution. Real-time monitoring, alerting, and performance analysis.
+                </p>
+                <div style="color: var(--text-dim); font-size: 0.9rem;">
+                    ✓ 200+ sensor types<br>
+                    ✓ Real-time alerts<br>
+                    ✓ Custom dashboards
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-icon">⚡</div>
+                <div class="tool-name">iperf3</div>
+                <div class="tool-category">Performance Testing</div>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">
+                    Network performance measurement tool. Bandwidth testing, throughput analysis, and network capacity evaluation.
+                </p>
+                <div style="color: var(--text-dim); font-size: 0.9rem;">
+                    ✓ Bandwidth testing<br>
+                    ✓ Multi-threading<br>
+                    ✓ JSON output
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3 style="color: var(--primary-color); margin-bottom: 2rem; font-size: 2.5rem; font-weight: 800;">NetworkHub.ch</h3>
+            <p style="color: var(--text-light); margin-bottom: 3rem; font-size: 1.2rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                Your comprehensive guide to the networking universe. From foundational protocols to cutting-edge technologies,
+                explore every aspect of how our digital world connects and communicates.
+            </p>
+
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>Core Topics</h4>
+                    <ul class="footer-links">
+                        <li><a href="/protocols">Network Protocols</a></li>
+                        <li><a href="/security">Network Security</a></li>
+                        <li><a href="/osi-model">OSI Reference Model</a></li>
+                        <li><a href="/performance">Performance Optimization</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Modern Technologies</h4>
+                    <ul class="footer-links">
+                        <li><a href="/modern-tech">5G & Edge Computing</a></li>
+                        <li><a href="/cloud">Cloud Networking</a></li>
+                        <li><a href="/modern-tech">Software-Defined Networks</a></li>
+                        <li><a href="/future">Quantum Networking</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Tools & Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="/tools">Professional Tools</a></li>
+                        <li><a href="/troubleshooting">Troubleshooting Guide</a></li>
+                        <li><a href="/performance">Performance Testing</a></li>
+                        <li><a href="/security">Security Assessment</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Quick Access</h4>
+                    <ul class="footer-links">
+                        <li><a href="#explore">Topic Overview</a></li>
+                        <li><a href="/api/network-stats">Live Statistics</a></li>
+                        <li><a href="#networkDashboard">Real-time Dashboard</a></li>
+                        <li><a href="#protocols">Protocol Stack</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin: 4rem 0 2rem; padding: 3rem; background: rgba(0, 255, 255, 0.05); border-radius: 20px; border: 1px solid rgba(0, 255, 255, 0.1);">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; text-align: center;">
+                    <div>
+                        <div style="font-size: 2rem; color: var(--accent-color); margin-bottom: 0.5rem;">🌐</div>
+                        <div style="color: var(--text-light); font-weight: 600;">Global Reach</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem;">Networking knowledge worldwide</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; color: var(--accent-color); margin-bottom: 0.5rem;">📚</div>
+                        <div style="color: var(--text-light); font-weight: 600;">Comprehensive</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem;">Complete networking compendium</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; color: var(--accent-color); margin-bottom: 0.5rem;">🔄</div>
+                        <div style="color: var(--text-light); font-weight: 600;">Always Updated</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem;">Latest technologies & trends</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; color: var(--accent-color); margin-bottom: 0.5rem;">⚡</div>
+                        <div style="color: var(--text-light); font-weight: 600;">Real-time Data</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem;">Live network statistics</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding: 2rem 0; border-top: 1px solid rgba(0, 255, 255, 0.2);">
+                <p style="color: var(--text-dim); font-size: 1rem; margin-bottom: 1rem;">
+                    "The network is the computer" - John Gage, Sun Microsystems
+                </p>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">
+                    Built with the same protocols it teaches • Powered by TCP/IP • Made with ❤️ for network engineers
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Enhanced particle system with multiple types
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleTypes = ['small', 'medium', 'large', 'xl'];
+            const particleCount = 120;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+                particle.className = `particle ${type}`;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Data flow visualization
+        function createDataFlow() {
+            const container = document.getElementById('dataFlow');
+
+            setInterval(() => {
+                if (Math.random() > 0.6) {
+                    const packet = document.createElement('div');
+                    packet.className = 'data-packet';
+                    packet.style.top = Math.random() * 100 + '%';
+                    packet.style.animationDelay = Math.random() * 1 + 's';
+                    container.appendChild(packet);
+
+                    setTimeout(() => {
+                        if (packet.parentNode) {
+                            packet.parentNode.removeChild(packet);
+                        }
+                    }, 3000);
+                }
+            }, 800);
+        }
+
+        // Real-time network statistics updates
+        function updateNetworkStats() {
+            fetch('/api/network-stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('internetUsers').textContent = data.internet_users;
+                    document.getElementById('globalTraffic').textContent = data.global_traffic;
+                    document.getElementById('connectedDevices').textContent = data.connected_devices;
+                    document.getElementById('bgpRoutes').textContent = data.bgp_routes;
+                    document.getElementById('ddosAttacks').textContent = data.ddos_attacks;
+                    document.getElementById('dnsQueries').textContent = data.dns_queries;
+                })
+                .catch(error => console.log('Stats update failed:', error));
+        }
+
+        // Enhanced scroll animations
+        function handleScrollAnimations() {
+            const elements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right');
+
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('animate');
+                }
+            });
+        }
+
+        // Layer details modal (placeholder function)
+        function showLayerDetails(layer) {
+            console.log(`Showing details for ${layer} layer`);
+            // Future: Implement modal with detailed layer information
+        }
+
+        // Smooth scrolling
+        function initSmoothScrolling() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Hero typing effect
+        function initTypingEffect() {
+            const title = document.querySelector('.hero-title');
+            const text = title.textContent;
+            title.textContent = '';
+
+            let i = 0;
+            const typeWriter = () => {
+                if (i < text.length) {
+                    title.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 150);
+                }
+            };
+
+            setTimeout(typeWriter, 1000);
+        }
+
+        // Card hover effects
+        function initCardEffects() {
+            document.querySelectorAll('.topic-card, .tool-card, .dashboard-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-15px) scale(1.02)';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            createDataFlow();
+            initSmoothScrolling();
+            initTypingEffect();
+            initCardEffects();
+            handleScrollAnimations();
+            updateNetworkStats();
+
+            // Update stats periodically
+            setInterval(updateNetworkStats, 10000);
+
+            // Scroll event listeners
+            window.addEventListener('scroll', function() {
+                handleScrollAnimations();
+
+                // Parallax effect for hero
+                const scrolled = window.pageYOffset;
+                const hero = document.querySelector('.hero');
+                if (hero && scrolled < window.innerHeight) {
+                    hero.style.transform = `translateY(${scrolled * 0.3}px)`;
+                    hero.style.opacity = 1 - (scrolled / window.innerHeight) * 0.4;
+                }
+            });
+        });
+
+        // Performance monitoring
+        if ('performance' in window) {
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                    console.log(`NetworkHub loaded in ${loadTime}ms`);
+                }, 0);
+            });
+        }
+    </script>
+</body>
+</html>

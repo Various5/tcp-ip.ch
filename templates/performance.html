@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Performance - NetworkHub.ch</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary-color: #00ffff;
+            --secondary-color: #ff00ff;
+            --accent-color: #00ff88;
+            --warning-color: #ffaa00;
+            --danger-color: #ff4444;
+            --success-color: #00ff44;
+            --perf-color: #ff6600;
+            --bg-dark: #0a0a0f;
+            --bg-darker: #050508;
+            --bg-card: #111118;
+            --bg-section: #161620;
+            --text-light: #e0e0ff;
+            --text-dim: #a0a0c0;
+            --border-glow: rgba(0, 255, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        nav {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .hero {
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 102, 0, 0.1) 0%, transparent 70%);
+        }
+
+        .section {
+            padding: 6rem 0;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .section h2 {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: var(--perf-color);
+            text-align: center;
+        }
+
+        .performance-dashboard {
+            background: var(--bg-section);
+            border-radius: 30px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin: 4rem 0;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid var(--border-glow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 102, 0, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .metric-card:hover::before {
+            opacity: 1;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 102, 0, 0.3);
+        }
+
+        .metric-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--perf-color);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .metric-label {
+            color: var(--text-dim);
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .metric-trend {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .trend-up {
+            background: rgba(0, 255, 68, 0.2);
+            color: var(--success-color);
+        }
+
+        .trend-down {
+            background: rgba(255, 68, 68, 0.2);
+            color: var(--danger-color);
+        }
+
+        .trend-stable {
+            background: rgba(255, 170, 0, 0.2);
+            color: var(--warning-color);
+        }
+
+        .speed-test {
+            background: var(--bg-card);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+            text-align: center;
+        }
+
+        .speed-gauge {
+            width: 300px;
+            height: 150px;
+            margin: 3rem auto;
+            position: relative;
+        }
+
+        .gauge-bg {
+            width: 100%;
+            height: 100%;
+            border-radius: 150px 150px 0 0;
+            background: conic-gradient(
+                from 180deg,
+                var(--danger-color) 0deg 60deg,
+                var(--warning-color) 60deg 120deg,
+                var(--success-color) 120deg 180deg
+            );
+            position: relative;
+        }
+
+        .gauge-inner {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 0;
+            background: var(--bg-card);
+            border-radius: 130px 130px 0 0;
+        }
+
+        .gauge-needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            height: 120px;
+            background: var(--primary-color);
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(-90deg);
+            transition: transform 1s ease-out;
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .gauge-center {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+
+        .speed-value {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .test-controls {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .test-button {
+            background: linear-gradient(45deg, var(--perf-color), var(--primary-color));
+            color: white;
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .test-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 102, 0, 0.3);
+        }
+
+        .test-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .optimization-tips {
+            background: var(--bg-section);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin: 3rem 0;
+        }
+
+        .tip-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 3rem;
+            border-left: 5px solid var(--perf-color);
+            transition: all 0.3s ease;
+        }
+
+        .tip-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 15px 30px rgba(255, 102, 0, 0.2);
+        }
+
+        .tip-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--perf-color);
+        }
+
+        .tip-title {
+            color: var(--perf-color);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .bandwidth-calculator {
+            background: var(--bg-card);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .calculator-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--perf-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-section);
+            border: 1px solid var(--border-glow);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-section);
+            border: 1px solid var(--border-glow);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(45deg, var(--perf-color), var(--primary-color));
+            color: white;
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 102, 0, 0.3);
+        }
+
+        .calculation-result {
+            margin-top: 3rem;
+            padding: 3rem;
+            background: var(--bg-section);
+            border-radius: 20px;
+            border: 1px solid var(--border-glow);
+            text-align: center;
+            display: none;
+        }
+
+        .result-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--perf-color);
+            margin-bottom: 1rem;
+        }
+
+        .performance-chart {
+            background: var(--bg-section);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .chart-container {
+            height: 400px;
+            margin: 3rem 0;
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            height: 300px;
+            margin: 2rem 0;
+        }
+
+        .chart-bar {
+            background: linear-gradient(to top, var(--perf-color), var(--primary-color));
+            width: 40px;
+            border-radius: 5px 5px 0 0;
+            display: flex;
+            align-items: end;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            padding-bottom: 0.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .chart-bar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(255, 102, 0, 0.5);
+        }
+
+        .chart-label {
+            position: absolute;
+            bottom: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-light);
+            font-size: 0.8rem;
+            width: 60px;
+            text-align: center;
+        }
+
+        .qos-config {
+            background: var(--bg-card);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
+            border: 1px solid var(--border-glow);
+        }
+
+        .qos-matrix {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 1rem;
+            margin: 3rem 0;
+            background: var(--bg-section);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .qos-header {
+            background: rgba(255, 102, 0, 0.2);
+            padding: 1rem;
+            border-radius: 10px;
+            font-weight: bold;
+            color: var(--perf-color);
+            text-align: center;
+        }
+
+        .qos-row {
+            display: contents;
+        }
+
+        .qos-cell {
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .qos-priority {
+            font-weight: bold;
+        }
+
+        .priority-high { color: var(--danger-color); }
+        .priority-medium { color: var(--warning-color); }
+        .priority-low { color: var(--success-color); }
+
+        footer {
+            background: var(--bg-darker);
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-glow);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo"><a href="/" style="color: inherit; text-decoration: none;">NetworkHub.ch</a></div>
+            <ul class="nav-links">
+                <li><a href="/">🏠 Hub</a></li>
+                <li><a href="/protocols">📡 Protocols</a></li>
+                <li><a href="/security">🔒 Security</a></li>
+                <li><a href="/modern-tech">🚀 Modern Tech</a></li>
+                <li><a href="/tools">🛠️ Tools</a></li>
+                <li><a href="/cloud">☁️ Cloud</a></li>
+                <li><a href="/performance" style="color: var(--perf-color);">⚡ Performance</a></li>
+                <li><a href="/osi-model">📊 OSI Model</a></li>
+                <li><a href="/troubleshooting">🔧 Troubleshooting</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div>
+            <h1 style="font-size: 4rem; color: var(--perf-color);">Network Performance</h1>
+            <p style="font-size: 1.4rem; margin-bottom: 2rem;">
+                Optimizing speed, latency, and throughput for peak network efficiency
+            </p>
+        </div>
+    </section>
+
+    <!-- Real-time Performance Dashboard -->
+    <section class="section">
+        <h2>Live Performance Metrics</h2>
+        <div class="performance-dashboard">
+            <h3 style="color: var(--primary-color); margin-bottom: 3rem; text-align: center;">
+                Real-time Network Performance Dashboard
+            </h3>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">📊</div>
+                    <div class="metric-value" id="bandwidthUsage">67%</div>
+                    <div class="metric-label">Bandwidth Utilization</div>
+                    <div class="metric-trend trend-up">↗ +5% from last hour</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">⚡</div>
+                    <div class="metric-value" id="latency">12ms</div>
+                    <div class="metric-label">Average Latency</div>
+                    <div class="metric-trend trend-stable">→ Stable</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">📈</div>
+                    <div class="metric-value" id="throughput">847</div>
+                    <div class="metric-label">Throughput (Mbps)</div>
+                    <div class="metric-trend trend-up">↗ +12% improvement</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">📉</div>
+                    <div class="metric-value" id="packetLoss">0.02%</div>
+                    <div class="metric-label">Packet Loss</div>
+                    <div class="metric-trend trend-down">↘ -0.01% improvement</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">🔄</div>
+                    <div class="metric-value" id="jitter">2.1ms</div>
+                    <div class="metric-label">Jitter</div>
+                    <div class="metric-trend trend-stable">→ Within normal range</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">🎯</div>
+                    <div class="metric-value" id="availability">99.97%</div>
+                    <div class="metric-label">Network Availability</div>
+                    <div class="metric-trend trend-up">↗ 99.9% SLA exceeded</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Speed Test -->
+    <section class="section">
+        <h2>Network Speed Test</h2>
+        <div class="speed-test">
+            <h3 style="color: var(--primary-color); margin-bottom: 2rem;">
+                ⚡ Comprehensive Network Speed Analysis
+            </h3>
+            <p style="color: var(--text-dim); margin-bottom: 3rem;">
+                Test your network's download and upload speeds, latency, and overall performance
+            </p>
+
+            <div class="speed-gauge">
+                <div class="gauge-bg">
+                    <div class="gauge-inner"></div>
+                    <div class="gauge-needle" id="speedNeedle"></div>
+                    <div class="gauge-center"></div>
+                    <div class="speed-value" id="speedValue">0 Mbps</div>
+                </div>
+            </div>
+
+            <div class="test-controls">
+                <button class="test-button" onclick="runSpeedTest('download')" id="downloadBtn">
+                    📥 Test Download Speed
+                </button>
+                <button class="test-button" onclick="runSpeedTest('upload')" id="uploadBtn">
+                    📤 Test Upload Speed
+                </button>
+                <button class="test-button" onclick="runSpeedTest('ping')" id="pingBtn">
+                    🏓 Test Ping & Latency
+                </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 3rem;">
+                <div style="text-align: center; padding: 2rem; background: var(--bg-section); border-radius: 15px;">
+                    <div style="font-size: 2rem; color: var(--success-color); margin-bottom: 0.5rem;" id="downloadResult">--</div>
+                    <div style="color: var(--text-dim);">Download Speed</div>
+                </div>
+                <div style="text-align: center; padding: 2rem; background: var(--bg-section); border-radius: 15px;">
+                    <div style="font-size: 2rem; color: var(--warning-color); margin-bottom: 0.5rem;" id="uploadResult">--</div>
+                    <div style="color: var(--text-dim);">Upload Speed</div>
+                </div>
+                <div style="text-align: center; padding: 2rem; background: var(--bg-section); border-radius: 15px;">
+                    <div style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;" id="pingResult">--</div>
+                    <div style="color: var(--text-dim);">Ping Latency</div>
+                </div>
+                <div style="text-align: center; padding: 2rem; background: var(--bg-section); border-radius: 15px;">
+                    <div style="font-size: 2rem; color: var(--accent-color); margin-bottom: 0.5rem;" id="jitterResult">--</div>
+                    <div style="color: var(--text-dim);">Jitter</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Optimization Tips -->
+    <section class="section">
+        <h2>Network Optimization Strategies</h2>
+        <div class="optimization-tips">
+            <h3 style="color: var(--primary-color); margin-bottom: 3rem; text-align: center;">
+                🚀 Proven Techniques for Better Performance
+            </h3>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-icon">🔧</div>
+                    <div class="tip-title">Bandwidth Management</div>
+                    <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+                        Implement Quality of Service (QoS) policies to prioritize critical traffic.
+                        Use traffic shaping and bandwidth allocation to ensure optimal performance for business-critical applications.
+                    </p>
+                    <ul style="color: var(--text-dim); list-style: none; padding-left: 1rem;">
+                        <li>• Configure QoS policies</li>
+                        <li>• Implement traffic shaping</li>
+                        <li>• Monitor bandwidth usage</li>
+                        <li>• Set application priorities</li>
+                    </ul>
+                </div>
+
+                <div class="tip-card">
+                    <div class="tip-icon">📡</div>
+                    <div class="tip-title">Network Infrastructure</div>
+                    <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+                        Upgrade network hardware and optimize physical infrastructure.
+                        Use modern switches, routers, and cabling to eliminate bottlenecks and improve overall performance.
+                    </p>
+                    <ul style="color: var(--text-dim); list-style: none; padding-left: 1rem;">
+                        <li>• Upgrade to Gigabit Ethernet</li>
+                        <li>• Replace aging hardware</li>
+                        <li>• Optimize cable management</li>
+                        <li>• Implement redundancy</li>
+                    </ul>
+                </div>
+
+                <div class="tip-card">
+                    <div class="tip-icon">💾</div>
+                    <div class="tip-title">Caching & CDN</div>
+                    <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+                        Deploy caching strategies and Content Delivery Networks to reduce latency.
+                        Store frequently accessed content closer to users for faster response times.
+                    </p>
+                    <ul style="color: var(--text-dim); list-style: none; padding-left: 1rem;">
+                        <li>• Implement local caching</li>
+                        <li>• Use CDN services</li>
+                        <li>• Cache static content</li>
+                        <li>• Optimize cache policies</li>
+                    </ul>
+                </div>
+
+                <div class="tip-card">
+                    <div class="tip-icon">⚖️</div>
+                    <div class="tip-title">Load Balancing</div>
+                    <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+                        Distribute network traffic across multiple servers and paths.
+                        Prevent single points of failure and ensure optimal resource utilization across your infrastructure.
+                    </p>
+                    <ul style="color: var(--text-dim); list-style: none; padding-left: 1rem;">
+                        <li>• Deploy load balancers</li>
+                        <li>• Configure health checks</li>
+                        <li>• Use multiple paths</li>
+                        <li>• Monitor server loads</li>
+                    </ul>
+                </div>
+
+                <div class="tip-card">
+                    <div class="tip-icon">🔍</div>
+                    <div class="tip-title">Network Monitoring</div>
+                    <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+                        Implement comprehensive monitoring and analytics to identify performance issues before they impact users.
+                        Use real-time alerts and historical analysis for proactive optimization.
+                    </p>
+                    <ul style="color: var(--text-dim); list-style: none; padding-left: 1rem;">
+                        <li>• Deploy monitoring tools</li>
+                        <li>• Set up alerting</li>
+                        <li>• Analyze traffic patterns</li>
+                        <li>• Track performance metrics</li>
+                    </ul>
+                </div>
+
+                <div class="tip-card">
+                    <div class="tip-icon">🛡️</div>
+                    <div class="tip-title">Security Optimization</div>
+                    <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+                        Balance security with performance by optimizing firewall rules and security policies.
+                        Use efficient security protocols that don't compromise network speed.
+                    </p>
+                    <ul style="color: var(--text-dim); list-style: none; padding-left: 1rem;">
+                        <li>• Optimize firewall rules</li>
+                        <li>• Use hardware acceleration</li>
+                        <li>• Implement efficient encryption</li>
+                        <li>• Regular security audits</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bandwidth Calculator -->
+    <section class="section">
+        <h2>Bandwidth Requirements Calculator</h2>
+        <div class="bandwidth-calculator">
+            <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">
+                📊 Calculate Your Network Bandwidth Needs
+            </h3>
+            <div class="calculator-form">
+                <div class="form-group">
+                    <label class="form-label">Number of Users</label>
+                    <input type="number" class="form-input" id="userCount" placeholder="100" value="100">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Application Type</label>
+                    <select class="form-select" id="appType">
+                        <option value="basic">Basic Office Applications</option>
+                        <option value="video">Video Conferencing</option>
+                        <option value="streaming">Media Streaming</option>
+                        <option value="design">Design/CAD Applications</option>
+                        <option value="development">Software Development</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Peak Usage Factor</label>
+                    <select class="form-select" id="peakFactor">
+                        <option value="0.3">Low (30% concurrent usage)</option>
+                        <option value="0.5">Medium (50% concurrent usage)</option>
+                        <option value="0.7">High (70% concurrent usage)</option>
+                        <option value="0.9">Very High (90% concurrent usage)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Growth Factor (next 3 years)</label>
+                    <select class="form-select" id="growthFactor">
+                        <option value="1.2">20% growth</option>
+                        <option value="1.5">50% growth</option>
+                        <option value="2.0">100% growth</option>
+                        <option value="3.0">200% growth</option>
+                    </select>
+                </div>
+                <button class="calculate-btn" onclick="calculateBandwidth()">
+                    🧮 Calculate Bandwidth Requirements
+                </button>
+                <div class="calculation-result" id="bandwidthResult">
+                    <div class="result-value" id="bandwidthValue">0 Mbps</div>
+                    <div style="color: var(--text-dim); margin-bottom: 2rem;">Recommended Bandwidth</div>
+                    <div style="background: rgba(255, 102, 0, 0.1); padding: 2rem; border-radius: 15px; text-align: left;">
+                        <h4 style="color: var(--perf-color); margin-bottom: 1rem;">Breakdown:</h4>
+                        <div id="bandwidthBreakdown"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Chart -->
+    <section class="section">
+        <h2>Network Performance Trends</h2>
+        <div class="performance-chart">
+            <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">
+                📈 Weekly Performance Analysis
+            </h3>
+            <div class="chart-container">
+                <div class="chart-bars">
+                    <div class="chart-bar" style="height: 85%;">
+                        85%
+                        <div class="chart-label">Mon</div>
+                    </div>
+                    <div class="chart-bar" style="height: 92%;">
+                        92%
+                        <div class="chart-label">Tue</div>
+                    </div>
+                    <div class="chart-bar" style="height: 78%;">
+                        78%
+                        <div class="chart-label">Wed</div>
+                    </div>
+                    <div class="chart-bar" style="height: 88%;">
+                        88%
+                        <div class="chart-label">Thu</div>
+                    </div>
+                    <div class="chart-bar" style="height: 95%;">
+                        95%
+                        <div class="chart-label">Fri</div>
+                    </div>
+                    <div class="chart-bar" style="height: 65%;">
+                        65%
+                        <div class="chart-label">Sat</div>
+                    </div>
+                    <div class="chart-bar" style="height: 45%;">
+                        45%
+                        <div class="chart-label">Sun</div>
+                    </div>
+                </div>
+            </div>
+            <p style="text-align: center; color: var(--text-dim);">
+                Average network utilization by day of week. Peak usage typically occurs on weekdays between 9 AM and 5 PM.
+            </p>
+        </div>
+    </section>
+
+    <!-- QoS Configuration -->
+    <section class="section">
+        <h2>Quality of Service (QoS) Guidelines</h2>
+        <div class="qos-config">
+            <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">
+                🎯 Application Priority Matrix
+            </h3>
+            <p style="text-align: center; color: var(--text-dim); margin-bottom: 3rem;">
+                Recommended QoS settings for different application types to ensure optimal performance
+            </p>
+            <div class="qos-matrix">
+                <div class="qos-header">Application Type</div>
+                <div class="qos-header">Priority</div>
+                <div class="qos-header">Bandwidth</div>
+                <div class="qos-header">Latency</div>
+                <div class="qos-header">Jitter</div>
+
+                <div class="qos-row">
+                    <div class="qos-cell"><strong>Voice/VoIP</strong></div>
+                    <div class="qos-cell priority-high qos-priority">High</div>
+                    <div class="qos-cell">64-128 Kbps</div>
+                    <div class="qos-cell">&lt; 150ms</div>
+                    <div class="qos-cell">&lt; 30ms</div>
+                </div>
+
+                <div class="qos-row">
+                    <div class="qos-cell"><strong>Video Conferencing</strong></div>
+                    <div class="qos-cell priority-high qos-priority">High</div>
+                    <div class="qos-cell">384Kbps-2Mbps</div>
+                    <div class="qos-cell">&lt; 200ms</div>
+                    <div class="qos-cell">&lt; 50ms</div>
+                </div>
+
+                <div class="qos-row">
+                    <div class="qos-cell"><strong>Interactive Data</strong></div>
+                    <div class="qos-cell priority-medium qos-priority">Medium</div>
+                    <div class="qos-cell">Variable</div>
+                    <div class="qos-cell">&lt; 500ms</div>
+                    <div class="qos-cell">Variable</div>
+                </div>
+
+                <div class="qos-row">
+                    <div class="qos-cell"><strong>Streaming Media</strong></div>
+                    <div class="qos-cell priority-medium qos-priority">Medium</div>
+                    <div class="qos-cell">1-10 Mbps</div>
+                    <div class="qos-cell">&lt; 1s</div>
+                    <div class="qos-cell">&lt; 100ms</div>
+                </div>
+
+                <div class="qos-row">
+                    <div class="qos-cell"><strong>File Transfer</strong></div>
+                    <div class="qos-cell priority-low qos-priority">Low</div>
+                    <div class="qos-cell">Best Effort</div>
+                    <div class="qos-cell">Variable</div>
+                    <div class="qos-cell">Variable</div>
+                </div>
+
+                <div class="qos-row">
+                    <div class="qos-cell"><strong>Email/Web</strong></div>
+                    <div class="qos-cell priority-low qos-priority">Low</div>
+                    <div class="qos-cell">Best Effort</div>
+                    <div class="qos-cell">&lt; 2s</div>
+                    <div class="qos-cell">Variable</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+            <h3 style="color: var(--perf-color); margin-bottom: 1rem;">NetworkHub.ch Performance</h3>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">
+                Optimizing network performance for maximum efficiency and user satisfaction
+            </p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                Speed matters • <a href="/" style="color: var(--accent-color);">Return to Hub</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Speed test simulation
+        function runSpeedTest(testType) {
+            const buttons = document.querySelectorAll('.test-button');
+            const needle = document.getElementById('speedNeedle');
+            const speedValue = document.getElementById('speedValue');
+
+            // Disable all buttons during test
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Reset needle
+            needle.style.transform = 'translateX(-50%) rotate(-90deg)';
+            speedValue.textContent = '0 Mbps';
+
+            let maxSpeed = 0;
+            let currentSpeed = 0;
+            let targetSpeed = 0;
+
+            switch(testType) {
+                case 'download':
+                    targetSpeed = Math.random() * 800 + 200; // 200-1000 Mbps
+                    break;
+                case 'upload':
+                    targetSpeed = Math.random() * 400 + 100; // 100-500 Mbps
+                    break;
+                case 'ping':
+                    targetSpeed = Math.random() * 50 + 10; // 10-60 ms (inverted scale)
+                    break;
+            }
+
+            // Animate speed test
+            const testInterval = setInterval(() => {
+                currentSpeed += (targetSpeed - currentSpeed) * 0.1;
+
+                if (testType === 'ping') {
+                    // For ping, lower is better, so invert the scale
+                    const pingValue = currentSpeed;
+                    const needleAngle = -90 + (180 * (60 - pingValue) / 60);
+                    needle.style.transform = `translateX(-50%) rotate(${needleAngle}deg)`;
+                    speedValue.textContent = pingValue.toFixed(0) + ' ms';
+                } else {
+                    const needleAngle = -90 + (180 * currentSpeed / 1000);
+                    needle.style.transform = `translateX(-50%) rotate(${needleAngle}deg)`;
+                    speedValue.textContent = currentSpeed.toFixed(0) + ' Mbps';
+                }
+
+                if (Math.abs(currentSpeed - targetSpeed) < 1) {
+                    clearInterval(testInterval);
+
+                    // Update results
+                    updateTestResults(testType, currentSpeed);
+
+                    // Re-enable buttons
+                    setTimeout(() => {
+                        buttons.forEach(btn => btn.disabled = false);
+                    }, 1000);
+                }
+            }, 50);
+        }
+
+        function updateTestResults(testType, value) {
+            switch(testType) {
+                case 'download':
+                    document.getElementById('downloadResult').textContent = value.toFixed(0) + ' Mbps';
+                    break;
+                case 'upload':
+                    document.getElementById('uploadResult').textContent = value.toFixed(0) + ' Mbps';
+                    break;
+                case 'ping':
+                    document.getElementById('pingResult').textContent = value.toFixed(0) + ' ms';
+                    document.getElementById('jitterResult').textContent = (Math.random() * 5 + 1).toFixed(1) + ' ms';
+                    break;
+            }
+        }
+
+        // Bandwidth calculator
+        function calculateBandwidth() {
+            const userCount = parseInt(document.getElementById('userCount').value) || 100;
+            const appType = document.getElementById('appType').value;
+            const peakFactor = parseFloat(document.getElementById('peakFactor').value);
+            const growthFactor = parseFloat(document.getElementById('growthFactor').value);
+
+            // Base bandwidth per user (Mbps)
+            const bandwidthPerUser = {
+                'basic': 2,
+                'video': 5,
+                'streaming': 8,
+                'design': 15,
+                'development': 10
+            };
+
+            const baseRequired = userCount * bandwidthPerUser[appType] * peakFactor;
+            const withGrowth = baseRequired * growthFactor;
+            const recommended = withGrowth * 1.2; // 20% buffer
+
+            document.getElementById('bandwidthValue').textContent = recommended.toFixed(0) + ' Mbps';
+
+            const breakdown = `
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>Base requirement (${userCount} users × ${bandwidthPerUser[appType]} Mbps):</div>
+                    <div style="text-align: right;"><strong>${(userCount * bandwidthPerUser[appType]).toFixed(0)} Mbps</strong></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>Peak usage factor (${(peakFactor * 100).toFixed(0)}%):</div>
+                    <div style="text-align: right;"><strong>${baseRequired.toFixed(0)} Mbps</strong></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>Growth factor (${((growthFactor - 1) * 100).toFixed(0)}%):</div>
+                    <div style="text-align: right;"><strong>${withGrowth.toFixed(0)} Mbps</strong></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem; border-top: 1px solid var(--border-glow); padding-top: 1rem;">
+                    <div>Recommended with buffer (20%):</div>
+                    <div style="text-align: right; color: var(--perf-color);"><strong>${recommended.toFixed(0)} Mbps</strong></div>
+                </div>
+            `;
+
+            document.getElementById('bandwidthBreakdown').innerHTML = breakdown;
+            document.getElementById('bandwidthResult').style.display = 'block';
+        }
+
+        // Update real-time metrics
+        function updateMetrics() {
+            const metrics = [
+                { id: 'bandwidthUsage', range: [60, 80], unit: '%' },
+                { id: 'latency', range: [8, 20], unit: 'ms' },
+                { id: 'throughput', range: [800, 900], unit: '' },
+                { id: 'packetLoss', range: [0.01, 0.05], unit: '%', decimals: 2 },
+                { id: 'jitter', range: [1.5, 3.0], unit: 'ms', decimals: 1 },
+                { id: 'availability', range: [99.95, 99.99], unit: '%', decimals: 2 }
+            ];
+
+            metrics.forEach(metric => {
+                const element = document.getElementById(metric.id);
+                if (element) {
+                    const min = metric.range[0];
+                    const max = metric.range[1];
+                    const value = Math.random() * (max - min) + min;
+                    const decimals = metric.decimals || 0;
+                    element.textContent = value.toFixed(decimals) + metric.unit;
+                }
+            });
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            updateMetrics();
+            setInterval(updateMetrics, 5000); // Update every 5 seconds
+
+            // Animate chart bars
+            setTimeout(() => {
+                document.querySelectorAll('.chart-bar').forEach((bar, index) => {
+                    setTimeout(() => {
+                        bar.style.transform = 'scaleY(1)';
+                        bar.style.transformOrigin = 'bottom';
+                        bar.style.transition = 'transform 0.8s ease-out';
+                    }, index * 200);
+                });
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
