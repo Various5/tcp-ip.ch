@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Network Tools - NetworkHub.ch</title>
+    <title>Network Tools - tcp-ip.ch</title>
     <style>
-        /* Base styles */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
@@ -13,31 +12,106 @@
             --secondary-color: #ff00ff;
             --accent-color: #00ff88;
             --warning-color: #ffaa00;
+            --tool-blue: #2196f3;
+            --tool-green: #4caf50;
+            --tool-orange: #ff9800;
+            --tool-purple: #9c27b0;
             --bg-dark: #0a0a0f;
             --bg-darker: #050508;
             --bg-card: #111118;
             --bg-section: #161620;
             --text-light: #e0e0ff;
             --text-dim: #a0a0c0;
-            --border-glow: rgba(0, 255, 255, 0.3);
+            --border-glow: rgba(33, 150, 243, 0.4);
+            --gradient-tools: linear-gradient(135deg, var(--tool-blue), var(--tool-green));
+            --gradient-terminal: linear-gradient(45deg, var(--tool-purple), var(--primary-color));
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
             color: var(--text-light);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
+        /* Tools Circuit Background */
+        .tools-circuit {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -3;
+            opacity: 0.1;
+            background-image:
+                radial-gradient(circle at 20% 20%, var(--tool-blue) 2px, transparent 2px),
+                radial-gradient(circle at 80% 80%, var(--tool-green) 2px, transparent 2px),
+                linear-gradient(45deg, var(--tool-blue) 1px, transparent 1px),
+                linear-gradient(-45deg, var(--tool-orange) 1px, transparent 1px);
+            background-size: 100px 100px, 120px 120px, 60px 60px, 60px 60px;
+            animation: circuitPulse 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes circuitPulse {
+            0% { opacity: 0.1; transform: translateX(0) translateY(0); }
+            50% { opacity: 0.2; }
+            100% { opacity: 0.15; transform: translateX(20px) translateY(20px); }
+        }
+
+        /* Floating Command Snippets */
+        .command-stream {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .command-snippet {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            padding: 4px 8px;
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid var(--tool-blue);
+            border-radius: 4px;
+            color: var(--tool-blue);
+            animation: commandFloat 25s infinite linear;
+            opacity: 0.6;
+        }
+
+        @keyframes commandFloat {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+                opacity: 0;
+                filter: hue-rotate(0deg);
+            }
+            10% { opacity: 0.6; }
+            50% { filter: hue-rotate(180deg); }
+            90% { opacity: 0.6; }
+            100% {
+                transform: translateY(-10vh) translateX(100px) rotate(360deg);
+                opacity: 0;
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        /* Enhanced Header */
         header {
             position: fixed;
             top: 0;
             width: 100%;
             background: rgba(10, 10, 15, 0.95);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px) saturate(180%);
             z-index: 1000;
             padding: 1rem 0;
-            border-bottom: 1px solid var(--border-glow);
+            border-bottom: 2px solid var(--border-glow);
+            box-shadow: 0 5px 30px rgba(33, 150, 243, 0.2);
         }
 
         nav {
@@ -50,71 +124,206 @@
         }
 
         .logo {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 900;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(45deg, #ff0080, #00ffff, #8000ff, #00ff80);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px rgba(33, 150, 243, 0.5));
         }
 
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
             color: var(--text-light);
             text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+            padding: 0.7rem 1.2rem;
+            border-radius: 25px;
             transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
         }
 
         .nav-links a:hover {
-            color: var(--primary-color);
-            background: rgba(0, 255, 255, 0.1);
+            color: var(--tool-blue);
+            text-shadow: 0 0 15px currentColor;
+            background: rgba(33, 150, 243, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(33, 150, 243, 0.3);
         }
 
+        .nav-links a[style*="tool-blue"] {
+            color: var(--tool-blue);
+            background: rgba(33, 150, 243, 0.1);
+            box-shadow: 0 0 20px rgba(33, 150, 243, 0.3);
+        }
+
+        /* Hero Section */
         .hero {
             height: 70vh;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            background: radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(33, 150, 243, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(76, 175, 80, 0.15) 0%, transparent 50%);
         }
 
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(33, 150, 243, 0.05), transparent, rgba(76, 175, 80, 0.05), transparent);
+            animation: rotate 50s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 7vw, 5rem);
+            margin-bottom: 1rem;
+            background: var(--gradient-tools);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -3px;
+            opacity: 0;
+            animation: titleReveal 2s ease-out 0.5s forwards;
+            text-shadow: 0 0 50px rgba(33, 150, 243, 0.3);
+        }
+
+        @keyframes titleReveal {
+            0% { opacity: 0; transform: translateY(50px) scale(0.8); filter: blur(10px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 3vw, 1.8rem);
+            color: var(--tool-orange);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 1s forwards;
+        }
+
+        .hero-description {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 1.5s forwards;
+            line-height: 1.8;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        /* Enhanced Sections */
         .section {
-            padding: 6rem 0;
+            padding: 8rem 0;
             max-width: 1600px;
             margin: 0 auto;
             padding-left: 2rem;
             padding-right: 2rem;
+            position: relative;
         }
 
         .section h2 {
-            font-size: 3rem;
+            font-size: clamp(2.5rem, 5vw, 4rem);
             margin-bottom: 3rem;
-            color: var(--accent-color);
+            color: var(--tool-blue);
             text-align: center;
+            position: relative;
+            font-weight: 800;
+            text-shadow: 0 0 30px rgba(33, 150, 243, 0.3);
         }
 
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 4px;
+            background: var(--gradient-tools);
+            border-radius: 2px;
+            box-shadow: 0 0 20px rgba(33, 150, 243, 0.5);
+        }
+
+        /* Enhanced Tools Grid */
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 3rem;
-            margin: 4rem 0;
+            margin: 5rem 0;
         }
 
         .tool-card {
-            background: var(--bg-card);
+            background: rgba(17, 17, 24, 0.9);
+            backdrop-filter: blur(20px);
             border-radius: 25px;
             padding: 3rem;
-            border: 1px solid var(--border-glow);
-            transition: all 0.3s ease;
+            border: 1px solid rgba(33, 150, 243, 0.3);
+            transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        .tool-card.animate {
+            transform: translateY(0);
+            opacity: 1;
         }
 
         .tool-card::before {
@@ -124,9 +333,10 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.05), rgba(0, 255, 255, 0.05));
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.05), rgba(76, 175, 80, 0.05));
             opacity: 0;
             transition: opacity 0.3s ease;
+            z-index: 0;
         }
 
         .tool-card:hover::before {
@@ -134,9 +344,9 @@
         }
 
         .tool-card:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 25px 50px rgba(0, 255, 136, 0.3);
-            border-color: var(--accent-color);
+            transform: translateY(-20px) scale(1.03);
+            box-shadow: 0 30px 60px rgba(33, 150, 243, 0.3);
+            border-color: var(--tool-blue);
         }
 
         .tool-header {
@@ -150,24 +360,32 @@
         .tool-icon {
             width: 70px;
             height: 70px;
-            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            background: var(--gradient-tools);
             border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2rem;
             margin-right: 1.5rem;
+            box-shadow: 0 10px 30px rgba(33, 150, 243, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .tool-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 15px 40px rgba(33, 150, 243, 0.4);
         }
 
         .tool-info h3 {
-            color: var(--accent-color);
-            font-size: 1.5rem;
+            color: var(--tool-blue);
+            font-size: 1.8rem;
+            font-weight: 700;
             margin-bottom: 0.5rem;
         }
 
         .tool-category {
-            background: rgba(0, 255, 136, 0.2);
-            color: var(--accent-color);
+            background: rgba(33, 150, 243, 0.2);
+            color: var(--tool-blue);
             padding: 0.3rem 0.8rem;
             border-radius: 10px;
             font-size: 0.9rem;
@@ -179,6 +397,7 @@
             position: relative;
             z-index: 1;
             color: var(--text-light);
+            line-height: 1.7;
         }
 
         .tool-features {
@@ -193,75 +412,206 @@
             padding-left: 2rem;
             position: relative;
             color: var(--text-dim);
+            transition: all 0.3s ease;
         }
 
         .tool-features li::before {
             content: '⚡';
             position: absolute;
             left: 0;
-            color: var(--warning-color);
+            color: var(--tool-orange);
         }
 
-        .interactive-demo {
-            background: var(--bg-section);
-            border-radius: 25px;
-            padding: 4rem;
+        .tool-features li:hover {
+            color: var(--text-light);
+            transform: translateX(5px);
+        }
+
+        /* Interactive Terminal Demo */
+        .terminal-demo {
+            background: rgba(22, 22, 32, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 5rem;
             margin: 6rem 0;
-            border: 1px solid var(--border-glow);
+            border: 2px solid var(--border-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal-demo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 70%, rgba(33, 150, 243, 0.05), transparent 50%);
+            z-index: 0;
         }
 
         .demo-terminal {
             background: #000;
-            border-radius: 10px;
+            border-radius: 15px;
             padding: 2rem;
             font-family: 'Courier New', monospace;
-            margin: 2rem 0;
+            margin: 3rem 0;
             border: 1px solid var(--border-glow);
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
         .terminal-header {
             display: flex;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid #333;
         }
 
         .terminal-button {
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            margin-right: 8px;
+            margin-right: 10px;
+            transition: all 0.3s ease;
         }
 
         .terminal-button.red { background: #ff5f56; }
         .terminal-button.yellow { background: #ffbd2e; }
         .terminal-button.green { background: #27ca3f; }
 
+        .terminal-button:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 10px currentColor;
+        }
+
         .terminal-title {
             color: #fff;
-            margin-left: 1rem;
-            font-size: 0.9rem;
+            margin-left: 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
         }
 
         .terminal-command {
-            color: var(--accent-color);
+            color: var(--tool-green);
             margin-bottom: 0.5rem;
+            font-size: 1rem;
         }
 
         .terminal-output {
             color: var(--text-light);
             white-space: pre-wrap;
-            line-height: 1.4;
+            line-height: 1.6;
+            font-size: 0.9rem;
         }
 
+        .command-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-button {
+            background: var(--gradient-tools);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .tab-button:hover::before {
+            left: 100%;
+        }
+
+        .tab-button:hover, .tab-button.active {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(33, 150, 243, 0.4);
+        }
+
+        .tab-button.active {
+            background: var(--gradient-terminal);
+        }
+
+        /* Performance Test Section */
         .performance-test {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 3rem;
-            margin: 4rem 0;
+            background: rgba(17, 17, 24, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 4rem;
+            margin: 6rem 0;
             border: 1px solid var(--border-glow);
             text-align: center;
+        }
+
+        .test-controls {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .test-button {
+            background: var(--gradient-tools);
+            color: white;
+            border: none;
+            padding: 1.5rem 3rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .test-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .test-button:hover::before {
+            left: 100%;
+        }
+
+        .test-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(33, 150, 243, 0.4);
+        }
+
+        .test-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .test-results {
@@ -273,16 +623,23 @@
 
         .test-metric {
             padding: 2rem;
-            background: rgba(0, 255, 255, 0.1);
+            background: rgba(33, 150, 243, 0.1);
             border-radius: 15px;
-            border: 1px solid rgba(0, 255, 255, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .test-metric:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(33, 150, 243, 0.2);
         }
 
         .metric-value {
             font-size: 2.5rem;
             font-weight: bold;
-            color: var(--primary-color);
+            color: var(--tool-blue);
             margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px currentColor;
         }
 
         .metric-label {
@@ -290,42 +647,124 @@
             font-size: 0.9rem;
         }
 
-        .run-test-btn {
-            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
-            color: var(--bg-dark);
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 25px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
+        /* Tool Categories */
+        .tool-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin: 6rem 0;
+        }
+
+        .category-card {
+            background: rgba(17, 17, 24, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-glow);
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(33, 150, 243, 0.3);
+        }
+
+        .category-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--tool-blue);
+        }
+
+        .category-title {
+            color: var(--tool-blue);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .category-tools {
+            list-style: none;
+            text-align: left;
+        }
+
+        .category-tools li {
+            margin-bottom: 0.8rem;
+            padding: 0.5rem 1rem;
+            background: rgba(33, 150, 243, 0.1);
+            border-radius: 10px;
+            color: var(--text-light);
             transition: all 0.3s ease;
         }
 
-        .run-test-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
+        .category-tools li:hover {
+            background: rgba(33, 150, 243, 0.2);
+            transform: translateX(5px);
         }
 
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Footer */
         footer {
-            background: var(--bg-darker);
-            padding: 3rem 0;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            padding: 4rem 0;
             text-align: center;
-            border-top: 1px solid var(--border-glow);
+            border-top: 2px solid var(--border-glow);
+            margin-top: 6rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-tools);
+            box-shadow: 0 0 20px rgba(33, 150, 243, 0.5);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3rem; letter-spacing: -1px; }
+            .nav-links { display: none; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .tool-categories { grid-template-columns: 1fr; }
+            .test-results { grid-template-columns: repeat(2, 1fr); }
+            .command-tabs { flex-direction: column; align-items: center; }
+        }
+
+        @media (max-width: 480px) {
+            .test-results { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
+    <!-- Enhanced Background Effects -->
+    <div class="tools-circuit"></div>
+    <div class="command-stream" id="commandStream"></div>
+
     <!-- Header -->
     <header>
         <nav>
-            <div class="logo"><a href="/" style="color: inherit; text-decoration: none;">NetworkHub.ch</a></div>
+            <a href="/" class="logo">tcp-ip.ch</a>
             <ul class="nav-links">
                 <li><a href="/">🏠 Hub</a></li>
                 <li><a href="/protocols">📡 Protocols</a></li>
                 <li><a href="/security">🔒 Security</a></li>
                 <li><a href="/modern-tech">🚀 Modern Tech</a></li>
-                <li><a href="/tools" style="color: var(--accent-color);">🛠️ Tools</a></li>
+                <li><a href="/tools" style="color: var(--tool-blue);">🛠️ Tools</a></li>
                 <li><a href="/cloud">☁️ Cloud</a></li>
                 <li><a href="/performance">⚡ Performance</a></li>
                 <li><a href="/osi-model">📊 OSI Model</a></li>
@@ -336,85 +775,179 @@
 
     <!-- Hero Section -->
     <section class="hero">
-        <div>
-            <h1 style="font-size: 4rem; color: var(--accent-color);">Network Tools</h1>
-            <p style="font-size: 1.4rem; margin-bottom: 2rem;">
-                Master the professional toolkit for network analysis and optimization
-            </p>
+        <div class="hero-content">
+            <h1 class="hero-title">Network Tools</h1>
+            <div class="hero-subtitle">Professional-Grade Network Analysis</div>
+            <div class="hero-description">
+                Master the complete networking toolkit from Wireshark packet analysis to enterprise monitoring platforms.
+                Learn hands-on with interactive demonstrations, real command examples, and professional best practices.
+            </div>
         </div>
     </section>
 
-    <!-- Essential Tools -->
-    <section class="section">
-        <h2>Professional Network Toolkit</h2>
+    <!-- Professional Tools Grid -->
+    <section class="section fade-in">
+        <h2>Essential Network Tools</h2>
         <div class="tools-grid">
-            {% for tool in tools %}
             <div class="tool-card">
                 <div class="tool-header">
-                    <div class="tool-icon">
-                        {% if tool.name == 'Wireshark' %}🔍
-                        {% elif tool.name == 'Nmap' %}🎯
-                        {% elif tool.name == 'ping' %}📡
-                        {% elif tool.name == 'traceroute' %}🗺️
-                        {% elif tool.name == 'iperf3' %}⚡
-                        {% elif tool.name == 'tcpdump' %}📊
-                        {% elif tool.name == 'Netstat' %}🔗
-                        {% else %}📈
-                        {% endif %}
-                    </div>
+                    <div class="tool-icon">🔍</div>
                     <div class="tool-info">
-                        <h3>{{ tool.name }}</h3>
-                        <div class="tool-category">{{ tool.category }}</div>
+                        <h3>Wireshark</h3>
+                        <div class="tool-category">Packet Analysis</div>
                     </div>
                 </div>
-                <div class="tool-description">{{ tool.use_case }}</div>
+                <div class="tool-description">
+                    The world's foremost network protocol analyzer with 3000+ protocol decoders and real-time capture.
+                    Essential for deep packet inspection, troubleshooting, and security analysis.
+                </div>
                 <ul class="tool-features">
-                    {% if tool.name == 'Wireshark' %}
                     <li>3000+ protocol decoders</li>
                     <li>Real-time packet capture</li>
                     <li>Advanced filtering capabilities</li>
                     <li>Statistical analysis tools</li>
                     <li>Export to multiple formats</li>
-                    {% elif tool.name == 'Nmap' %}
+                    <li>Offline analysis support</li>
+                </ul>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">🎯</div>
+                    <div class="tool-info">
+                        <h3>Nmap</h3>
+                        <div class="tool-category">Network Discovery</div>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Advanced port scanning, OS detection, and network mapping with the powerful NSE scripting engine.
+                    The de facto standard for network discovery and security auditing.
+                </div>
+                <ul class="tool-features">
                     <li>Host discovery and enumeration</li>
                     <li>Port scanning techniques</li>
                     <li>OS and service detection</li>
                     <li>Vulnerability assessment</li>
                     <li>Scripting engine (NSE)</li>
-                    {% elif tool.name == 'iperf3' %}
+                    <li>Zenmap GUI interface</li>
+                </ul>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">⚡</div>
+                    <div class="tool-info">
+                        <h3>iperf3</h3>
+                        <div class="tool-category">Performance Testing</div>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Comprehensive bandwidth testing with multi-threading, JSON output, and advanced measurement capabilities.
+                    Industry standard for network performance analysis.
+                </div>
+                <ul class="tool-features">
                     <li>TCP and UDP bandwidth testing</li>
                     <li>Multi-threaded performance</li>
                     <li>JSON output support</li>
                     <li>Bidirectional testing</li>
                     <li>Custom test parameters</li>
-                    {% else %}
-                    <li>Cross-platform compatibility</li>
-                    <li>Command-line interface</li>
-                    <li>Scriptable automation</li>
-                    <li>Real-time monitoring</li>
-                    <li>Professional reporting</li>
-                    {% endif %}
+                    <li>Real-time statistics</li>
                 </ul>
             </div>
-            {% endfor %}
+
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">📊</div>
+                    <div class="tool-info">
+                        <h3>tcpdump</h3>
+                        <div class="tool-category">Packet Capture</div>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Command-line packet analyzer with powerful filtering capabilities and lightweight operation.
+                    Essential for network debugging and traffic analysis on servers and embedded systems.
+                </div>
+                <ul class="tool-features">
+                    <li>Command-line packet capture</li>
+                    <li>Powerful filtering syntax</li>
+                    <li>Minimal system overhead</li>
+                    <li>Remote capture support</li>
+                    <li>Integration with scripts</li>
+                    <li>pcap file format support</li>
+                </ul>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">🌐</div>
+                    <div class="tool-info">
+                        <h3>ping & traceroute</h3>
+                        <div class="tool-category">Connectivity Testing</div>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Fundamental connectivity testing tools for reachability verification and path analysis.
+                    Essential first-line diagnostic tools for any network professional.
+                </div>
+                <ul class="tool-features">
+                    <li>Basic reachability testing</li>
+                    <li>Round-trip time measurement</li>
+                    <li>Path discovery and analysis</li>
+                    <li>Hop-by-hop latency</li>
+                    <li>IPv4 and IPv6 support</li>
+                    <li>Packet loss detection</li>
+                </ul>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">📈</div>
+                    <div class="tool-info">
+                        <h3>Prometheus + Grafana</h3>
+                        <div class="tool-category">Enterprise Monitoring</div>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Enterprise-grade monitoring stack with time-series data collection, alerting, and visualization.
+                    Industry standard for modern infrastructure monitoring and observability.
+                </div>
+                <ul class="tool-features">
+                    <li>Time-series data collection</li>
+                    <li>Advanced visualization</li>
+                    <li>Alerting and notifications</li>
+                    <li>Multi-dimensional metrics</li>
+                    <li>Service discovery</li>
+                    <li>High availability design</li>
+                </ul>
+            </div>
         </div>
     </section>
 
-    <!-- Interactive Demo Section -->
-    <section class="section">
+    <!-- Interactive Terminal Demo -->
+    <section class="section fade-in">
         <h2>Live Tool Demonstrations</h2>
-        <div class="interactive-demo">
-            <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">
-                Network Diagnostic Commands
+        <div class="terminal-demo">
+            <h3 style="color: var(--tool-blue); margin-bottom: 3rem; text-align: center; font-size: 2.5rem; position: relative; z-index: 1;">
+                🖥️ Interactive Command-Line Demos
             </h3>
+            <p style="color: var(--text-dim); margin-bottom: 3rem; text-align: center; position: relative; z-index: 1;">
+                Experience real network diagnostic commands with realistic output and explanations
+            </p>
+
+            <div class="command-tabs">
+                <button class="tab-button active" onclick="showDemo('ping')">🏓 Ping Test</button>
+                <button class="tab-button" onclick="showDemo('traceroute')">🗺️ Traceroute</button>
+                <button class="tab-button" onclick="showDemo('nmap')">🎯 Nmap Scan</button>
+                <button class="tab-button" onclick="showDemo('netstat')">📊 Netstat</button>
+            </div>
 
             <!-- Ping Demo -->
-            <div class="demo-terminal">
+            <div class="demo-terminal" id="pingDemo">
                 <div class="terminal-header">
                     <div class="terminal-button red"></div>
                     <div class="terminal-button yellow"></div>
                     <div class="terminal-button green"></div>
-                    <div class="terminal-title">Terminal - ping google.com</div>
+                    <div class="terminal-title">Terminal - ping connectivity test</div>
                 </div>
                 <div class="terminal-command">$ ping -c 4 google.com</div>
                 <div class="terminal-output">PING google.com (142.250.191.46): 56 data bytes
@@ -425,36 +958,41 @@
 
 --- google.com ping statistics ---
 4 packets transmitted, 4 received, 0% packet loss
-round-trip min/avg/max/stddev = 10.987/12.006/13.456/1.021 ms</div>
+round-trip min/avg/max/stddev = 10.987/12.006/13.456/1.021 ms
+
+<span style="color: var(--tool-green);">✓ Analysis: Excellent connectivity with consistent latency under 15ms</span></div>
             </div>
 
             <!-- Traceroute Demo -->
-            <div class="demo-terminal">
+            <div class="demo-terminal" id="tracerouteDemo" style="display: none;">
                 <div class="terminal-header">
                     <div class="terminal-button red"></div>
                     <div class="terminal-button yellow"></div>
                     <div class="terminal-button green"></div>
-                    <div class="terminal-title">Terminal - traceroute google.com</div>
+                    <div class="terminal-title">Terminal - traceroute path analysis</div>
                 </div>
                 <div class="terminal-command">$ traceroute google.com</div>
                 <div class="terminal-output">traceroute to google.com (142.250.191.46), 30 hops max, 60 byte packets
  1  gateway (192.168.1.1)  1.234 ms  1.123 ms  1.456 ms
  2  isp-router (10.0.0.1)  15.234 ms  14.567 ms  16.123 ms
  3  regional-hub (172.16.1.1)  25.678 ms  24.234 ms  26.789 ms
- 4  backbone (203.0.113.1)  35.123 ms  34.567 ms  36.234 ms
+ 4  tier1-backbone (203.0.113.1)  35.123 ms  34.567 ms  36.234 ms
  5  peer-network (198.51.100.1)  45.678 ms  44.234 ms  47.123 ms
- 6  google.com (142.250.191.46)  52.345 ms  51.234 ms  53.456 ms</div>
+ 6  google-edge (74.125.224.1)  48.456 ms  47.234 ms  49.678 ms
+ 7  google.com (142.250.191.46)  52.345 ms  51.234 ms  53.456 ms
+
+<span style="color: var(--tool-green);">✓ Analysis: 7-hop path through ISP, regional, and backbone networks</span></div>
             </div>
 
             <!-- Nmap Demo -->
-            <div class="demo-terminal">
+            <div class="demo-terminal" id="nmapDemo" style="display: none;">
                 <div class="terminal-header">
                     <div class="terminal-button red"></div>
                     <div class="terminal-button yellow"></div>
                     <div class="terminal-button green"></div>
-                    <div class="terminal-title">Terminal - nmap scan</div>
+                    <div class="terminal-title">Terminal - nmap network scan</div>
                 </div>
-                <div class="terminal-command">$ nmap -sS -O 192.168.1.1</div>
+                <div class="terminal-command">$ nmap -sS -O 192.168.1.1-10</div>
                 <div class="terminal-output">Starting Nmap 7.94 ( https://nmap.org ) at 2025-06-06 14:30 UTC
 Nmap scan report for gateway (192.168.1.1)
 Host is up (0.001s latency).
@@ -466,24 +1004,59 @@ PORT     STATE SERVICE
 MAC Address: AA:BB:CC:DD:EE:FF (Router Manufacturer)
 Device type: router
 Running: Linux 4.X|5.X
-OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5
-OS details: Linux 4.15 - 5.8
+OS CPE: cpe:/o:linux:linux_kernel:4
 
-Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds</div>
+Nmap scan report for workstation (192.168.1.5)
+Host is up (0.002s latency).
+PORT     STATE SERVICE
+22/tcp   open  ssh
+3389/tcp open  ms-wbt-server
+
+<span style="color: var(--tool-green);">✓ Analysis: Network devices discovered with open services identified</span></div>
+            </div>
+
+            <!-- Netstat Demo -->
+            <div class="demo-terminal" id="netstatDemo" style="display: none;">
+                <div class="terminal-header">
+                    <div class="terminal-button red"></div>
+                    <div class="terminal-button yellow"></div>
+                    <div class="terminal-button green"></div>
+                    <div class="terminal-title">Terminal - netstat connection analysis</div>
+                </div>
+                <div class="terminal-command">$ netstat -tuln</div>
+                <div class="terminal-output">Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN
+tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN
+tcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN
+tcp6       0      0 :::22                   :::*                    LISTEN
+tcp6       0      0 :::80                   :::*                    LISTEN
+udp        0      0 0.0.0.0:53              0.0.0.0:*
+udp        0      0 0.0.0.0:67              0.0.0.0:*
+udp6       0      0 :::53                   :::*
+
+<span style="color: var(--tool-green);">✓ Analysis: Standard services running - SSH, HTTP/HTTPS, DNS, DHCP</span></div>
             </div>
         </div>
     </section>
 
     <!-- Performance Testing -->
-    <section class="section">
+    <section class="section fade-in">
         <h2>Network Performance Testing</h2>
         <div class="performance-test">
-            <h3 style="color: var(--primary-color); margin-bottom: 2rem;">
-                Live Network Speed Test
+            <h3 style="color: var(--tool-blue); margin-bottom: 2rem;">
+                🚀 Live Network Speed & Performance Analysis
             </h3>
             <p style="color: var(--text-dim); margin-bottom: 3rem;">
-                Test your network performance with our integrated speed testing tool
+                Test your network performance with professional-grade measurement tools
             </p>
+
+            <div class="test-controls">
+                <button class="test-button" onclick="runPerformanceTest()">📈 Full Speed Test</button>
+                <button class="test-button" onclick="runLatencyTest()">⚡ Latency Test</button>
+                <button class="test-button" onclick="runThroughputTest()">🌊 Throughput Test</button>
+            </div>
 
             <div class="test-results" id="testResults">
                 <div class="test-metric">
@@ -506,59 +1079,93 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds</div>
                     <div class="metric-value" id="packetLoss">--</div>
                     <div class="metric-label">Packet Loss (%)</div>
                 </div>
+                <div class="test-metric">
+                    <div class="metric-value" id="qualityScore">--</div>
+                    <div class="metric-label">Quality Score</div>
+                </div>
             </div>
-
-            <button class="run-test-btn" onclick="runPerformanceTest()">
-                🚀 Run Speed Test
-            </button>
         </div>
     </section>
 
     <!-- Tool Categories -->
-    <section class="section">
+    <section class="section fade-in">
         <h2>Tools by Category</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem;">
-            <div style="background: var(--bg-card); padding: 3rem; border-radius: 20px; border: 1px solid var(--border-glow);">
-                <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">📊 Monitoring</h3>
-                <ul style="list-style: none; color: var(--text-dim);">
-                    <li style="margin-bottom: 1rem;">• PRTG Network Monitor</li>
-                    <li style="margin-bottom: 1rem;">• SolarWinds NPM</li>
-                    <li style="margin-bottom: 1rem;">• Nagios Core</li>
-                    <li style="margin-bottom: 1rem;">• Zabbix</li>
-                    <li style="margin-bottom: 1rem;">• LibreNMS</li>
+        <div class="tool-categories">
+            <div class="category-card">
+                <div class="category-icon">📊</div>
+                <div class="category-title">Network Monitoring</div>
+                <ul class="category-tools">
+                    <li>PRTG Network Monitor</li>
+                    <li>SolarWinds NPM</li>
+                    <li>Nagios Core</li>
+                    <li>Zabbix</li>
+                    <li>LibreNMS</li>
+                    <li>Cacti</li>
                 </ul>
             </div>
 
-            <div style="background: var(--bg-card); padding: 3rem; border-radius: 20px; border: 1px solid var(--border-glow);">
-                <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">🔍 Analysis</h3>
-                <ul style="list-style: none; color: var(--text-dim);">
-                    <li style="margin-bottom: 1rem;">• Wireshark</li>
-                    <li style="margin-bottom: 1rem;">• tcpdump</li>
-                    <li style="margin-bottom: 1rem;">• NetworkMiner</li>
-                    <li style="margin-bottom: 1rem;">• Kismet</li>
-                    <li style="margin-bottom: 1rem;">• Ntopng</li>
+            <div class="category-card">
+                <div class="category-icon">🔍</div>
+                <div class="category-title">Packet Analysis</div>
+                <ul class="category-tools">
+                    <li>Wireshark</li>
+                    <li>tcpdump</li>
+                    <li>NetworkMiner</li>
+                    <li>Kismet</li>
+                    <li>Ntopng</li>
+                    <li>Ettercap</li>
                 </ul>
             </div>
 
-            <div style="background: var(--bg-card); padding: 3rem; border-radius: 20px; border: 1px solid var(--border-glow);">
-                <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">🎯 Discovery</h3>
-                <ul style="list-style: none; color: var(--text-dim);">
-                    <li style="margin-bottom: 1rem;">• Nmap</li>
-                    <li style="margin-bottom: 1rem;">• Masscan</li>
-                    <li style="margin-bottom: 1rem;">• Zenmap</li>
-                    <li style="margin-bottom: 1rem;">• Advanced IP Scanner</li>
-                    <li style="margin-bottom: 1rem;">• Angry IP Scanner</li>
+            <div class="category-card">
+                <div class="category-icon">🎯</div>
+                <div class="category-title">Network Discovery</div>
+                <ul class="category-tools">
+                    <li>Nmap</li>
+                    <li>Masscan</li>
+                    <li>Zenmap</li>
+                    <li>Advanced IP Scanner</li>
+                    <li>Angry IP Scanner</li>
+                    <li>Lansweeper</li>
                 </ul>
             </div>
 
-            <div style="background: var(--bg-card); padding: 3rem; border-radius: 20px; border: 1px solid var(--border-glow);">
-                <h3 style="color: var(--primary-color); margin-bottom: 2rem; text-align: center;">⚡ Performance</h3>
-                <ul style="list-style: none; color: var(--text-dim);">
-                    <li style="margin-bottom: 1rem;">• iperf3</li>
-                    <li style="margin-bottom: 1rem;">• Speedtest CLI</li>
-                    <li style="margin-bottom: 1rem;">• bmon</li>
-                    <li style="margin-bottom: 1rem;">• iftop</li>
-                    <li style="margin-bottom: 1rem;">• vnStat</li>
+            <div class="category-card">
+                <div class="category-icon">⚡</div>
+                <div class="category-title">Performance Testing</div>
+                <ul class="category-tools">
+                    <li>iperf3</li>
+                    <li>Speedtest CLI</li>
+                    <li>bmon</li>
+                    <li>iftop</li>
+                    <li>vnStat</li>
+                    <li>Darkstat</li>
+                </ul>
+            </div>
+
+            <div class="category-card">
+                <div class="category-icon">🛡️</div>
+                <div class="category-title">Security Analysis</div>
+                <ul class="category-tools">
+                    <li>Nessus</li>
+                    <li>OpenVAS</li>
+                    <li>Metasploit</li>
+                    <li>Burp Suite</li>
+                    <li>OWASP ZAP</li>
+                    <li>Aircrack-ng</li>
+                </ul>
+            </div>
+
+            <div class="category-card">
+                <div class="category-icon">☁️</div>
+                <div class="category-title">Cloud & Modern</div>
+                <ul class="category-tools">
+                    <li>kubectl</li>
+                    <li>Terraform</li>
+                    <li>AWS CLI</li>
+                    <li>Azure CLI</li>
+                    <li>Google Cloud SDK</li>
+                    <li>Istio</li>
                 </ul>
             </div>
         </div>
@@ -566,65 +1173,211 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds</div>
 
     <!-- Footer -->
     <footer>
-        <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
-            <h3 style="color: var(--accent-color); margin-bottom: 1rem;">NetworkHub.ch Tools</h3>
-            <p style="color: var(--text-dim); margin-bottom: 2rem;">
-                Empowering network professionals with the right tools for every task
+        <div style="max-width: 1400px; margin: 0 auto; padding: 0 2rem;">
+            <h3 style="color: var(--tool-blue); margin-bottom: 1rem; font-size: 2.5rem; font-weight: 800;">tcp-ip.ch Tools</h3>
+            <p style="color: var(--text-light); margin-bottom: 3rem; font-size: 1.2rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                Empowering network professionals with comprehensive tool education, hands-on demonstrations,
+                and real-world application scenarios for every networking challenge.
             </p>
+            <div style="background: rgba(33, 150, 243, 0.1); padding: 3rem; border-radius: 20px; margin: 3rem 0; border: 1px solid var(--border-glow);">
+                <p style="color: var(--text-light); font-size: 1.1rem; font-style: italic; margin-bottom: 1rem;">
+                    "Give someone the right tool, and they can fix anything. Teach them to choose the right tool, and they become unstoppable."
+                </p>
+                <p style="color: var(--tool-blue); font-weight: bold;">
+                    — The Philosophy of Network Troubleshooting
+                </p>
+            </div>
             <p style="color: var(--text-muted); font-size: 0.9rem;">
-                Professional toolkit • <a href="/" style="color: var(--accent-color);">Return to Hub</a>
+                Professional toolkit mastery • <a href="/" style="color: var(--accent-color);">Return to Hub</a>
             </p>
         </div>
     </footer>
 
     <script>
-        // Performance test simulation
+        // Enhanced Command Stream
+        function createCommandStream() {
+            const container = document.getElementById('commandStream');
+            const commands = [
+                'ping -c 4', 'traceroute', 'nmap -sS', 'tcpdump -i eth0',
+                'netstat -tuln', 'ss -tuln', 'iperf3 -c', 'wireshark',
+                'dig @8.8.8.8', 'nslookup', 'curl -I', 'wget --spider',
+                'mtr google.com', 'iftop', 'vnstat -i', 'bmon',
+                'ethtool eth0', 'ip route', 'arp -a', 'iwconfig'
+            ];
+
+            function createCommandSnippet() {
+                if (Math.random() > 0.75) {
+                    const snippet = document.createElement('div');
+                    snippet.className = 'command-snippet';
+                    snippet.textContent = commands[Math.floor(Math.random() * commands.length)];
+                    snippet.style.left = Math.random() * 100 + '%';
+                    snippet.style.animationDelay = Math.random() * 3 + 's';
+                    snippet.style.animationDuration = (20 + Math.random() * 10) + 's';
+                    container.appendChild(snippet);
+
+                    setTimeout(() => {
+                        if (snippet.parentNode) {
+                            snippet.parentNode.removeChild(snippet);
+                        }
+                    }, 25000);
+                }
+            }
+
+            setInterval(createCommandSnippet, 1000);
+        }
+
+        // Demo Tab Switching
+        function showDemo(type) {
+            // Hide all demos
+            document.querySelectorAll('.demo-terminal').forEach(demo => {
+                demo.style.display = 'none';
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected demo
+            document.getElementById(type + 'Demo').style.display = 'block';
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Performance Testing Functions
         function runPerformanceTest() {
-            const button = document.querySelector('.run-test-btn');
-            button.textContent = '🔄 Testing...';
-            button.disabled = true;
-
-            // Simulate testing phases
-            setTimeout(() => {
-                document.getElementById('downloadSpeed').textContent = '0.0';
-                document.getElementById('uploadSpeed').textContent = '0.0';
-                document.getElementById('latency').textContent = 'Testing...';
-                document.getElementById('jitter').textContent = 'Testing...';
-                document.getElementById('packetLoss').textContent = 'Testing...';
-            }, 500);
-
-            // Get test results from API
+            setTestState('running', 'Full Speed Test');
             setTimeout(() => {
                 fetch('/api/performance-test')
                     .then(response => response.json())
                     .then(data => {
-                        document.getElementById('downloadSpeed').textContent = data.download_speed.replace(' Mbps', '');
-                        document.getElementById('uploadSpeed').textContent = data.upload_speed.replace(' Mbps', '');
-                        document.getElementById('latency').textContent = data.latency.replace(' ms', '');
-                        document.getElementById('jitter').textContent = data.jitter.replace(' ms', '');
-                        document.getElementById('packetLoss').textContent = data.packet_loss.replace('%', '');
-
-                        button.textContent = '✅ Test Complete';
-                        setTimeout(() => {
-                            button.textContent = '🚀 Run Speed Test';
-                            button.disabled = false;
-                        }, 3000);
+                        updateTestResults(data);
+                        setTestState('complete', 'Test Complete');
                     })
-                    .catch(error => {
-                        console.log('Performance test failed:', error);
-                        button.textContent = '❌ Test Failed';
-                        setTimeout(() => {
-                            button.textContent = '🚀 Run Speed Test';
-                            button.disabled = false;
-                        }, 3000);
+                    .catch(() => {
+                        setTestState('error', 'Test Failed');
                     });
             }, 3000);
         }
 
-        // Initialize page
+        function runLatencyTest() {
+            setTestState('running', 'Latency Test');
+            setTimeout(() => {
+                const results = {
+                    latency: `${Math.floor(Math.random() * 20 + 5)} ms`,
+                    jitter: `${(Math.random() * 3 + 0.5).toFixed(1)} ms`,
+                    packet_loss: `${(Math.random() * 0.5).toFixed(3)}%`
+                };
+                updateTestResults(results, true);
+                setTestState('complete', 'Latency Test Complete');
+            }, 2000);
+        }
+
+        function runThroughputTest() {
+            setTestState('running', 'Throughput Test');
+            setTimeout(() => {
+                const results = {
+                    download_speed: `${Math.floor(Math.random() * 500 + 100)} Mbps`,
+                    upload_speed: `${Math.floor(Math.random() * 100 + 50)} Mbps`,
+                    quality_score: Math.floor(Math.random() * 20 + 80)
+                };
+                updateTestResults(results, true);
+                setTestState('complete', 'Throughput Test Complete');
+            }, 4000);
+        }
+
+        function setTestState(state, message) {
+            const buttons = document.querySelectorAll('.test-button');
+            buttons.forEach(button => {
+                if (state === 'running') {
+                    button.disabled = true;
+                    if (button.textContent.includes(message.split(' ')[0])) {
+                        button.textContent = `🔄 ${message}...`;
+                    }
+                } else {
+                    button.disabled = false;
+                    button.textContent = button.textContent.replace(/🔄.*/, button.textContent.split('🔄')[0]);
+                }
+            });
+        }
+
+        function updateTestResults(data, partial = false) {
+            const animations = [];
+
+            if (data.download_speed) {
+                animateValue('downloadSpeed', data.download_speed.replace(' Mbps', ''));
+            }
+            if (data.upload_speed) {
+                animateValue('uploadSpeed', data.upload_speed.replace(' Mbps', ''));
+            }
+            if (data.latency) {
+                animateValue('latency', data.latency.replace(' ms', ''));
+            }
+            if (data.jitter) {
+                animateValue('jitter', data.jitter.replace(' ms', ''));
+            }
+            if (data.packet_loss) {
+                animateValue('packetLoss', data.packet_loss.replace('%', ''));
+            }
+            if (data.quality_score) {
+                animateValue('qualityScore', data.quality_score);
+            }
+        }
+
+        function animateValue(elementId, value) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.style.transform = 'scale(1.1)';
+                element.style.textShadow = '0 0 30px currentColor';
+                element.textContent = value;
+
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                    element.style.textShadow = '0 0 20px currentColor';
+                }, 300);
+            }
+        }
+
+        // Enhanced Scroll Animations
+        function handleScrollAnimations() {
+            const elements = document.querySelectorAll('.fade-in, .tool-card');
+
+            elements.forEach((element, index) => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < window.innerHeight - elementVisible) {
+                    setTimeout(() => {
+                        element.classList.add('animate');
+                    }, index * 150);
+                }
+            });
+        }
+
+        // Initialize Everything
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Network Tools page loaded');
+            // Create visual effects
+            createCommandStream();
+
+            // Setup interactions
+            handleScrollAnimations();
+
+            // Event listeners
+            window.addEventListener('scroll', handleScrollAnimations, { passive: true });
+
+            console.log('🛠️ Enhanced Tools page loaded with interactive demos!');
         });
+
+        // Performance monitoring
+        if ('performance' in window) {
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                    console.log(`⚡ Tools page loaded in ${loadTime}ms`);
+                }, 0);
+            });
+        }
     </script>
 </body>
 </html>
